@@ -11,8 +11,8 @@ public class FastDocumentationStoreTests
     {
         var a = new ClassA();
         var b = new ClassB();
-        
-        
+
+
         var assemblies = AppDomain.CurrentDomain.GetAssemblies()
             .Where(a => a.FullName?.StartsWith("TestAssembly.") ?? false)
             .ToList();
