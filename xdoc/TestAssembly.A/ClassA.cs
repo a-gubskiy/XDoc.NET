@@ -8,5 +8,14 @@ public class ClassA : ClassBase
     /// <summary>
     /// Name
     /// </summary>
-    public string Name { get; set; } = "";
+    public virtual string Name { get; set; } = "";
+
+    /// <summary>
+    /// Return the name.
+    /// </summary>
+    /// <returns></returns>
+    public virtual string GetName()
+    {
+        return "My name is " + Name;
+    }
 }

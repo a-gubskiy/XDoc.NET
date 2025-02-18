@@ -1,6 +1,6 @@
 namespace TestAssembly.A;
 
-
+/// <inheritdoc />
 public class ClassA1 : ClassA
 {
     /// <summary>
@@ -12,4 +12,13 @@ public class ClassA1 : ClassA
     /// Field two
     /// </summary>
     public int Field2 { get; set; }
+
+    /// <inheritdoc />
+    public override string Name { get; set; }
+
+    /// <inheritdoc />
+    public override string GetName()
+    {
+        return "H! My name is " + Name;
+    }
 }
