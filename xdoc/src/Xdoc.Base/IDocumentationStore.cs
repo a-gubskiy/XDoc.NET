@@ -1,10 +1,12 @@
 using System.Reflection;
+using JetBrains.Annotations;
 
 namespace Xdoc;
 
 /// <summary>
 /// Defines a contract for retrieving documentation comments for types and properties.
 /// </summary>
+[PublicAPI]
 public interface IDocumentationStore
 {
     /// <summary>
@@ -21,11 +23,32 @@ public interface IDocumentationStore
     /// <param name="propertyName"></param>
     /// <returns></returns>
     string GetCommentForProperty(Type type, string propertyName);
-    
+
     /// <summary>
     /// comment for the specified property
     /// </summary>
     /// <param name="propertyInfo"></param>
     /// <returns></returns>
     string GetCommentForProperty(PropertyInfo propertyInfo);
+}
+
+public abstract class DocumentationStoreBase : IDocumentationStore
+{
+    public abstract string GetCommentForType(Type type);
+
+    public abstract string GetCommentForProperty(Type type, string propertyName);
+
+    /// <inheritdoc />
+    public virtual string GetCommentForProperty(PropertyInfo propertyInfo)
+    {
+        var type = propertyInfo.DeclaringType ?? propertyInfo.ReflectedType;
+        var propertyName = propertyInfo.Name;
+        
+        if (type == null)
+        {
+            return string.Empty;
+        }
+        
+        return GetCommentForProperty(type, propertyName);
+    }
 }

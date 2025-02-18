@@ -1,11 +1,13 @@
 using System.Reflection;
 using System.Xml;
+using JetBrains.Annotations;
 
 namespace Xdoc;
 
 /// <summary>
 /// Provides functionality to load and parse XML documentation files for assemblies.
 /// </summary>
+[PublicAPI]
 public static class XmlDocumentation
 {
     /// <summary>
