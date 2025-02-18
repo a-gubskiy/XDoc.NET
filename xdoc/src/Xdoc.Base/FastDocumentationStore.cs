@@ -1,4 +1,4 @@
-using System.Reflection;
+using System.Collections.Frozen;
 using System.Xml;
 
 namespace Xdoc;
@@ -10,31 +10,28 @@ public class FastDocumentationStore : DocumentationStoreBase
     public FastDocumentationStore(IEnumerable<XmlDocument> documents)
     {
         var dictionary = new Dictionary<string, string>();
-        
+
         foreach (var document in documents)
         {
-            var nodes = document.SelectNodes("/doc/members/member")?
-                .Cast<XmlElement>()
-                .ToList() ?? new List<XmlElement>();
+            var nodes = document
+                .SelectNodes("/doc/members/member")?
+                .Cast<XmlNode>()
+                .ToList() ?? [];
 
-            // foreach (var node in nodes)
-            // {
-            //     node.
-            //     dictionary.Add();
-            // }
-            //
-            //  nodes
-            //     .Select(node => new
-            //     {
-            //         Key = node.GetAttribute("name"),
-            //         Value = node.InnerText.Trim()
-            //     })
-            //     .ToList();
+            foreach (var node in nodes)
+            {
+                var nameAttribute = node.Attributes?["name"];
+
+                if (nameAttribute == null)
+                {
+                    continue;
+                }
+
+                dictionary.Add(nameAttribute.Value, node.InnerXml);
+            }
         }
-        //
-        // _xml = documents
-        //     .SelectMany(document => 
-        //     .ToDictionary(x => x.Key, x => x.Value);
+
+        _xml = dictionary.ToFrozenDictionary();
     }
 
     public FastDocumentationStore(XmlDocument document)
@@ -44,7 +41,7 @@ public class FastDocumentationStore : DocumentationStoreBase
 
     public override string GetCommentForType(Type type)
     {
-        var key = $"/doc/members/member[@name='T:{type.FullName}']";
+        var key = $"T:{type.FullName}";
 
         var value = _xml.GetValueOrDefault(key, string.Empty);
 
@@ -53,7 +50,7 @@ public class FastDocumentationStore : DocumentationStoreBase
 
     public override string GetCommentForProperty(Type type, string propertyName)
     {
-        var key = $"/doc/members/member[@name='P:{type.FullName}.{propertyName}']";
+        var key = $"P:{type.FullName}.{propertyName}";
 
         var value = _xml.GetValueOrDefault(key, string.Empty);
 

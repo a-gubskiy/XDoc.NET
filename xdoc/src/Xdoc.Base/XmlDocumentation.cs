@@ -83,6 +83,35 @@ public static class XmlDocumentation
     {
         return LoadAsync(assembly.Location);
     }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="assemblies"></param>
+    /// <returns></returns>
+    public static IReadOnlyCollection<XmlDocument> Load(IEnumerable<Assembly> assemblies)
+    {
+        return assemblies.Select(assembly => Load(assembly.Location)).ToList();
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="assemblies"></param>
+    /// <returns></returns>
+    public static async Task<IReadOnlyCollection<XmlDocument>> LoadAsync(IEnumerable<Assembly> assemblies)
+    {
+        var result = new List<XmlDocument>();
+        
+        foreach (var assembly in assemblies)
+        {
+            var document = await LoadAsync(assembly.Location);
+            
+            result.Add(document);
+        }
+
+        return result;
+    }
 
     /// <summary>
     /// Load XML documentation for the current AppDomain.
