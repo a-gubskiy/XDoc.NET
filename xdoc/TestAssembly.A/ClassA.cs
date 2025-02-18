@@ -1,15 +1,10 @@
-namespace TestAssembly;
+namespace TestAssembly.A;
 
 /// <summary>
 /// Test class A.
 /// </summary>
-public class ClassA
+public class ClassA : ClassBase
 {
-    /// <summary>
-    /// Unique identifier.
-    /// </summary>
-    public int Id { get; set; }
-
     /// <summary>
     /// Name
     /// </summary>

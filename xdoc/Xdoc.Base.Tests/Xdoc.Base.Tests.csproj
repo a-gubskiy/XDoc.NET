@@ -22,6 +22,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\src\Xdoc.Base\Xdoc.Base.csproj" />
+      <ProjectReference Include="..\TestAssembly.A\TestAssembly.A.csproj" />
     </ItemGroup>
 
 </Project>

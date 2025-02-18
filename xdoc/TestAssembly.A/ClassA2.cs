@@ -1,4 +1,4 @@
-namespace TestAssembly;
+namespace TestAssembly.A;
 
 /// <inheritdoc />
 public class ClassA2 : ClassA

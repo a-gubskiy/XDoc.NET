@@ -1,4 +1,4 @@
-namespace TestAssembly;
+namespace TestAssembly.A;
 
 
 public class ClassA1 : ClassA
