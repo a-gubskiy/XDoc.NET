@@ -8,31 +8,18 @@ public record ClassXmlInfo : ISummarized
 
     private readonly Type _type;
     private readonly IDictionary<string, PropertyXmlInfo> _properties;
-    
-    private ClassXmlInfo? _parent;
 
     public string Name => _type.FullName!;
 
-    public ClassXmlInfo? Parent
-    {
-        get
-        {
-            if (_parent == null && _type.BaseType != null && _type.BaseType != typeof(object))
-            {
-                _parent = Assembly.GetClassInfo(_type.BaseType);
-            }
-
-            return _parent;
-        }
-    }
+    public ClassXmlInfo? Parent => Assembly.DocumentStore.GetClassInfo(_type.BaseType);
 
     public XmlSummary Summary { get; init; }
 
-    internal ClassXmlInfo(Type type, AssemblyXmlInfo assembly, Dictionary<string, PropertyXmlInfo> properties, XmlNode xml)
+    internal ClassXmlInfo(Type type, AssemblyXmlInfo assembly, XmlNode xml)
     {
         _type = type;
-        _properties = properties;
-        
+        _properties = new Dictionary<string, PropertyXmlInfo>();
+
         Assembly = assembly;
         Summary = new XmlSummary(xml);
     }
@@ -48,9 +35,22 @@ public record ClassXmlInfo : ISummarized
         {
             return propertyXmlInfo;
         }
-        
+
         return null;
     }
 
     public override string ToString() => Name;
+
+    /// <summary>
+    /// Add a property to the class.
+    /// </summary>
+    /// <param name="propertyXmlInfo"></param>
+    /// <exception cref="InvalidOperationException"></exception>
+    internal void AddProperty(PropertyXmlInfo propertyXmlInfo)
+    {
+        if (!_properties.TryAdd(propertyXmlInfo.Name, propertyXmlInfo))
+        {
+            throw new InvalidOperationException($"Property '{propertyXmlInfo.Name}' already exists in class '{Name}'");
+        }
+    }
 }
