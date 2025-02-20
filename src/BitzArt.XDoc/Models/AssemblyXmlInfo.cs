@@ -1,53 +1,40 @@
-using System.Collections.Frozen;
-using System.Collections.Immutable;
-using System.Xml;
 using JetBrains.Annotations;
-using Xdoc.Abstractions;
+using System.Collections.Frozen;
+using System.Reflection;
+using System.Xml;
 
-namespace Xdoc.Models;
+namespace BitzArt.XDoc;
 
 /// <summary>
 /// Represents an assembly in the XML documentation.
 /// </summary>
 [PublicAPI]
-public record AssemblyXmlInfo : IAssemblyXmlInfo
+public class AssemblyXmlInfo : XmlInfo<Assembly>
 {
-    public string Name { get; init; }
+    private readonly Dictionary<Type, TypeXmlInfo> _data;
 
-    private readonly IDocumentStore _documentStore;
-
-    private readonly IDictionary<Type, ClassXmlInfo> _classes;
-
-    /// <summary>
-    /// Initialize a new instance of <see cref="AssemblyXmlInfo"/>.
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="xml"></param>
-    /// <param name="documentStore"></param>
-    internal AssemblyXmlInfo(string name, string xml, IDocumentStore documentStore)
+    internal AssemblyXmlInfo(XDoc xdoc, Assembly assembly) : base(xdoc, assembly)
     {
-        _classes = new Dictionary<Type, ClassXmlInfo>();
-        _documentStore = documentStore;
-        
-        Name = name;
+        var filePath = Path.ChangeExtension(assembly.Location, "xml");
 
-        var documentation = LoadXmlDocumentation(xml);
-        var types = GetTypeNames(documentation);
+        XmlDocumentationFileNotFoundException.ThrowIfFileNotFound(filePath);
+
+        var content = File.ReadAllText(filePath);
+
+        _data = [];
+
+        var documentation = LoadXmlDocumentation(content);
+        var types = GetTypes(documentation);
 
         foreach (var type in types)
         {
-            var classXmlInfo = new ClassXmlInfo(type, this, documentation);
+            var classXmlInfo = new TypeXmlInfo(type, this, documentation);
 
-            _classes.Add(type, classXmlInfo);
+            _data.Add(type, classXmlInfo);
         }
     }
 
-    /// <summary>
-    /// Get a list of type names from the XML documentation.
-    /// </summary>
-    /// <param name="documentation"></param>
-    /// <returns></returns>
-    private IReadOnlyCollection<Type> GetTypeNames(IReadOnlyDictionary<string, XmlNode> documentation)
+    private IReadOnlyCollection<Type> GetTypes(IReadOnlyDictionary<string, XmlNode> documentation)
     {
         var exactlyTypeNames = documentation.Keys
             .Where(k => k.StartsWith("T:"))
@@ -75,11 +62,6 @@ public record AssemblyXmlInfo : IAssemblyXmlInfo
         return types;
     }
 
-    /// <summary>
-    /// Load the XML documentation into a collection of XML nodes.
-    /// </summary>
-    /// <param name="xml"></param>
-    /// <returns></returns>
     private static IReadOnlyDictionary<string, XmlNode> LoadXmlDocumentation(string xml)
     {
         var xmlDocument = new XmlDocument();
@@ -100,9 +82,9 @@ public record AssemblyXmlInfo : IAssemblyXmlInfo
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public ClassXmlInfo? GetClassInfo(Type type)
+    public TypeXmlInfo? GetData(Type type)
     {
-        if (_classes.TryGetValue(type, out var classXmlInfo))
+        if (_data.TryGetValue(type, out var classXmlInfo))
         {
             return classXmlInfo;
         }
@@ -111,15 +93,12 @@ public record AssemblyXmlInfo : IAssemblyXmlInfo
 
         if (typeAssemblyName.Name != Name)
         {
-            return _documentStore.GetClassInfo(type);
+            return _xdoc.GetClassInfo(type);
         }
 
         return null;
     }
 
-    /// <summary>
-    /// Get a string representation of the of <see cref="AssemblyXmlInfo"/>.
-    /// </summary>
-    /// <returns></returns>
-    public override string ToString() => Name;
+    /// <inheritdoc/>
+    public override string ToString() => Assembly.GetName().Name!;
 }

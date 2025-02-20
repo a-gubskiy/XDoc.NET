@@ -1,12 +1,11 @@
 using System.Xml;
-using Xdoc.Abstractions;
 
-namespace Xdoc.Models;
+namespace BitzArt.XDoc;
 
 /// <summary>
 /// Represents a property in the XML documentation.
 /// </summary>
-public record PropertyXmlInfo : IPropertyXmlInfo
+public record PropertyXmlInfo
 {
     /// <summary>
     /// Name of the property.
@@ -16,12 +15,12 @@ public record PropertyXmlInfo : IPropertyXmlInfo
     /// <summary>
     /// Class which the property belongs to.
     /// </summary>
-    public IClassXmlInfo Class { get; }
+    public TypeXmlInfo Type { get; }
 
     /// <summary>
     /// Property summary.
     /// </summary>
-    public IXmlSummary Summary { get; }
+    public XmlSummary Summary { get; }
 
     /// <summary>
     /// Initialize a new instance of <see cref="PropertyXmlInfo"/>.
@@ -29,11 +28,11 @@ public record PropertyXmlInfo : IPropertyXmlInfo
     /// <param name="name"></param>
     /// <param name="classInfo"></param>
     /// <param name="xml"></param>
-    internal PropertyXmlInfo(string name, ClassXmlInfo classInfo, XmlNode xml)
+    internal PropertyXmlInfo(string name, TypeXmlInfo classInfo, XmlNode xml)
     {
         Name = name;
         Summary = new XmlSummary(xml);
-        Class = classInfo;
+        Type = classInfo;
     }
 
     /// <summary>

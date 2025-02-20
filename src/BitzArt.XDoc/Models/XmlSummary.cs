@@ -1,12 +1,11 @@
 using System.Xml;
-using Xdoc.Abstractions;
 
-namespace Xdoc.Models;
+namespace BitzArt.XDoc;
 
 /// <summary>
 /// Represents a summary in the XML documentation.
 /// </summary>
-public record XmlSummary : IXmlSummary
+public record XmlSummary
 {
     public XmlNode? Xml { get; }
     

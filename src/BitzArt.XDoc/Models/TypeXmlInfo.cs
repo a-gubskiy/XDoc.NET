@@ -1,21 +1,22 @@
 using System.Collections.Frozen;
 using System.Xml;
-using Xdoc.Abstractions;
 
-namespace Xdoc.Models;
+namespace BitzArt.XDoc;
 
 /// <summary>
 /// Represents a class in the XML documentation.
 /// </summary>
-public record ClassXmlInfo : IClassXmlInfo
+public record TypeXmlInfo
 {
+    private AssemblyXmlInfo _assembly;
+
     private readonly Type _type;
     private XmlSummary _summary;
 
     /// <summary>
     /// Documented properties of the class.
     /// </summary>
-    public IReadOnlyDictionary<string, IPropertyXmlInfo> Properties { get; }
+    public IReadOnlyDictionary<string, PropertyXmlInfo> Properties { get; }
 
     /// <summary>
     /// Class name.
@@ -23,14 +24,9 @@ public record ClassXmlInfo : IClassXmlInfo
     public string Name => _type.FullName!;
 
     /// <summary>
-    /// Assembly which the class belongs to.
-    /// </summary>
-    public IAssemblyXmlInfo Assembly { get; }
-
-    /// <summary>
     /// Class summary.
     /// </summary>
-    public IXmlSummary Summary { get; }
+    public XmlSummary Summary { get; }
 
     // public ClassXmlInfo? Parent => Assembly.DocumentStore.GetClassInfo(_type.BaseType);
 
@@ -40,11 +36,11 @@ public record ClassXmlInfo : IClassXmlInfo
     /// <param name="type"></param>
     /// <param name="assembly"></param>
     /// <param name="documentation"></param>
-    internal ClassXmlInfo(Type type, AssemblyXmlInfo assembly, IReadOnlyDictionary<string, XmlNode> documentation)
+    internal TypeXmlInfo(Type type, AssemblyXmlInfo assembly, IReadOnlyDictionary<string, XmlNode> documentation)
     {
         _type = type;
 
-        Assembly = assembly;
+        _assembly = assembly;
         Summary = CreateSummary(type, documentation);
         Properties = CreateProperties(documentation);
     }
@@ -68,7 +64,7 @@ public record ClassXmlInfo : IClassXmlInfo
     /// </summary>
     /// <param name="documentation"></param>
     /// <returns></returns>
-    private IReadOnlyDictionary<string, IPropertyXmlInfo> CreateProperties(
+    private IReadOnlyDictionary<string, PropertyXmlInfo> CreateProperties(
         IReadOnlyDictionary<string, XmlNode> documentation)
     {
         var typeNamePrefix = $"P:{_type.FullName}.";
@@ -77,7 +73,7 @@ public record ClassXmlInfo : IClassXmlInfo
             .Where(k => k.StartsWith(typeNamePrefix))
             .ToFrozenSet();
 
-        var result = new Dictionary<string, IPropertyXmlInfo>();
+        var result = new Dictionary<string, PropertyXmlInfo>();
 
         foreach (var propertyKey in propertyKeys)
         {
@@ -97,13 +93,13 @@ public record ClassXmlInfo : IClassXmlInfo
     /// </summary>
     /// <param name="propertyName"></param>
     /// <returns></returns>
-    public IPropertyXmlInfo? GetPropertyInfo(string propertyName)
+    public PropertyXmlInfo? GetPropertyInfo(string propertyName)
     {
         return Properties.GetValueOrDefault(propertyName);
     }
 
     /// <summary>
-    /// Get a string representation of the of <see cref="ClassXmlInfo"/>.
+    /// Get a string representation of the of <see cref="TypeXmlInfo"/>.
     /// </summary>
     /// <returns></returns>
     public override string ToString() => Name;
