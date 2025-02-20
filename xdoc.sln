@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xdoc.Base.Tests", "tests\Xd
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xdoc.Renderer.PlaintText", "src\Xdoc.Renderer.PlaintText\Xdoc.Renderer.PlaintText.csproj", "{95283F56-EFD3-4B32-AE26-4E486D186127}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xdoc.Renderer.PlaintText.Tests", "Xdoc.Renderer.PlaintText.Tests\Xdoc.Renderer.PlaintText.Tests.csproj", "{4F4720A9-8DD2-4DFD-B217-A0FAFC6F60D0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{95283F56-EFD3-4B32-AE26-4E486D186127}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95283F56-EFD3-4B32-AE26-4E486D186127}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95283F56-EFD3-4B32-AE26-4E486D186127}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F4720A9-8DD2-4DFD-B217-A0FAFC6F60D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F4720A9-8DD2-4DFD-B217-A0FAFC6F60D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F4720A9-8DD2-4DFD-B217-A0FAFC6F60D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F4720A9-8DD2-4DFD-B217-A0FAFC6F60D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{051F3A64-78F8-4055-9785-5D5A3C489832} = {DE8DA5D7-65DB-4FE8-8CF9-52CEB9CE6648}
@@ -47,5 +53,6 @@ Global
 		{D73DD449-5ED9-4D3C-ABE8-6E63EAFF3FF3} = {616D63B3-7EF0-40FB-A404-33A221F65577}
 		{D6F5A728-53AD-49F9-8BA0-1E72D0AF6A93} = {616D63B3-7EF0-40FB-A404-33A221F65577}
 		{95283F56-EFD3-4B32-AE26-4E486D186127} = {DE8DA5D7-65DB-4FE8-8CF9-52CEB9CE6648}
+		{4F4720A9-8DD2-4DFD-B217-A0FAFC6F60D0} = {616D63B3-7EF0-40FB-A404-33A221F65577}
 	EndGlobalSection
 EndGlobal

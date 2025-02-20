@@ -1,15 +1,13 @@
-using TestAssembly;
 using TestAssembly.A;
 using TestAssembly.B;
 using Xdoc.Abstractions;
-using Xdoc.Renderer.PlaintText;
 
-namespace Xdoc.Base.Tests;
+namespace Xdoc.Renderer.PlaintText.Tests;
 
-public class FastDocumentationStoreTests
+public class UnitTest1
 {
-    [Fact]
-    public async Task Test1()
+    [Fact(Skip = "Rendering is not implemented yet.")]
+    public async Task TestRendering()
     {
         IDocumentStore documentStore = new DocumentStore();
 
@@ -26,14 +24,10 @@ public class FastDocumentationStoreTests
         var dogsFriend = documentStore.GetPropertyInfo(typeof(Dog), nameof(Dog.Friend));
         var animalFriend = documentStore.GetPropertyInfo(typeof(Animal), nameof(Animal.Friend));
 
-        // Cause exception
-        // var objectFriend = documentStore.GetPropertyInfo(typeof(Object), nameof(Animal.Friend));
-
         var renderer = new PlainTextRenderer(documentStore);
 
         var catClassInfoSummary = renderer.Render(catClassInfo);
         var dogClassInfoSummary = renderer.Render(dogClassInfo);
-
         var catNamePropertyInfoSummary = renderer.Render(catNamePropertyInfo);
         var blackCatNamePropertyInfoSummary = renderer.Render(blackCatNamePropertyInfo);
         var orangeCatNamePropertyInfoSummary = renderer.Render(orangeCatNamePropertyInfo);
@@ -41,6 +35,13 @@ public class FastDocumentationStoreTests
         var dogsFriendSummary = renderer.Render(dogsFriend);
         var animalFriendSummary = renderer.Render(animalFriend!);
 
-        Assert.True(true);
+        Assert.False(string.IsNullOrWhiteSpace(catClassInfoSummary));
+        Assert.False(string.IsNullOrWhiteSpace(dogClassInfoSummary));
+        Assert.False(string.IsNullOrWhiteSpace(catNamePropertyInfoSummary));
+        Assert.False(string.IsNullOrWhiteSpace(blackCatNamePropertyInfoSummary));
+        Assert.False(string.IsNullOrWhiteSpace(orangeCatNamePropertyInfoSummary));
+        Assert.False(string.IsNullOrWhiteSpace(dogNamePropertyInfoSummary));
+        Assert.False(string.IsNullOrWhiteSpace(dogsFriendSummary));
+        Assert.False(string.IsNullOrWhiteSpace(animalFriendSummary));
     }
 }
