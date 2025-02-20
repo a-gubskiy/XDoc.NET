@@ -14,7 +14,7 @@ public record AssemblyXmlInfo : IAssemblyXmlInfo
 {
     public string Name { get; init; }
 
-    internal IDocumentStore DocumentStore { get; }
+    private readonly IDocumentStore _documentStore;
 
     private readonly IDictionary<Type, ClassXmlInfo> _classes;
 
@@ -27,8 +27,8 @@ public record AssemblyXmlInfo : IAssemblyXmlInfo
     internal AssemblyXmlInfo(string name, string xml, IDocumentStore documentStore)
     {
         _classes = new Dictionary<Type, ClassXmlInfo>();
-
-        DocumentStore = documentStore;
+        _documentStore = documentStore;
+        
         Name = name;
 
         var documentation = LoadXmlDocumentation(xml);
@@ -83,12 +83,11 @@ public record AssemblyXmlInfo : IAssemblyXmlInfo
     private static IReadOnlyDictionary<string, XmlNode> LoadXmlDocumentation(string xml)
     {
         var xmlDocument = new XmlDocument();
-        xmlDocument.LoadXml(xml); // TODO: Parse to dictionary with Type as Key
+        xmlDocument.LoadXml(xml);
 
         var xpath = "/doc/members/member";
         var nodes = xmlDocument.SelectNodes(xpath)?.Cast<XmlNode>() ?? [];
-
-
+        
         var documentation = nodes
             .Where(o => o.Attributes != null && o.Attributes!["name"] != null)
             .ToFrozenDictionary(o => o.Attributes!["name"]!.Value, o => o);
@@ -112,7 +111,7 @@ public record AssemblyXmlInfo : IAssemblyXmlInfo
 
         if (typeAssemblyName.Name != Name)
         {
-            return DocumentStore.GetClassInfo(type);
+            return _documentStore.GetClassInfo(type);
         }
 
         return null;
