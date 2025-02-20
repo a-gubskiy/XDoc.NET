@@ -48,8 +48,9 @@ public class DocumentStore : IDocumentStore
 
     public PropertyXmlInfo GetPropertyInfo(Type type, string propertyName)
     {
-        var assemblyXmlInfo = GetAssemblyXmlInfo(type);
-        var propertyXmlInfo = assemblyXmlInfo.Get(type, propertyName);
+        AssemblyXmlInfo assemblyXmlInfo = GetAssemblyXmlInfo(type);
+        var classXmlInfo = assemblyXmlInfo.Get(type);
+        var propertyXmlInfo = classXmlInfo.Get(propertyName);
 
         return propertyXmlInfo;
     }

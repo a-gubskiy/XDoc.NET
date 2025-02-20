@@ -2,7 +2,9 @@ namespace Xdoc;
 
 public record PropertyXmlInfo
 {
-    public ClassXmlInfo? Parent { get; set; }
+    public ClassXmlInfo? Parent { get; init; }
     
-    public XmlSummary Summary { get; set; }
+    public string Name { get; init; } = "";
+
+    public XmlSummary? Summary { get; init; }
 }
