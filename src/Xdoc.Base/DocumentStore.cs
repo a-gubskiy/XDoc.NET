@@ -1,6 +1,4 @@
 using System.Reflection;
-using System.Xml;
-using JetBrains.Annotations;
 using Xdoc.Models;
 
 namespace Xdoc;
@@ -15,11 +13,11 @@ public class DocumentStore : IDocumentStore
     {
         _assemblies = new Dictionary<string, AssemblyXmlInfo>();
     }
-    
+
     public ClassXmlInfo? GetClassInfo(Type type)
     {
         var assemblyInfo = GetAssemblyInfo(type);
-        
+
         var xpath = $"/doc/members/member[@name='T:{type.FullName}']";
         var typeNode = assemblyInfo.Xml.SelectSingleNode(xpath);
 
@@ -41,7 +39,7 @@ public class DocumentStore : IDocumentStore
     public PropertyXmlInfo? GetPropertyInfo(Type type, string propertyName)
     {
         var assemblyInfo = GetAssemblyInfo(type);
-        
+
         var xpath = $"/doc/members/member[@name='P:{type.FullName}.{propertyName}']";
         var propertyNode = assemblyInfo.Xml.SelectSingleNode(xpath);
 
@@ -60,25 +58,20 @@ public class DocumentStore : IDocumentStore
         return null;
     }
 
-    private AssemblyXmlInfo GetAssemblyInfo(Type type)
+    public AssemblyXmlInfo GetAssemblyInfo(Type type)
     {
-        var assemblyName = type.Assembly.GetName();
+        var typeAssembly = type.Assembly;
+
+        var assemblyName = typeAssembly.GetName();
         var key = assemblyName.Name ?? string.Empty;
 
-        if (_assemblies.TryGetValue(key, out var a))
-        {
-            return a;
-        }
-        else
+        if (!_assemblies.ContainsKey(key))
         {
             // Load new assembly
-            
-            var assembly = LoadAssemblyInfo(type.Assembly);
-
-            _assemblies[key] = assembly;
-
-            return assembly;
+            _assemblies[key] = LoadAssemblyInfo(typeAssembly);
         }
+
+        return _assemblies[key];
     }
 
     /// <summary>
@@ -96,7 +89,7 @@ public class DocumentStore : IDocumentStore
             var xml = File.ReadAllText(pathToXmlDocumentation);
             var assemblyName = assembly.GetName();
             var assemblyXmlInfo = new AssemblyXmlInfo(assemblyName.Name!, xml);
-            
+
             return assemblyXmlInfo;
         }
 
