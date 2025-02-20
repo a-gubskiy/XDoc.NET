@@ -3,6 +3,9 @@ using Xdoc.Models;
 
 namespace Xdoc;
 
+/// <summary>
+/// Interface for a document store.
+/// </summary>
 [PublicAPI]
 public interface IDocumentStore
 {

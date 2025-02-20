@@ -1,9 +1,11 @@
-using System.Collections.Frozen;
 using System.Reflection;
 using Xdoc.Models;
 
 namespace Xdoc;
 
+/// <summary>
+/// Represents a document store for XML documentation.
+/// </summary>
 public class DocumentStore : IDocumentStore
 {
     private readonly Dictionary<string, AssemblyXmlInfo> _assemblies;
