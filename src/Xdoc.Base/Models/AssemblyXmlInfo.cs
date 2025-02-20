@@ -16,14 +16,14 @@ public record AssemblyXmlInfo
     internal AssemblyXmlInfo(string name, string xml, IDocumentStore documentStore)
     {
         _classes = new Dictionary<Type, ClassXmlInfo>();
-        
+
         DocumentStore = documentStore;
         Name = name;
 
         // T:TestAssembly.A.ClassA
         // P:TestAssembly.A.ClassA.Name
         // M:TestAssembly.A.ClassA.GetName
-        
+
         var documentation = LoadXmlDocumentation(xml);
 
         // Extract all type names
@@ -31,33 +31,44 @@ public record AssemblyXmlInfo
             .Where(k => k.StartsWith("T:"))
             .Select(o => o.Replace("T:", ""))
             .ToFrozenSet();
-        
+
         // Create a list of types
         var types = typeNames
             .Select(o => Type.GetType($"{o}, {Name}"))
             .Where(o => o != null)
             .Select(o => o!)
             .ToFrozenSet();
-        
+
         foreach (var type in types)
         {
-            var properties = documentation.Keys
-                .Where(k => k.StartsWith($"P:{type}"))
-                .ToFrozenSet();
-            
             var classXmlInfo = new ClassXmlInfo(type, this, documentation[$"T:{type.FullName}"]);
 
-            foreach (var p in properties)
-            {
-                var propertyName = p[(p.LastIndexOf('.') + 1)..];
-                
-                var node = documentation[p];
-                var propertyXmlInfo = new PropertyXmlInfo(propertyName, classXmlInfo, node);
+            var properties = ParseProperties(type, documentation, classXmlInfo);
 
-                classXmlInfo.AddProperty(propertyXmlInfo);
-            }
-
+            classXmlInfo.AddProperties(properties);
             _classes.Add(type, classXmlInfo);
+        }
+    }
+
+    private static IEnumerable<PropertyXmlInfo> ParseProperties(
+        Type type,
+        IReadOnlyDictionary<string, XmlNode> documentation,
+        ClassXmlInfo classXmlInfo)
+    {
+        var typeName = $"P:{type.FullName}";
+        
+        var propertyKeys = documentation.Keys
+            .Where(k => k.StartsWith(typeName))
+            .ToFrozenSet();
+        
+        foreach (var propertyKey in propertyKeys)
+        {
+            var propertyName = propertyKey[(propertyKey.LastIndexOf('.') + 1)..];
+
+            var node = documentation[propertyKey];
+            var propertyXmlInfo = new PropertyXmlInfo(propertyName, classXmlInfo, node);
+
+            yield return propertyXmlInfo;
         }
     }
 
@@ -73,8 +84,8 @@ public record AssemblyXmlInfo
 
         var xpath = "/doc/members/member";
         var nodes = xmlDocument.SelectNodes(xpath)?.Cast<XmlNode>() ?? [];
-        
-        
+
+
         var documentation = nodes
             .Where(o => o.Attributes != null && o.Attributes!["name"] != null)
             .ToFrozenDictionary(o => o.Attributes!["name"]!.Value, o => o);

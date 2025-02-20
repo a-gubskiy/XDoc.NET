@@ -8,9 +8,9 @@ public record ClassXmlInfo : ISummarized
     private readonly IDictionary<string, PropertyXmlInfo> _properties;
 
     public string Name => _type.FullName!;
-    
+
     public AssemblyXmlInfo Assembly { get; init; }
-    
+
     public XmlSummary Summary { get; init; }
 
     public ClassXmlInfo? Parent => Assembly.DocumentStore.GetClassInfo(_type.BaseType);
@@ -42,15 +42,20 @@ public record ClassXmlInfo : ISummarized
     public override string ToString() => Name;
 
     /// <summary>
-    /// Add a property to the class.
+    /// Add properties to the class.
     /// </summary>
-    /// <param name="propertyXmlInfo"></param>
+    /// <param name="properties"></param>
     /// <exception cref="InvalidOperationException"></exception>
-    internal void AddProperty(PropertyXmlInfo propertyXmlInfo)
+    internal void AddProperties(IEnumerable<PropertyXmlInfo> properties)
     {
-        if (!_properties.TryAdd(propertyXmlInfo.Name, propertyXmlInfo))
+        foreach (var propertyXmlInfo in properties)
         {
-            throw new InvalidOperationException($"Property '{propertyXmlInfo.Name}' already exists in class '{Name}'");
+            if (!_properties.TryAdd(propertyXmlInfo.Name, propertyXmlInfo))
+            {
+                var error = $"Property '{propertyXmlInfo.Name}' already exists in class '{Name}'";
+
+                throw new InvalidOperationException(error);
+            }
         }
     }
 }
