@@ -12,15 +12,15 @@ public interface IDocumentStore
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    XmlSummary? GetClassInfo(Type type);
-    
+    ClassXmlInfo? GetClassInfo(Type type);
+
     /// <summary>
     /// Get property information for a given type and property name.
     /// </summary>
     /// <param name="type"></param>
     /// <param name="propertyName"></param>
     /// <returns></returns>
-    XmlSummary? GetPropertyInfo(Type type, string propertyName);
+    PropertyXmlInfo? GetPropertyInfo(Type type, string propertyName);
     
     /// <summary>
     /// List of assemblies loaded into the document store.
@@ -39,7 +39,7 @@ public class DocumentStore : IDocumentStore
         _assemblies = new Dictionary<string, AssemblyXmlInfo>();
     }
     
-    public XmlSummary? GetClassInfo(Type type)
+    public ClassXmlInfo? GetClassInfo(Type type)
     {
         var assemblyInfo = GetAssemblyXmlInfo(type);
         
@@ -57,13 +57,13 @@ public class DocumentStore : IDocumentStore
                 return comment;
             }
 
-            return new XmlSummary(typeNode);
+            return new ClassXmlInfo(type.FullName, typeNode);
         }
 
         return null;
     }
 
-    public XmlSummary? GetPropertyInfo(Type type, string propertyName)
+    public PropertyXmlInfo? GetPropertyInfo(Type type, string propertyName)
     {
         var assemblyInfo = GetAssemblyXmlInfo(type);
         
@@ -81,7 +81,7 @@ public class DocumentStore : IDocumentStore
                 return summary;
             }
 
-            return new XmlSummary(propertyNode);
+            return new PropertyXmlInfo(propertyName, propertyNode);
         }
 
         return null;
