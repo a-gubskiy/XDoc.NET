@@ -1,4 +1,5 @@
 using System.Collections.Frozen;
+using System.Collections.Immutable;
 using System.Xml;
 using JetBrains.Annotations;
 
@@ -26,10 +27,37 @@ public record AssemblyXmlInfo
 
         var documentation = LoadXmlDocumentation(xml);
 
-        // Extract all type names
-        var typeNames = documentation.Keys
+        var types = GetTypeNames(documentation);
+
+        foreach (var type in types)
+        {
+            var classXmlInfo = new ClassXmlInfo(type, this, documentation);
+
+            _classes.Add(type, classXmlInfo);
+        }
+    }
+
+    /// <summary>
+    /// Get a list of type names from the XML documentation.
+    /// </summary>
+    /// <param name="documentation"></param>
+    /// <returns></returns>
+    private IReadOnlyCollection<Type> GetTypeNames(IReadOnlyDictionary<string, XmlNode> documentation)
+    {
+        var exactlyTypeNames = documentation.Keys
             .Where(k => k.StartsWith("T:"))
             .Select(o => o.Replace("T:", ""))
+            .ToList();
+
+        var typeNamesFromDefinedMembers = documentation.Keys
+            .Where(k => k.StartsWith("M:") || k.StartsWith("P:"))
+            .Select(o => o.Replace("M:", "").Replace("P:", ""))
+            .Select(o => o[..o.LastIndexOf('.')])
+            .ToList();
+
+        var typeNames = new[] { exactlyTypeNames, typeNamesFromDefinedMembers }
+            .SelectMany(o => o)
+            .Distinct()
             .ToFrozenSet();
 
         // Create a list of types
@@ -39,12 +67,7 @@ public record AssemblyXmlInfo
             .Select(o => o!)
             .ToFrozenSet();
 
-        foreach (var type in types)
-        {
-            var classXmlInfo = new ClassXmlInfo(type, this, documentation);
-
-            _classes.Add(type, classXmlInfo);
-        }
+        return types;
     }
 
     /// <summary>
@@ -76,7 +99,7 @@ public record AssemblyXmlInfo
         }
 
         var assemblyName = type.Assembly.GetName();
-        
+
         if (assemblyName.Name != Name)
         {
             return DocumentStore.GetClassInfo(type);

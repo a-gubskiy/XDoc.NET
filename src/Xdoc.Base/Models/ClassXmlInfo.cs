@@ -23,19 +23,18 @@ public record ClassXmlInfo : ISummarized
 
         Assembly = assembly;
         Summary = CreateSummary(type, documentation);
-        Properties = CreateProperties(documentation, type);
+        Properties = CreateProperties(documentation);
     }
 
     private static XmlSummary CreateSummary(Type type, IReadOnlyDictionary<string, XmlNode> documentation)
     {
         var typeNameKey = $"T:{type.FullName}";
-        var xmlNode = documentation[typeNameKey];
-
+        var xmlNode = documentation.GetValueOrDefault(typeNameKey);
+        
         return new XmlSummary(xmlNode);
     }
 
-    private IReadOnlyDictionary<string, PropertyXmlInfo> CreateProperties(
-        IReadOnlyDictionary<string, XmlNode> documentation, Type typeName)
+    private IReadOnlyDictionary<string, PropertyXmlInfo> CreateProperties(IReadOnlyDictionary<string, XmlNode> documentation)
     {
         var typeNamePrefix = $"P:{_type.FullName}.";
         
@@ -50,7 +49,7 @@ public record ClassXmlInfo : ISummarized
             var propertyName = propertyKey[(propertyKey.LastIndexOf('.') + 1)..];
 
             var node = documentation[propertyKey];
-            var propertyXmlInfo = new PropertyXmlInfo(propertyName, node);
+            var propertyXmlInfo = new PropertyXmlInfo(propertyName, this, node);
 
             result.Add(propertyXmlInfo.Name, propertyXmlInfo);
         }

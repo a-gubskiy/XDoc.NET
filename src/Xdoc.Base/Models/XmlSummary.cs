@@ -4,13 +4,10 @@ namespace Xdoc.Models;
 
 public record XmlSummary
 {
-    public XmlNode Xml { get; }
+    public XmlNode? Xml { get; }
     
-    public string Value { get; init; } = "";
-
-    public XmlSummary(XmlNode node)
+    public XmlSummary(XmlNode? node)
     {
         Xml = node;
-        Value = node.InnerXml;
     }
 }
