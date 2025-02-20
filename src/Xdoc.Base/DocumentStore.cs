@@ -17,45 +17,17 @@ public class DocumentStore : IDocumentStore
     public ClassXmlInfo? GetClassInfo(Type type)
     {
         var assemblyInfo = GetAssemblyInfo(type);
+        var classXmlInfo = assemblyInfo.GetClassInfo(type);
 
-        var xpath = $"/doc/members/member[@name='T:{type.FullName}']";
-        var typeNode = assemblyInfo.Xml.SelectSingleNode(xpath);
-
-        if (typeNode != null)
-        {
-            var inheritdoc = typeNode.SelectSingleNode("inheritdoc");
-
-            if (inheritdoc != null && type.BaseType != null)
-            {
-                return GetClassInfo(type.BaseType);
-            }
-
-            return new ClassXmlInfo(type.FullName!, typeNode);
-        }
-
-        return null;
+        return classXmlInfo;
     }
 
     public PropertyXmlInfo? GetPropertyInfo(Type type, string propertyName)
     {
-        var assemblyInfo = GetAssemblyInfo(type);
-
-        var xpath = $"/doc/members/member[@name='P:{type.FullName}.{propertyName}']";
-        var propertyNode = assemblyInfo.Xml.SelectSingleNode(xpath);
-
-        if (propertyNode != null)
-        {
-            var inheritdoc = propertyNode.SelectSingleNode("inheritdoc");
-
-            if (inheritdoc != null && type.BaseType != null)
-            {
-                return GetPropertyInfo(type.BaseType, propertyName);
-            }
-
-            return new PropertyXmlInfo(propertyName, propertyNode);
-        }
-
-        return null;
+        var classXmlInfo = GetClassInfo(type);
+        var propertyXmlInfo = classXmlInfo?.GetPropertyInfo(propertyName);
+        
+        return propertyXmlInfo;
     }
 
     public AssemblyXmlInfo GetAssemblyInfo(Type type)
