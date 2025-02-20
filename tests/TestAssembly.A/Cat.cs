@@ -3,7 +3,7 @@ namespace TestAssembly.A;
 /// <summary>
 /// Test class A.
 /// </summary>
-public class ClassA : ClassBase
+public class Cat : Animal
 {
     /// <summary>
     /// Class A Name

@@ -5,7 +5,7 @@ namespace TestAssembly.B;
 /// <summary>
 /// Test class B.
 /// </summary>
-public class ClassB : ClassBase
+public class Dog : Animal
 {
     /// <summary>
     /// Class B Name

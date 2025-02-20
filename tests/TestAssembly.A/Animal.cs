@@ -1,6 +1,6 @@
 namespace TestAssembly.A;
 
-public class ClassBase
+public abstract class Animal
 {
     /// <summary>
     /// Unique identifier.
@@ -8,7 +8,7 @@ public class ClassBase
     public int Id { get; set; }
     
     /// <summary>
-    /// Property of type <see cref="ClassA"/> which we use for tests
+    /// Property of type <see cref="Cat"/> which we use for tests
     /// </summary>
-    public ClassA? ClassBaseProperty { get; set; }
+    public Cat? Friend { get; set; }
 }
