@@ -18,7 +18,11 @@ public class FastDocumentationStoreTests
         var classXmlInfo2 = documentStore.GetClassInfo(typeof(ClassB));
 
         var propertyInfo1 = documentStore.GetPropertyInfo(typeof(ClassA), nameof(ClassA.Name));
-        var propertyInfo2 = documentStore.GetPropertyInfo(typeof(ClassA), nameof(ClassB.Name));
+        
+        var propertyInfo2 = documentStore.GetPropertyInfo(typeof(ClassA), nameof(ClassA1.Name));
+        var propertyInfo3 = documentStore.GetPropertyInfo(typeof(ClassA), nameof(ClassA2.Name));
+        
+        var propertyInfo4 = documentStore.GetPropertyInfo(typeof(ClassA), nameof(ClassB.Name));
         
 
 

@@ -12,4 +12,8 @@ public class ClassA2 : ClassA
     /// Field two
     /// </summary>
     public string Field2 { get; set; } = "";
+    
+    
+    /// <inheritdoc />
+    public override string Name { get; set; } = "";
 }

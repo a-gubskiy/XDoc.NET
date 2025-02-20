@@ -6,7 +6,7 @@ namespace TestAssembly.A;
 public class ClassA : ClassBase
 {
     /// <summary>
-    /// Classs A Name
+    /// Class A Name
     /// </summary>
     public virtual string Name { get; set; } = "";
 
