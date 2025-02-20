@@ -7,11 +7,20 @@ namespace Xdoc.Models;
 /// </summary>
 public record PropertyXmlInfo : ISummarized
 {
-    public string Name { get; init; }
+    /// <summary>
+    /// Name of the property.
+    /// </summary>
+    public string Name { get; }
 
-    public ClassXmlInfo Class { get; internal set; }
+    /// <summary>
+    /// Class which the property belongs to.
+    /// </summary>
+    public ClassXmlInfo Class { get; }
 
-    public XmlSummary Summary { get; init; }
+    /// <summary>
+    /// Property summary.
+    /// </summary>
+    public XmlSummary Summary { get; }
 
     /// <summary>
     /// Initialize a new instance of <see cref="PropertyXmlInfo"/>.

@@ -9,11 +9,11 @@ namespace Xdoc.Models;
 public record ClassXmlInfo : ISummarized
 {
     private readonly Type _type;
-    
+
     /// <summary>
     /// Documented properties of the class.
     /// </summary>
-    public IReadOnlyDictionary<string, PropertyXmlInfo> Properties { get; init; }
+    public IReadOnlyDictionary<string, PropertyXmlInfo> Properties { get; }
 
     /// <summary>
     /// Class name.
@@ -23,12 +23,12 @@ public record ClassXmlInfo : ISummarized
     /// <summary>
     /// Assembly which the class belongs to.
     /// </summary>
-    public AssemblyXmlInfo Assembly { get; init; }
+    public AssemblyXmlInfo Assembly { get; }
 
     /// <summary>
     /// Class summary.
     /// </summary>
-    public XmlSummary Summary { get; init; }
+    public XmlSummary Summary { get; }
 
     // public ClassXmlInfo? Parent => Assembly.DocumentStore.GetClassInfo(_type.BaseType);
 
@@ -57,7 +57,7 @@ public record ClassXmlInfo : ISummarized
     {
         var typeNameKey = $"T:{type.FullName}";
         var xmlNode = documentation.GetValueOrDefault(typeNameKey);
-        
+
         return new XmlSummary(xmlNode);
     }
 
@@ -66,10 +66,11 @@ public record ClassXmlInfo : ISummarized
     /// </summary>
     /// <param name="documentation"></param>
     /// <returns></returns>
-    private IReadOnlyDictionary<string, PropertyXmlInfo> CreateProperties(IReadOnlyDictionary<string, XmlNode> documentation)
+    private IReadOnlyDictionary<string, PropertyXmlInfo> CreateProperties(
+        IReadOnlyDictionary<string, XmlNode> documentation)
     {
         var typeNamePrefix = $"P:{_type.FullName}.";
-        
+
         var propertyKeys = documentation.Keys
             .Where(k => k.StartsWith(typeNamePrefix))
             .ToFrozenSet();
