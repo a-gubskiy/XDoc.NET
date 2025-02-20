@@ -7,35 +7,38 @@ namespace Xdoc.Models;
 public record AssemblyXmlInfo
 {
     public string Name { get; init; }
-    
-    public XmlDocument Xml { get; set; }
 
-    public AssemblyXmlInfo(string name, string xml)
+    private readonly IDocumentStore _documentStore;
+    private readonly IDictionary<Type, ClassXmlInfo> _classes;
+
+    public AssemblyXmlInfo(string name, string xml, IDocumentStore documentStore)
     {
+        _documentStore = documentStore;
+
         Name = name;
 
-        Xml = new XmlDocument();
-        Xml.LoadXml(xml);
+        var xmlDocument = new XmlDocument();
+        xmlDocument.LoadXml(xml); // TODO: Parse to dictionary with Type as Key
+
+        IReadOnlyCollection<Type> classes = GetClasses(xml); // FullName
+
+        foreach (var @class in classes)
+        {
+            var type = Type.GetType(@class);
+
+            IDictionary<string, PropertyXmlInfo> properties = GetProperties(xml, @class);
+            new ClassXmlInfo(type, this, properties, node);
+        }
     }
 
     public ClassXmlInfo? GetClassInfo(Type type)
     {
-        var xpath = $"/doc/members/member[@name='T:{type.FullName}']";
-        var node = Xml.SelectSingleNode(xpath);
-
-        if (node != null)
+        if (_classes.TryGetValue(type, out var classXmlInfo))
         {
-            var inheritdoc = node.SelectSingleNode("inheritdoc");
-
-            if (inheritdoc != null && type.BaseType != null)
-            {
-                return GetClassInfo(type.BaseType);
-            }
-
-            return new ClassXmlInfo(type, this, node);
+            return classXmlInfo;
         }
 
-        return null;
+        return _documentStore.GetClassInfo(type);
     }
 
     public override string ToString() => Name;

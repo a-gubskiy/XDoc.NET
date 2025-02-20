@@ -13,6 +13,8 @@ public interface IDocumentStore
     /// <returns></returns>
     ClassXmlInfo? GetClassInfo(Type type);
 
+    ClassXmlInfo? GetClassInfo<T>() => GetClassInfo(typeof(T));
+
     /// <summary>
     /// Get property information for a given type and property name.
     /// </summary>
@@ -20,6 +22,8 @@ public interface IDocumentStore
     /// <param name="propertyName"></param>
     /// <returns></returns>
     PropertyXmlInfo? GetPropertyInfo(Type type, string propertyName);
+
+    PropertyXmlInfo? GetPropertyInfo<T>(string propertyName) => GetPropertyInfo(typeof(T), propertyName);
 
     /// <summary>
     /// List of assemblies loaded into the document store.

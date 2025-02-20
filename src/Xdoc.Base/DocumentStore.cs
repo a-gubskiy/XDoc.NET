@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Reflection;
 using Xdoc.Models;
 
@@ -7,7 +8,7 @@ public class DocumentStore : IDocumentStore
 {
     private readonly Dictionary<string, AssemblyXmlInfo> _assemblies;
 
-    public IReadOnlyDictionary<string, AssemblyXmlInfo> Assemblies => _assemblies;
+    public IReadOnlyDictionary<string, AssemblyXmlInfo> Assemblies => _assemblies.AsReadOnly();
 
     public DocumentStore()
     {
@@ -56,15 +57,18 @@ public class DocumentStore : IDocumentStore
     {
         var pathToXmlDocumentation = Path.ChangeExtension(assembly.Location, "xml");
 
-        if (File.Exists(pathToXmlDocumentation))
+        if (!File.Exists(pathToXmlDocumentation))
         {
-            var xml = File.ReadAllText(pathToXmlDocumentation);
-            var assemblyName = assembly.GetName();
-            var assemblyXmlInfo = new AssemblyXmlInfo(assemblyName.Name!, xml);
-
-            return assemblyXmlInfo;
+            throw new XmlDocumentationFileNotFound(
+                "XML documentation file not found. " +
+                "Please check that xml documentation generation is enabled and documentation exist in assembly output directory.",
+                pathToXmlDocumentation);
         }
+        
+        var xml = File.ReadAllText(pathToXmlDocumentation);
+        var assemblyName = assembly.GetName();
+        var assemblyXmlInfo = new AssemblyXmlInfo(assemblyName.Name!, xml, this);
 
-        throw new FileNotFoundException($"XML documentation file not found: {pathToXmlDocumentation}");
+        return assemblyXmlInfo;
     }
 }

@@ -2,21 +2,38 @@ using System.Xml;
 
 namespace Xdoc.Models;
 
-public record ClassXmlInfo
+public record ClassXmlInfo : ISummarized
 {
-    public AssemblyXmlInfo Parent { get; }
-    
+    public AssemblyXmlInfo Assembly { get; }
+
     private readonly Type _type;
+    private readonly IDictionary<string, PropertyXmlInfo> _properties;
     
+    private ClassXmlInfo? _parent;
+
     public string Name => _type.FullName!;
-    
+
+    public ClassXmlInfo? Parent
+    {
+        get
+        {
+            if (_parent == null && _type.BaseType != null && _type.BaseType != typeof(object))
+            {
+                _parent = Assembly.GetClassInfo(_type.BaseType);
+            }
+
+            return _parent;
+        }
+    }
+
     public XmlSummary Summary { get; init; }
 
-    public ClassXmlInfo(Type type, AssemblyXmlInfo parent, XmlNode xml)
+    internal ClassXmlInfo(Type type, AssemblyXmlInfo assembly, Dictionary<string, PropertyXmlInfo> properties, XmlNode xml)
     {
         _type = type;
+        _properties = properties;
         
-        Parent = parent;
+        Assembly = assembly;
         Summary = new XmlSummary(xml);
     }
 
@@ -27,35 +44,13 @@ public record ClassXmlInfo
     /// <returns></returns>
     public PropertyXmlInfo? GetPropertyInfo(string propertyName)
     {
-        var xmlNode = GetPropertyInfo(_type, propertyName);
-
-        if (xmlNode == null)
+        if (_properties.TryGetValue(propertyName, out var propertyXmlInfo))
         {
-            return null;
+            return propertyXmlInfo;
         }
         
-        return new PropertyXmlInfo(propertyName, this, xmlNode);
-    }
-
-    private XmlNode? GetPropertyInfo(Type type, string propertyName)
-    {
-        var xpath = $"/doc/members/member[@name='P:{type.FullName}.{propertyName}']";
-        var node = Parent.Xml.SelectSingleNode(xpath);
-
-        if (node != null)
-        {
-            var inheritdoc = node.SelectSingleNode("inheritdoc");
-
-            if (inheritdoc != null && type.BaseType != null)
-            {
-                return GetPropertyInfo(type.BaseType, propertyName);
-            }
-
-            return node;
-        }
-
         return null;
     }
-    
+
     public override string ToString() => Name;
 }
