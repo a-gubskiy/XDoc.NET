@@ -1,6 +1,5 @@
 namespace Xdoc.Abstractions;
 
-
 public interface IPropertyXmlInfo : ISummarized
 {
     /// <summary>
