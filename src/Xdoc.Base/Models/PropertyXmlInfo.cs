@@ -6,14 +6,13 @@ public record PropertyXmlInfo : ISummarized
 {
     public string Name { get; init; }
 
-    public ClassXmlInfo Class { get; init; }
+    public ClassXmlInfo Class { get; internal set; }
 
     public XmlSummary Summary { get; init; }
 
-    internal PropertyXmlInfo(string name, ClassXmlInfo @class, XmlNode xml)
+    internal PropertyXmlInfo(string name, XmlNode xml)
     {
         Name = name;
-        Class = @class;
         Summary = new XmlSummary(xml);
     }
 

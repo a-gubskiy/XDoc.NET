@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Xml;
 
 namespace Xdoc.Models;
@@ -5,7 +6,7 @@ namespace Xdoc.Models;
 public record ClassXmlInfo : ISummarized
 {
     private readonly Type _type;
-    private readonly IDictionary<string, PropertyXmlInfo> _properties;
+    private readonly Dictionary<string, PropertyXmlInfo> _properties;
 
     public string Name => _type.FullName!;
 
@@ -25,6 +26,29 @@ public record ClassXmlInfo : ISummarized
     }
 
     /// <summary>
+    /// Fill properties for the class.
+    /// </summary>
+    /// <param name="documentation"></param>
+    internal void FillProperties(IReadOnlyDictionary<string, XmlNode> documentation)
+    {
+        var typeName = $"P:{_type.FullName}";
+
+        var propertyKeys = documentation.Keys
+            .Where(k => k.StartsWith(typeName))
+            .ToFrozenSet();
+
+        foreach (var propertyKey in propertyKeys)
+        {
+            var propertyName = propertyKey[(propertyKey.LastIndexOf('.') + 1)..];
+
+            var node = documentation[propertyKey];
+            var propertyXmlInfo = new PropertyXmlInfo(propertyName, node);
+
+            _properties.Add(propertyXmlInfo.Name, propertyXmlInfo);
+        }
+    }
+
+    /// <summary>
     /// Get information about a property.
     /// </summary>
     /// <param name="propertyName"></param>
@@ -40,22 +64,4 @@ public record ClassXmlInfo : ISummarized
     }
 
     public override string ToString() => Name;
-
-    /// <summary>
-    /// Add properties to the class.
-    /// </summary>
-    /// <param name="properties"></param>
-    /// <exception cref="InvalidOperationException"></exception>
-    internal void AddProperties(IEnumerable<PropertyXmlInfo> properties)
-    {
-        foreach (var propertyXmlInfo in properties)
-        {
-            if (!_properties.TryAdd(propertyXmlInfo.Name, propertyXmlInfo))
-            {
-                var error = $"Property '{propertyXmlInfo.Name}' already exists in class '{Name}'";
-
-                throw new InvalidOperationException(error);
-            }
-        }
-    }
 }

@@ -43,34 +43,13 @@ public record AssemblyXmlInfo
         {
             var classXmlInfo = new ClassXmlInfo(type, this, documentation[$"T:{type.FullName}"]);
 
-            var properties = ParseProperties(type, documentation, classXmlInfo);
-
-            classXmlInfo.AddProperties(properties);
+            classXmlInfo.FillProperties(documentation);
+            
             _classes.Add(type, classXmlInfo);
         }
     }
 
-    private static IEnumerable<PropertyXmlInfo> ParseProperties(
-        Type type,
-        IReadOnlyDictionary<string, XmlNode> documentation,
-        ClassXmlInfo classXmlInfo)
-    {
-        var typeName = $"P:{type.FullName}";
-        
-        var propertyKeys = documentation.Keys
-            .Where(k => k.StartsWith(typeName))
-            .ToFrozenSet();
-        
-        foreach (var propertyKey in propertyKeys)
-        {
-            var propertyName = propertyKey[(propertyKey.LastIndexOf('.') + 1)..];
-
-            var node = documentation[propertyKey];
-            var propertyXmlInfo = new PropertyXmlInfo(propertyName, classXmlInfo, node);
-
-            yield return propertyXmlInfo;
-        }
-    }
+   
 
     /// <summary>
     /// Load the XML documentation into a collection of XML nodes.
