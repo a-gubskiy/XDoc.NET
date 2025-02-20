@@ -3,12 +3,12 @@ using TestAssembly.A;
 namespace TestAssembly.B;
 
 /// <summary>
-/// Test class A.
+/// Test class B.
 /// </summary>
 public class ClassB : ClassBase
 {
     /// <summary>
-    /// Name
+    /// Class B Name
     /// </summary>
     public string Name { get; set; } = "";
 
