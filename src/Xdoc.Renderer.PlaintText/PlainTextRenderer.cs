@@ -2,10 +2,17 @@ namespace Xdoc.Renderer.PlaintText;
 
 public class PlainTextRenderer
 {
-    public string Render(ISummarized summarized)
-    {
-        var value = summarized.Summary.Xml.InnerText!.Trim();
+    private readonly IDocumentStore _documentStore;
 
-        return value;
+    public PlainTextRenderer(IDocumentStore documentStore)
+    {
+        _documentStore = documentStore;
+    }
+
+    public string Render(ISummarized? summarized)
+    {
+        var value = summarized?.Summary.Xml?.InnerText?.Trim();
+
+        return value ?? string.Empty;
     }
 }

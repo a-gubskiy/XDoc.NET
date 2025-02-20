@@ -10,37 +10,39 @@ public class FastDocumentationStoreTests
     [Fact]
     public async Task Test1()
     {
+        // Load assemblies
         var a = new Cat();
         var b = new Dog();
 
         IDocumentStore documentStore = new DocumentStore();
 
-        // var classXmlInfo1 = documentStore.GetClassInfo(typeof(ClassA));
-        // var classXmlInfo2 = documentStore.GetClassInfo(typeof(ClassB));
-        //
-        // var propertyInfo1 = documentStore.GetPropertyInfo(typeof(ClassA), nameof(ClassA.Name));
-        //
-        // var propertyInfo2 = documentStore.GetPropertyInfo(typeof(ClassA), nameof(ClassA1.Name));
-        // var propertyInfo3 = documentStore.GetPropertyInfo(typeof(ClassA), nameof(ClassA2.Name));
-        //
-        // var propertyInfo4 = documentStore.GetPropertyInfo(typeof(ClassA), nameof(ClassB.Name));
-        //
-        // var propertyInfo5 = documentStore.GetPropertyInfo(typeof(ClassB), nameof(ClassB.ClassBaseProperty));
-        var propertyInfo6 = documentStore.GetPropertyInfo(typeof(Animal), nameof(Dog.Friend));
+        var catClassInfo = documentStore.GetClassInfo(typeof(Cat));
+        var dogClassInfo = documentStore.GetClassInfo(typeof(Dog));
+        
+        var catNamePropertyInfo = documentStore.GetPropertyInfo(typeof(Cat), nameof(Cat.Name));
+        
+        var blackCatNamePropertyInfo = documentStore.GetPropertyInfo(typeof(BlackCat), nameof(BlackCat.Name));
+        var orangeCatNamePropertyInfo = documentStore.GetPropertyInfo(typeof(OrangeCat), nameof(OrangeCat.Name));
+        
+        var dogNamePropertyInfo = documentStore.GetPropertyInfo(typeof(Dog), nameof(Dog.Name));
+        
+        var dogsFriend = documentStore.GetPropertyInfo(typeof(Dog), nameof(Dog.Friend));
+        var animalFriend = documentStore.GetPropertyInfo(typeof(Animal), nameof(Animal.Friend));
 
-        var renderer = new PlainTextRenderer();
+        // Cause exception
+        // var objectFriend = documentStore.GetPropertyInfo(typeof(Object), nameof(Animal.Friend));
 
-        // var classXmlInfo1Summary = renderer.Render(classXmlInfo1!);
-        // var classXmlInfo2Summary = renderer.Render(classXmlInfo2!);
-        //
-        // var propertyInfo1Summary = renderer.Render(propertyInfo1!);
-        // var propertyInfo2Summary = renderer.Render(propertyInfo2!);
-        // var propertyInfo3Summary = renderer.Render(propertyInfo3!);
-        // var propertyInfo4Summary = renderer.Render(propertyInfo4!);
-        //
-        // var propertyInfo5Summary = renderer.Render(propertyInfo5!);
+        var renderer = new PlainTextRenderer(documentStore);
 
-        var propertyInfo6Summary = renderer.Render(propertyInfo6!);
+        var catClassInfoSummary = renderer.Render(catClassInfo);
+        var dogClassInfoSummary = renderer.Render(dogClassInfo);
+        
+        var catNamePropertyInfoSummary = renderer.Render(catNamePropertyInfo);
+        var blackCatNamePropertyInfoSummary = renderer.Render(blackCatNamePropertyInfo);
+        var orangeCatNamePropertyInfoSummary = renderer.Render(orangeCatNamePropertyInfo);
+        var dogNamePropertyInfoSummary = renderer.Render(dogNamePropertyInfo);
+        var dogsFriendSummary = renderer.Render(dogsFriend);
+        var animalFriendSummary = renderer.Render(animalFriend!);
 
         Assert.True(true);
     }
