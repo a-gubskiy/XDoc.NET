@@ -52,9 +52,7 @@ public class DocumentStore : IDocumentStore
 
             if (inheritdoc != null && type.BaseType != null)
             {
-                var comment = GetClassInfo(type.BaseType);
-
-                return comment;
+                return GetClassInfo(type.BaseType);
             }
 
             return new ClassXmlInfo(type.FullName, typeNode);
@@ -76,9 +74,7 @@ public class DocumentStore : IDocumentStore
 
             if (inheritdoc != null && type.BaseType != null)
             {
-                var summary = GetPropertyInfo(type.BaseType, propertyName);
-                
-                return summary;
+                return GetPropertyInfo(type.BaseType, propertyName);
             }
 
             return new PropertyXmlInfo(propertyName, propertyNode);

@@ -25,17 +25,6 @@ public class FastDocumentationStoreTests
         var propertyInfo4 = documentStore.GetPropertyInfo(typeof(ClassA), nameof(ClassB.Name));
         
 
-
-        // var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-        //     .Where(a => a.FullName?.StartsWith("TestAssembly.") ?? false)
-        //     .ToList();
-        //
-        // var documents = await XmlDocumentation.LoadAsync(assemblies);
-        //
-        // var documentationStore = new FastDocumentationStore(documents);
-        //
-        // var commentForProperty = documentationStore.GetCommentForProperty(typeof(ClassA1), nameof(ClassA1.Field1));
-
         Assert.True(true);
     }
 }
