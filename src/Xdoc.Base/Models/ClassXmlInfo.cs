@@ -6,7 +6,8 @@ namespace Xdoc.Models;
 public record ClassXmlInfo : ISummarized
 {
     private readonly Type _type;
-    private readonly Dictionary<string, PropertyXmlInfo> _properties;
+    
+    public IReadOnlyDictionary<string, PropertyXmlInfo> Properties { get; init; }
 
     public string Name => _type.FullName!;
 
@@ -14,28 +15,35 @@ public record ClassXmlInfo : ISummarized
 
     public XmlSummary Summary { get; init; }
 
-    public ClassXmlInfo? Parent => Assembly.DocumentStore.GetClassInfo(_type.BaseType);
+    // public ClassXmlInfo? Parent => Assembly.DocumentStore.GetClassInfo(_type.BaseType);
 
-    internal ClassXmlInfo(Type type, AssemblyXmlInfo assembly, XmlNode xml)
+    internal ClassXmlInfo(Type type, AssemblyXmlInfo assembly, IReadOnlyDictionary<string, XmlNode> documentation)
     {
         _type = type;
-        _properties = new Dictionary<string, PropertyXmlInfo>();
 
         Assembly = assembly;
-        Summary = new XmlSummary(xml);
+        Summary = CreateSummary(type, documentation);
+        Properties = CreateProperties(documentation, type);
     }
 
-    /// <summary>
-    /// Fill properties for the class.
-    /// </summary>
-    /// <param name="documentation"></param>
-    internal void FillProperties(IReadOnlyDictionary<string, XmlNode> documentation)
+    private static XmlSummary CreateSummary(Type type, IReadOnlyDictionary<string, XmlNode> documentation)
     {
-        var typeName = $"P:{_type.FullName}";
+        var typeNameKey = $"T:{type.FullName}";
+        var xmlNode = documentation[typeNameKey];
 
+        return new XmlSummary(xmlNode);
+    }
+
+    private IReadOnlyDictionary<string, PropertyXmlInfo> CreateProperties(
+        IReadOnlyDictionary<string, XmlNode> documentation, Type typeName)
+    {
+        var typeNamePrefix = $"P:{_type.FullName}.";
+        
         var propertyKeys = documentation.Keys
-            .Where(k => k.StartsWith(typeName))
+            .Where(k => k.StartsWith(typeNamePrefix))
             .ToFrozenSet();
+
+        var result = new Dictionary<string, PropertyXmlInfo>();
 
         foreach (var propertyKey in propertyKeys)
         {
@@ -44,8 +52,10 @@ public record ClassXmlInfo : ISummarized
             var node = documentation[propertyKey];
             var propertyXmlInfo = new PropertyXmlInfo(propertyName, node);
 
-            _properties.Add(propertyXmlInfo.Name, propertyXmlInfo);
+            result.Add(propertyXmlInfo.Name, propertyXmlInfo);
         }
+
+        return result.ToFrozenDictionary();
     }
 
     /// <summary>
@@ -55,12 +65,7 @@ public record ClassXmlInfo : ISummarized
     /// <returns></returns>
     public PropertyXmlInfo? GetPropertyInfo(string propertyName)
     {
-        if (_properties.TryGetValue(propertyName, out var propertyXmlInfo))
-        {
-            return propertyXmlInfo;
-        }
-
-        return null;
+        return Properties.GetValueOrDefault(propertyName);
     }
 
     public override string ToString() => Name;

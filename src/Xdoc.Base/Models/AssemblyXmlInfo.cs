@@ -41,15 +41,11 @@ public record AssemblyXmlInfo
 
         foreach (var type in types)
         {
-            var classXmlInfo = new ClassXmlInfo(type, this, documentation[$"T:{type.FullName}"]);
+            var classXmlInfo = new ClassXmlInfo(type, this, documentation);
 
-            classXmlInfo.FillProperties(documentation);
-            
             _classes.Add(type, classXmlInfo);
         }
     }
-
-   
 
     /// <summary>
     /// Load the XML documentation into a collection of XML nodes.
@@ -79,7 +75,14 @@ public record AssemblyXmlInfo
             return classXmlInfo;
         }
 
-        return DocumentStore.GetClassInfo(type);
+        var assemblyName = type.Assembly.GetName();
+        
+        if (assemblyName.Name != Name)
+        {
+            return DocumentStore.GetClassInfo(type);
+        }
+
+        return null;
     }
 
     public override string ToString() => Name;
