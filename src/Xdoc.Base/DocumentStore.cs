@@ -1,32 +1,9 @@
 using System.Reflection;
 using System.Xml;
 using JetBrains.Annotations;
+using Xdoc.Models;
 
 namespace Xdoc;
-
-[PublicAPI]
-public interface IDocumentStore
-{
-    /// <summary>
-    /// Get class information for a given type.
-    /// </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
-    ClassXmlInfo? GetClassInfo(Type type);
-
-    /// <summary>
-    /// Get property information for a given type and property name.
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="propertyName"></param>
-    /// <returns></returns>
-    PropertyXmlInfo? GetPropertyInfo(Type type, string propertyName);
-    
-    /// <summary>
-    /// List of assemblies loaded into the document store.
-    /// </summary>
-    IReadOnlyDictionary<string, AssemblyXmlInfo> Assemblies { get; }
-}
 
 public class DocumentStore : IDocumentStore
 {
@@ -41,7 +18,7 @@ public class DocumentStore : IDocumentStore
     
     public ClassXmlInfo? GetClassInfo(Type type)
     {
-        var assemblyInfo = GetAssemblyXmlInfo(type);
+        var assemblyInfo = GetAssemblyInfo(type);
         
         var xpath = $"/doc/members/member[@name='T:{type.FullName}']";
         var typeNode = assemblyInfo.Xml.SelectSingleNode(xpath);
@@ -63,7 +40,7 @@ public class DocumentStore : IDocumentStore
 
     public PropertyXmlInfo? GetPropertyInfo(Type type, string propertyName)
     {
-        var assemblyInfo = GetAssemblyXmlInfo(type);
+        var assemblyInfo = GetAssemblyInfo(type);
         
         var xpath = $"/doc/members/member[@name='P:{type.FullName}.{propertyName}']";
         var propertyNode = assemblyInfo.Xml.SelectSingleNode(xpath);
@@ -83,7 +60,7 @@ public class DocumentStore : IDocumentStore
         return null;
     }
 
-    private AssemblyXmlInfo GetAssemblyXmlInfo(Type type)
+    private AssemblyXmlInfo GetAssemblyInfo(Type type)
     {
         var assemblyName = type.Assembly.GetName();
         var key = assemblyName.Name ?? string.Empty;

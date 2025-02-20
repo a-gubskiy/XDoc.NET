@@ -1,9 +1,7 @@
-using System.Collections.Immutable;
 using System.Xml;
-using System.Xml.Linq;
 using JetBrains.Annotations;
 
-namespace Xdoc;
+namespace Xdoc.Models;
 
 [PublicAPI]
 public record AssemblyXmlInfo

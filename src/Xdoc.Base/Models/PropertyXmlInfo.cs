@@ -1,6 +1,6 @@
 using System.Xml;
 
-namespace Xdoc;
+namespace Xdoc.Models;
 
 public record PropertyXmlInfo
 {
