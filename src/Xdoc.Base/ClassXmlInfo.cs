@@ -4,13 +4,13 @@ namespace Xdoc;
 
 public record ClassXmlInfo
 {
-    public string? Name { get; }
+    public string Name { get; init; }
     
-    public XmlNode Xml { get; }
+    public XmlSummary Summary { get; init; }
 
-    public ClassXmlInfo(string? name, XmlNode xml)
+    public ClassXmlInfo(string name, XmlNode xml)
     {
         Name = name;
-        Xml = xml;
+        Summary = new XmlSummary(xml);
     }
 }

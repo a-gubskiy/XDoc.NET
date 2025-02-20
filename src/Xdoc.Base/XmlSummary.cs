@@ -4,13 +4,13 @@ namespace Xdoc;
 
 public record XmlSummary
 {
-    public XmlNode Node { get; }
+    public XmlNode Xml { get; }
     
     public string Value { get; init; } = "";
 
     public XmlSummary(XmlNode node)
     {
-        Node = node;
+        Xml = node;
         Value = node.InnerXml;
     }
 }

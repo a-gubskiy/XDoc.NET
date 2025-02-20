@@ -55,7 +55,7 @@ public class DocumentStore : IDocumentStore
                 return GetClassInfo(type.BaseType);
             }
 
-            return new ClassXmlInfo(type.FullName, typeNode);
+            return new ClassXmlInfo(type.FullName!, typeNode);
         }
 
         return null;

@@ -4,12 +4,13 @@ namespace Xdoc;
 
 public record PropertyXmlInfo
 {
-    public string Name { get; }
-    public XmlNode Xml { get; }
+    public string Name { get; init; }
+    
+    public XmlSummary Summary { get; init; }
 
     public PropertyXmlInfo(string name, XmlNode xml)
     {
         Name = name;
-        Xml = xml;
+        Summary = new XmlSummary(xml);
     }
 }
