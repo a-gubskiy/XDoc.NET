@@ -4,18 +4,19 @@ namespace Xdoc.Models;
 
 public record PropertyXmlInfo
 {
-    private readonly XmlNode _xml;
-
     public string Name { get; init; }
 
-    public PropertyXmlInfo(string name, XmlNode xml)
+    public ClassXmlInfo Parent { get; init; }
+
+    public XmlSummary Summary { get; init; }
+
+    public PropertyXmlInfo(string name, ClassXmlInfo parent, XmlNode xml)
     {
-        _xml = xml;
-        
         Name = name;
+        Parent = parent;
+        Summary = new(xml);
     }
 
-    public XmlNode GetXml() => _xml;
 
     public override string ToString() => Name;
 }

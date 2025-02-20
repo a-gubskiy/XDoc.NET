@@ -4,15 +4,20 @@ namespace Xdoc.Models;
 
 public record ClassXmlInfo
 {
+    public AssemblyXmlInfo Parent { get; }
+    
     private readonly Type _type;
-    private readonly XmlNode _xml;
     
     public string Name => _type.FullName!;
+    
+    public XmlSummary Summary { get; init; }
 
-    public ClassXmlInfo(Type type, XmlNode xml)
+    public ClassXmlInfo(Type type, AssemblyXmlInfo parent, XmlNode xml)
     {
         _type = type;
-        _xml = xml;
+        
+        Parent = parent;
+        Summary = new XmlSummary(xml);
     }
 
     /// <summary>
@@ -22,13 +27,20 @@ public record ClassXmlInfo
     /// <returns></returns>
     public PropertyXmlInfo? GetPropertyInfo(string propertyName)
     {
-        return GetPropertyInfo(_type, propertyName);
+        var xmlNode = GetPropertyInfo(_type, propertyName);
+
+        if (xmlNode == null)
+        {
+            return null;
+        }
+        
+        return new PropertyXmlInfo(propertyName, this, xmlNode);
     }
 
-    private PropertyXmlInfo? GetPropertyInfo(Type type, string propertyName)
+    private XmlNode? GetPropertyInfo(Type type, string propertyName)
     {
         var xpath = $"/doc/members/member[@name='P:{type.FullName}.{propertyName}']";
-        var node = _xml.SelectSingleNode(xpath);
+        var node = Parent.Xml.SelectSingleNode(xpath);
 
         if (node != null)
         {
@@ -39,7 +51,7 @@ public record ClassXmlInfo
                 return GetPropertyInfo(type.BaseType, propertyName);
             }
 
-            return new PropertyXmlInfo(propertyName, node);
+            return node;
         }
 
         return null;

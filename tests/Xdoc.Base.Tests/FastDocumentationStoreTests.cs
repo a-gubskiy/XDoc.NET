@@ -24,7 +24,6 @@ public class FastDocumentationStoreTests
         
         var propertyInfo4 = documentStore.GetPropertyInfo(typeof(ClassA), nameof(ClassB.Name));
         
-
         Assert.True(true);
     }
 }

@@ -6,22 +6,22 @@ namespace Xdoc.Models;
 [PublicAPI]
 public record AssemblyXmlInfo
 {
-    public readonly XmlDocument _xml;
-    
     public string Name { get; init; }
+    
+    public XmlDocument Xml { get; set; }
 
     public AssemblyXmlInfo(string name, string xml)
     {
         Name = name;
 
-        _xml = new XmlDocument();
-        _xml.LoadXml(xml);
+        Xml = new XmlDocument();
+        Xml.LoadXml(xml);
     }
 
     public ClassXmlInfo? GetClassInfo(Type type)
     {
         var xpath = $"/doc/members/member[@name='T:{type.FullName}']";
-        var node = _xml.SelectSingleNode(xpath);
+        var node = Xml.SelectSingleNode(xpath);
 
         if (node != null)
         {
@@ -32,7 +32,7 @@ public record AssemblyXmlInfo
                 return GetClassInfo(type.BaseType);
             }
 
-            return new ClassXmlInfo(type, node);
+            return new ClassXmlInfo(type, this, node);
         }
 
         return null;
