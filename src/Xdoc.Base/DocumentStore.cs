@@ -96,15 +96,25 @@ public class DocumentStore : IDocumentStore
         {
             return a;
         }
-
-        var assembly = LoadAssembly(type.Assembly);
+        else
+        {
+            // Load new assembly
             
-        _assemblies[key] = assembly;
+            var assembly = LoadAssemblyInfo(type.Assembly);
 
-        return assembly;
+            _assemblies[key] = assembly;
+
+            return assembly;
+        }
     }
 
-    public AssemblyXmlInfo LoadAssembly(Assembly assembly)
+    /// <summary>
+    /// Get XML documentation for an assembly.
+    /// </summary>
+    /// <param name="assembly"></param>
+    /// <returns></returns>
+    /// <exception cref="FileNotFoundException"></exception>
+    public AssemblyXmlInfo LoadAssemblyInfo(Assembly assembly)
     {
         var pathToXmlDocumentation = Path.ChangeExtension(assembly.Location, "xml");
 
@@ -112,7 +122,7 @@ public class DocumentStore : IDocumentStore
         {
             var xml = File.ReadAllText(pathToXmlDocumentation);
             var assemblyName = assembly.GetName();
-            var assemblyXmlInfo = new AssemblyXmlInfo(assemblyName.Name ?? "", xml);
+            var assemblyXmlInfo = new AssemblyXmlInfo(assemblyName.Name!, xml);
             
             return assemblyXmlInfo;
         }
