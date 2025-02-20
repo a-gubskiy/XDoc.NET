@@ -1,6 +1,4 @@
 using System.Collections.Frozen;
-using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Xml;
 using JetBrains.Annotations;
 
@@ -15,7 +13,7 @@ public record AssemblyXmlInfo
 
     private readonly IDictionary<Type, ClassXmlInfo> _classes;
 
-    public AssemblyXmlInfo(string name, string xml, IDocumentStore documentStore)
+    internal AssemblyXmlInfo(string name, string xml, IDocumentStore documentStore)
     {
         _classes = new Dictionary<Type, ClassXmlInfo>();
         

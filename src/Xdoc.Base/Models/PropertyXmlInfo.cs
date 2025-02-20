@@ -10,7 +10,7 @@ public record PropertyXmlInfo : ISummarized
 
     public XmlSummary Summary { get; init; }
 
-    public PropertyXmlInfo(string name, ClassXmlInfo @class, XmlNode xml)
+    internal PropertyXmlInfo(string name, ClassXmlInfo @class, XmlNode xml)
     {
         Name = name;
         Class = @class;

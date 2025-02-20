@@ -13,6 +13,11 @@ public interface IDocumentStore
     /// <returns></returns>
     ClassXmlInfo? GetClassInfo(Type type);
 
+    /// <summary>
+    /// Get class information for a given type.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     ClassXmlInfo? GetClassInfo<T>() => GetClassInfo(typeof(T));
 
     /// <summary>
@@ -23,6 +28,12 @@ public interface IDocumentStore
     /// <returns></returns>
     PropertyXmlInfo? GetPropertyInfo(Type type, string propertyName);
 
+    /// <summary>
+    /// Get property information for a given type and property name.
+    /// </summary>
+    /// <param name="propertyName"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     PropertyXmlInfo? GetPropertyInfo<T>(string propertyName) => GetPropertyInfo(typeof(T), propertyName);
 
     /// <summary>

@@ -4,16 +4,16 @@ namespace Xdoc.Models;
 
 public record ClassXmlInfo : ISummarized
 {
-    public AssemblyXmlInfo Assembly { get; }
-
     private readonly Type _type;
     private readonly IDictionary<string, PropertyXmlInfo> _properties;
 
     public string Name => _type.FullName!;
+    
+    public AssemblyXmlInfo Assembly { get; init; }
+    
+    public XmlSummary Summary { get; init; }
 
     public ClassXmlInfo? Parent => Assembly.DocumentStore.GetClassInfo(_type.BaseType);
-
-    public XmlSummary Summary { get; init; }
 
     internal ClassXmlInfo(Type type, AssemblyXmlInfo assembly, XmlNode xml)
     {
