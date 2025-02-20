@@ -5,6 +5,9 @@ using JetBrains.Annotations;
 
 namespace Xdoc.Models;
 
+/// <summary>
+/// Represents an assembly in the XML documentation.
+/// </summary>
 [PublicAPI]
 public record AssemblyXmlInfo
 {
@@ -14,6 +17,12 @@ public record AssemblyXmlInfo
 
     private readonly IDictionary<Type, ClassXmlInfo> _classes;
 
+    /// <summary>
+    /// Initialize a new instance of <see cref="AssemblyXmlInfo"/>.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="xml"></param>
+    /// <param name="documentStore"></param>
     internal AssemblyXmlInfo(string name, string xml, IDocumentStore documentStore)
     {
         _classes = new Dictionary<Type, ClassXmlInfo>();
@@ -21,12 +30,7 @@ public record AssemblyXmlInfo
         DocumentStore = documentStore;
         Name = name;
 
-        // T:TestAssembly.A.ClassA
-        // P:TestAssembly.A.ClassA.Name
-        // M:TestAssembly.A.ClassA.GetName
-
         var documentation = LoadXmlDocumentation(xml);
-
         var types = GetTypeNames(documentation);
 
         foreach (var type in types)
@@ -91,6 +95,11 @@ public record AssemblyXmlInfo
         return documentation;
     }
 
+    /// <summary>
+    /// Try to find information about a class.
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
     public ClassXmlInfo? GetClassInfo(Type type)
     {
         if (_classes.TryGetValue(type, out var classXmlInfo))
@@ -98,9 +107,9 @@ public record AssemblyXmlInfo
             return classXmlInfo;
         }
 
-        var assemblyName = type.Assembly.GetName();
+        var typeAssemblyName = type.Assembly.GetName();
 
-        if (assemblyName.Name != Name)
+        if (typeAssemblyName.Name != Name)
         {
             return DocumentStore.GetClassInfo(type);
         }
@@ -108,5 +117,9 @@ public record AssemblyXmlInfo
         return null;
     }
 
+    /// <summary>
+    /// Get a string representation of the of <see cref="AssemblyXmlInfo"/>.
+    /// </summary>
+    /// <returns></returns>
     public override string ToString() => Name;
 }
