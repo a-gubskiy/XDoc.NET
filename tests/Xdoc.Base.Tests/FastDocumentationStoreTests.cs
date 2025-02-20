@@ -1,6 +1,7 @@
 using TestAssembly;
 using TestAssembly.A;
 using TestAssembly.B;
+using Xdoc.Abstractions;
 using Xdoc.Renderer.PlaintText;
 
 namespace Xdoc.Base.Tests;

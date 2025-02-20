@@ -1,11 +1,9 @@
-using Xdoc.Models;
-
-namespace Xdoc;
+namespace Xdoc.Abstractions;
 
 /// <summary>
 /// Interface for summarized objects.
 /// </summary>
 public interface ISummarized
 {
-    public XmlSummary Summary { get; }
+    public IXmlSummary Summary { get; }
 }

@@ -1,4 +1,6 @@
 using System.Reflection;
+using Xdoc.Abstractions;
+using Xdoc.Exceptions;
 using Xdoc.Models;
 
 namespace Xdoc;
@@ -25,7 +27,7 @@ public class DocumentStore : IDocumentStore
         return classXmlInfo;
     }
 
-    public PropertyXmlInfo? GetPropertyInfo(Type type, string propertyName)
+    public IPropertyXmlInfo? GetPropertyInfo(Type type, string propertyName)
     {
         var classXmlInfo = GetClassInfo(type);
         var propertyXmlInfo = classXmlInfo?.GetPropertyInfo(propertyName);

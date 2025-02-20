@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
 using Xdoc.Models;
 
-namespace Xdoc;
+namespace Xdoc.Abstractions;
 
 /// <summary>
 /// Interface for a document store.
@@ -21,7 +21,7 @@ public interface IDocumentStore
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    ClassXmlInfo? GetClassInfo<T>() => GetClassInfo(typeof(T));
+    IClassXmlInfo? GetClassInfo<T>() => GetClassInfo(typeof(T));
 
     /// <summary>
     /// Get property information for a given type and property name.
@@ -29,7 +29,7 @@ public interface IDocumentStore
     /// <param name="type"></param>
     /// <param name="propertyName"></param>
     /// <returns></returns>
-    PropertyXmlInfo? GetPropertyInfo(Type type, string propertyName);
+    IPropertyXmlInfo? GetPropertyInfo(Type type, string propertyName);
 
     /// <summary>
     /// Get property information for a given type and property name.
@@ -37,7 +37,7 @@ public interface IDocumentStore
     /// <param name="propertyName"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    PropertyXmlInfo? GetPropertyInfo<T>(string propertyName) => GetPropertyInfo(typeof(T), propertyName);
+    IPropertyXmlInfo? GetPropertyInfo<T>(string propertyName) => GetPropertyInfo(typeof(T), propertyName);
 
     /// <summary>
     /// List of assemblies loaded into the document store.

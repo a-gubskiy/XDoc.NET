@@ -1,4 +1,4 @@
-namespace Xdoc;
+namespace Xdoc.Exceptions;
 
 /// <summary>
 /// The exception that is thrown when an XML documentation file is not found.

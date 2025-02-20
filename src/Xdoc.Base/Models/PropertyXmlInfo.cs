@@ -1,11 +1,12 @@
 using System.Xml;
+using Xdoc.Abstractions;
 
 namespace Xdoc.Models;
 
 /// <summary>
 /// Represents a property in the XML documentation.
 /// </summary>
-public record PropertyXmlInfo : ISummarized
+public record PropertyXmlInfo : IPropertyXmlInfo
 {
     /// <summary>
     /// Name of the property.
@@ -15,12 +16,12 @@ public record PropertyXmlInfo : ISummarized
     /// <summary>
     /// Class which the property belongs to.
     /// </summary>
-    public ClassXmlInfo Class { get; }
+    public IClassXmlInfo Class { get; }
 
     /// <summary>
     /// Property summary.
     /// </summary>
-    public XmlSummary Summary { get; }
+    public IXmlSummary Summary { get; }
 
     /// <summary>
     /// Initialize a new instance of <see cref="PropertyXmlInfo"/>.

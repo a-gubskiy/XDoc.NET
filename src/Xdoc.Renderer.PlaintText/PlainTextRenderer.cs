@@ -1,3 +1,5 @@
+using Xdoc.Abstractions;
+
 namespace Xdoc.Renderer.PlaintText;
 
 public class PlainTextRenderer
@@ -11,7 +13,8 @@ public class PlainTextRenderer
 
     public string Render(ISummarized? summarized)
     {
-        var value = summarized?.Summary.Xml?.InnerText?.Trim();
+        var xmlSummary = summarized?.Summary;
+        var value = xmlSummary?.Xml?.InnerText?.Trim();
 
         return value ?? string.Empty;
     }

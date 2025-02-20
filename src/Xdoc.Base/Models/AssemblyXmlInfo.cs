@@ -2,6 +2,7 @@ using System.Collections.Frozen;
 using System.Collections.Immutable;
 using System.Xml;
 using JetBrains.Annotations;
+using Xdoc.Abstractions;
 
 namespace Xdoc.Models;
 
@@ -9,7 +10,7 @@ namespace Xdoc.Models;
 /// Represents an assembly in the XML documentation.
 /// </summary>
 [PublicAPI]
-public record AssemblyXmlInfo
+public record AssemblyXmlInfo : IAssemblyXmlInfo
 {
     public string Name { get; init; }
 

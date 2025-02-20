@@ -1,19 +1,21 @@
 using System.Collections.Frozen;
 using System.Xml;
+using Xdoc.Abstractions;
 
 namespace Xdoc.Models;
 
 /// <summary>
 /// Represents a class in the XML documentation.
 /// </summary>
-public record ClassXmlInfo : ISummarized
+public record ClassXmlInfo : IClassXmlInfo
 {
     private readonly Type _type;
+    private XmlSummary _summary;
 
     /// <summary>
     /// Documented properties of the class.
     /// </summary>
-    public IReadOnlyDictionary<string, PropertyXmlInfo> Properties { get; }
+    public IReadOnlyDictionary<string, IPropertyXmlInfo> Properties { get; }
 
     /// <summary>
     /// Class name.
@@ -23,12 +25,12 @@ public record ClassXmlInfo : ISummarized
     /// <summary>
     /// Assembly which the class belongs to.
     /// </summary>
-    public AssemblyXmlInfo Assembly { get; }
+    public IAssemblyXmlInfo Assembly { get; }
 
     /// <summary>
     /// Class summary.
     /// </summary>
-    public XmlSummary Summary { get; }
+    public IXmlSummary Summary { get; }
 
     // public ClassXmlInfo? Parent => Assembly.DocumentStore.GetClassInfo(_type.BaseType);
 
@@ -66,7 +68,7 @@ public record ClassXmlInfo : ISummarized
     /// </summary>
     /// <param name="documentation"></param>
     /// <returns></returns>
-    private IReadOnlyDictionary<string, PropertyXmlInfo> CreateProperties(
+    private IReadOnlyDictionary<string, IPropertyXmlInfo> CreateProperties(
         IReadOnlyDictionary<string, XmlNode> documentation)
     {
         var typeNamePrefix = $"P:{_type.FullName}.";
@@ -75,7 +77,7 @@ public record ClassXmlInfo : ISummarized
             .Where(k => k.StartsWith(typeNamePrefix))
             .ToFrozenSet();
 
-        var result = new Dictionary<string, PropertyXmlInfo>();
+        var result = new Dictionary<string, IPropertyXmlInfo>();
 
         foreach (var propertyKey in propertyKeys)
         {
@@ -95,7 +97,7 @@ public record ClassXmlInfo : ISummarized
     /// </summary>
     /// <param name="propertyName"></param>
     /// <returns></returns>
-    public PropertyXmlInfo? GetPropertyInfo(string propertyName)
+    public IPropertyXmlInfo? GetPropertyInfo(string propertyName)
     {
         return Properties.GetValueOrDefault(propertyName);
     }
