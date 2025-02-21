@@ -1,0 +1,33 @@
+﻿using System.Xml;
+
+namespace BitzArt.XDoc;
+
+/// <summary>
+/// Contains documentation for a member of a <see cref="Type"/>.
+/// </summary>
+/// <typeparam name="TMember">Type of the member.</typeparam>
+public abstract class MemberDocumentation<TMember>
+    where TMember : class
+{
+    internal XDoc Source { get; private set; }
+
+    internal TypeDocumentation ParentNode { get; private set; }
+
+    internal XmlNode Node { get; set; }
+
+    /// <inheritdoc/>
+    public Type DeclaringType => ParentNode.Type;
+
+    /// <summary>
+    /// The <typeparamref name="TMember"/> this documentation if provided for.
+    /// </summary>
+    public TMember Member { get; private set; }
+
+    internal MemberDocumentation(XDoc source, TypeDocumentation parentNode, TMember member, XmlNode node)
+    {
+        Source = source;
+        Member = member;
+        ParentNode = parentNode;
+        Node = node;
+    }
+}

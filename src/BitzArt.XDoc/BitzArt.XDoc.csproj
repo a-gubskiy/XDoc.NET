@@ -3,13 +3,9 @@
     <PropertyGroup>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>Xdoc</RootNamespace>
         <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<RootNamespace>BitzArt.XDoc</RootNamespace>
     </PropertyGroup>
-
-    <ItemGroup>
-      <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" PrivateAssets="true" />
-    </ItemGroup>
 
 </Project>

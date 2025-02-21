@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+	<PropertyGroup>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-    </PropertyGroup>
+		<RootNamespace>BitzArt.XDoc</RootNamespace>
+	</PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\BitzArt.XDoc\BitzArt.XDoc.csproj" />
