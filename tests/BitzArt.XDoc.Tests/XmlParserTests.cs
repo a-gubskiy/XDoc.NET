@@ -1,4 +1,3 @@
-using System.Reflection;
 using System.Xml;
 
 namespace BitzArt.XDoc.Tests;
@@ -11,7 +10,7 @@ public class TestClass
 public class XmlParserTests
 {
     [Fact]
-    public void Parse_TypeNode_ShouldReturnTypeDocumentation()
+    public void Parse_XmlDocWithTypeNode_ShouldReturnTypeDocumentation()
     {
         // Arrange
         var assembly = GetType().Assembly;
@@ -52,7 +51,7 @@ public class XmlParserTests
     }
 
     [Fact]
-    public void Parse_PropertyNode_ShouldReturnPropertyDocumentationInsideTypeDocumentation()
+    public void Parse_XmlDocWithPropertyNode_ShouldReturnPropertyDocumentationInsideTypeDocumentation()
     {
         // Arrange
         var assembly = GetType().Assembly;
@@ -97,6 +96,4 @@ public class XmlParserTests
         var trimmed = fetchedXmlData.Trim();
         Assert.Equal(content, trimmed);
     }
-
-    private record Sut(XDoc Source, Assembly Assembly, XmlParser Parser);
 }

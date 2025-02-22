@@ -6,7 +6,7 @@ public abstract class Animal
     /// Unique identifier.
     /// </summary>
     public int Id { get; set; }
-    
+
     /// <summary>
     /// Property of type <see cref="Cat"/> which we use for tests
     /// </summary>
