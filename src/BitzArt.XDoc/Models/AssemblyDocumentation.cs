@@ -1,5 +1,4 @@
 using System.Reflection;
-using System.Xml;
 
 namespace BitzArt.XDoc;
 
@@ -57,5 +56,5 @@ public sealed class AssemblyDocumentation
     }
 
     /// <inheritdoc/>
-    public override string ToString() => $"{nameof(AssemblyDocumentation)} for {Assembly.GetName().Name!}";
+    public override string ToString() => $"{nameof(AssemblyDocumentation)} (Assembly:'{Assembly.GetName().Name!}')";
 }
