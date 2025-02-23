@@ -8,7 +8,7 @@ namespace BitzArt.XDoc;
 /// </summary>
 public sealed class TypeDocumentation
 {
-    internal Dictionary<MemberInfo, object> MemberData;
+    internal readonly Dictionary<MemberInfo, object> MemberData;
 
     internal XDoc Source { get; private set; }
 
@@ -52,17 +52,21 @@ public sealed class TypeDocumentation
     public FieldDocumentation? GetDocumentation(FieldInfo field)
         => (FieldDocumentation?)GetDocumentation<FieldInfo>(field);
 
-    private object? GetDocumentation<TMember>(TMember property)
-        where TMember : MemberInfo
-         => MemberData.TryGetValue(Validate(property), out var result)
-            ? result
-            : null;
-
-    private TMember Validate<TMember>(TMember property)
+    private object? GetDocumentation<TMember>(TMember member)
         where TMember : MemberInfo
     {
-        if (property.DeclaringType != Type) throw new InvalidOperationException("The provided property is not defined in this type.");
-        return property;
+        var memberInfo = Validate(member);
+
+        return MemberData.GetValueOrDefault(memberInfo);
+    }
+
+    private TMember Validate<TMember>(TMember member)
+        where TMember : MemberInfo
+    {
+        if (member.DeclaringType != Type)
+            throw new InvalidOperationException("The provided property is not defined in this type.");
+
+        return member;
     }
 
     /// <inheritdoc/>
