@@ -7,9 +7,9 @@ namespace BitzArt.XDoc;
 /// of code members.
 /// <para>
 /// Currently supported code members: <br />
-/// • <see cref="Assembly"/> <br />
-/// • <see cref="Type"/> <br />
-/// • <see cref="PropertyInfo"/>
+/// â€“ <see cref="Assembly"/> <br />
+/// â€“ <see cref="Type"/> <br />
+/// â€“ <see cref="PropertyInfo"/>
 /// </para>
 /// <para>
 /// Fetching documentation for an <see cref="Assembly"/> or any of its members
