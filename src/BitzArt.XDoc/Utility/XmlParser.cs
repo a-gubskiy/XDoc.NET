@@ -75,17 +75,10 @@ internal class XmlParser
 
     private PropertyDocumentation ParsePropertyNode(XmlNode node, string name)
     {
-        var index = name.LastIndexOf('.');
-        
-        if (index == -1) throw new InvalidOperationException("Encountered invalid XML node.");
-
-        var (typeName, memberName) = (name[..index], name[(index + 1)..]);
-
-        var type = _assembly.GetType(typeName)
-            ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
+        var (type, memberName) = ResolveTypeAndMemberName(name);
 
         var propertyInfo = type.GetProperty(memberName)
-            ?? throw new InvalidOperationException($"Property '{memberName}' not found in type '{typeName}'.");
+            ?? throw new InvalidOperationException($"Property '{memberName}' not found in type '{type.Name}'.");
 
         var typeDocumentation = ResolveOwnerType(type);
 
@@ -95,20 +88,13 @@ internal class XmlParser
 
         return propertyDocumentation;
     }
-    
+
     private FieldDocumentation ParseFieldNode(XmlNode node, string name)
     {
-        var index = name.LastIndexOf('.');
-        
-        if (index == -1) throw new InvalidOperationException("Encountered invalid XML node.");
-
-        var (typeName, memberName) = (name[..index], name[(index + 1)..]);
-
-        var type = _assembly.GetType(typeName)
-                   ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
+        var (type, memberName) = ResolveTypeAndMemberName(name);
         
         var fieldInfo = type.GetField(memberName)
-                           ?? throw new InvalidOperationException($"Field '{memberName}' not found in type '{typeName}'.");
+                           ?? throw new InvalidOperationException($"Field '{memberName}' not found in type '{type.Name}'.");
 
         var typeDocumentation = ResolveOwnerType(type);
 
@@ -121,17 +107,10 @@ internal class XmlParser
     
     private MethodDocumentation ParseMethodNode(XmlNode node, string name)
     {
-        var index = name.LastIndexOf('.');
-        
-        if (index == -1) throw new InvalidOperationException("Encountered invalid XML node.");
-
-        var (typeName, memberName) = (name[..index], name[(index + 1)..]);
-
-        var type = _assembly.GetType(typeName)
-                   ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
+        var (type, memberName) = ResolveTypeAndMemberName(name);
         
         var methodInfo = type.GetMethod(memberName)
-                           ?? throw new InvalidOperationException($"Method '{memberName}' not found in type '{typeName}'.");
+                           ?? throw new InvalidOperationException($"Method '{memberName}' not found in type '{type.Name}'.");
 
         var typeDocumentation = ResolveOwnerType(type);
 
@@ -140,6 +119,23 @@ internal class XmlParser
         typeDocumentation.AddMemberData(methodInfo, methodDocumentation);
 
         return methodDocumentation;
+    }
+    
+    private (Type type, string memberName) ResolveTypeAndMemberName(string name)
+    {
+        var index = name.LastIndexOf('.');
+
+        if (index == -1)
+        {
+            throw new InvalidOperationException("Encountered invalid XML node.");
+        }
+        
+        var (typeName, memberName) = (name[..index], name[(index + 1)..]);
+        
+        var type = _assembly.GetType(typeName)
+                   ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
+
+        return (type, memberName);
     }
 
     private TypeDocumentation ResolveOwnerType(Type type)
@@ -150,7 +146,9 @@ internal class XmlParser
         }
 
         result = new TypeDocumentation(_source, type, node: null);
+        
         _results.Add(type, result);
+        
         return result;
     }
 }
