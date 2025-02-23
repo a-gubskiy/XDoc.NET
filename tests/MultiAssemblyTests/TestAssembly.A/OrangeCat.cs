@@ -12,8 +12,8 @@ public class OrangeCat : Cat
     /// Field two
     /// </summary>
     public string Field2 { get; set; } = "";
-
-
+    
+    
     /// <inheritdoc />
     public override string Name { get; set; } = "";
 }
