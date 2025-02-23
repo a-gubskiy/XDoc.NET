@@ -11,12 +11,15 @@ public class XDocTests
 
         var typeDocumentation = xDoc.GetDocumentation(typeof(Dog));
 
-        var members = typeDocumentation.MemberData.Keys.ToList();
+        var members = typeDocumentation.MemberData.Keys
+            .OrderBy(o => o.Name)
+            .ToList();
 
         Assert.Equal("Age", members[0].Name);
-        Assert.Equal("Name", members[1].Name);
-        Assert.Equal("Field1", members[2].Name);
-        Assert.Equal("Field2", members[3].Name);
+        Assert.Equal("Field1", members[1].Name);
+        Assert.Equal("Field2", members[2].Name);
+        Assert.Equal("GetInfo", members[3].Name);
+        Assert.Equal("Name", members[4].Name);
     }
 
     [Fact]
@@ -45,7 +48,7 @@ public class XDocTests
 
         Assert.Equal("Dog's Age", fieldDocumentation.Node.InnerText.Trim());
     }
-    
+
     [Fact]
     public void GetDocumentation_MethodInfo_ShouldReturnMethodDocumentation()
     {

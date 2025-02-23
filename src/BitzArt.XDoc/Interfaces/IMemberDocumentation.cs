@@ -1,6 +1,6 @@
 ﻿namespace BitzArt.XDoc;
 
-internal interface IMemberDocumentation
+public interface IMemberDocumentation
 {
     /// <summary>
     /// The <see cref="Type"/> that declares the member.

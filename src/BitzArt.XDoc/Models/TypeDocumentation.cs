@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Reflection;
 using System.Xml;
 
@@ -8,7 +9,7 @@ namespace BitzArt.XDoc;
 /// </summary>
 public sealed class TypeDocumentation
 {
-    internal readonly Dictionary<MemberInfo, object> MemberData;
+    private readonly Dictionary<MemberInfo, IMemberDocumentation> _memberData;
 
     internal XDoc Source { get; private set; }
 
@@ -19,13 +20,18 @@ public sealed class TypeDocumentation
     /// </summary>
     public Type Type { get; private set; }
 
+    /// <summary>
+    /// List of members declared by this <see cref="Type"/>.
+    /// </summary>
+    public IReadOnlyDictionary<MemberInfo, IMemberDocumentation> MemberData => _memberData.ToFrozenDictionary();
+
     internal TypeDocumentation(XDoc source, Type type, XmlNode? node)
     {
         Source = source;
         Type = type;
         Node = node;
 
-        MemberData = [];
+        _memberData = [];
     }
 
     /// <summary>
@@ -57,7 +63,7 @@ public sealed class TypeDocumentation
     {
         var memberInfo = Validate(member);
 
-        return MemberData.GetValueOrDefault(memberInfo);
+        return _memberData.GetValueOrDefault(memberInfo);
     }
 
     private TMember Validate<TMember>(TMember member)
@@ -71,4 +77,16 @@ public sealed class TypeDocumentation
 
     /// <inheritdoc/>
     public override string ToString() => $"{nameof(TypeDocumentation)} for {Type.Name!}";
+
+    /// <summary>
+    /// Adds documentation for a member declared by this <see cref="Type"/>.
+    /// </summary>
+    /// <param name="memberInfo"></param>
+    /// <param name="documentation"></param>
+    /// <typeparam name="T"></typeparam>
+    internal void AddMemberData<T>(MemberInfo memberInfo, MemberDocumentation<T> documentation) 
+        where T : class
+    {
+        _memberData.Add(memberInfo, documentation);
+    }
 }
