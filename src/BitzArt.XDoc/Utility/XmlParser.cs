@@ -52,7 +52,7 @@ internal class XmlParser
             case 'T': ParseTypeNode(node, name[2..]); break;
             case 'P': ParsePropertyNode(node, name[2..]); break;
             case 'F': ParseFieldNode(node, name[2..]); break;
-            case 'M': break; //ParseMethodNode(node, name[2..]); break;
+            case 'M': ParseMethodNode(node, name[2..]); break;
             default: break;
         };
     }
@@ -117,6 +117,29 @@ internal class XmlParser
         typeDocumentation.MemberData.Add(fieldInfo, fieldDocumentation);
 
         return fieldDocumentation;
+    }
+    
+    private MethodDocumentation ParseMethodNode(XmlNode node, string name)
+    {
+        var index = name.LastIndexOf('.');
+        
+        if (index == -1) throw new InvalidOperationException("Encountered invalid XML node.");
+
+        var (typeName, memberName) = (name[..index], name[(index + 1)..]);
+
+        var type = _assembly.GetType(typeName)
+                   ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
+        
+        var methodInfo = type.GetMethod(memberName)
+                           ?? throw new InvalidOperationException($"Method '{memberName}' not found in type '{typeName}'.");
+
+        var typeDocumentation = ResolveOwnerType(type);
+
+        var methodDocumentation = new MethodDocumentation(_source, typeDocumentation, methodInfo, node);
+
+        typeDocumentation.MemberData.Add(methodInfo, methodDocumentation);
+
+        return methodDocumentation;
     }
 
     private TypeDocumentation ResolveOwnerType(Type type)
