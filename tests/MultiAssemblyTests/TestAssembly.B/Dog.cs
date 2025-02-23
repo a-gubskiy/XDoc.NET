@@ -8,6 +8,11 @@ namespace TestAssembly.B;
 public class Dog : Animal
 {
     /// <summary>
+    /// Dog's Age
+    /// </summary>
+    public int Age;
+    
+    /// <summary>
     /// Class B Name
     /// </summary>
     public string Name { get; set; } = "";
