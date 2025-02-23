@@ -13,9 +13,10 @@ public class XDocTests
 
         var members = typeDocumentation.MemberData.Keys.ToList();
 
-        Assert.Equal("Name", members[0].Name);
-        Assert.Equal("Field1", members[1].Name);
-        Assert.Equal("Field2", members[2].Name);
+        Assert.Equal("Age", members[0].Name);
+        Assert.Equal("Name", members[1].Name);
+        Assert.Equal("Field1", members[2].Name);
+        Assert.Equal("Field2", members[3].Name);
     }
     
     [Fact]
