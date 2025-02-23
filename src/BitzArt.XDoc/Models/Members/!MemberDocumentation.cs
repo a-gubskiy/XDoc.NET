@@ -15,7 +15,6 @@ public abstract class MemberDocumentation<TMember>
 
     internal XmlNode Node { get; set; }
 
-    /// <inheritdoc/>
     public Type DeclaringType => ParentNode.Type;
 
     /// <summary>
