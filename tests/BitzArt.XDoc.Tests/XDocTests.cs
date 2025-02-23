@@ -25,7 +25,7 @@ public class XDocTests
         var xDoc = new XDoc();
 
         var type = typeof(Dog);
-        var propertyInfo = type.GetProperty("Field1");
+        var propertyInfo = type.GetProperty(nameof(Dog.Field1));
 
         var propertyDocumentation = xDoc.GetDocumentation(propertyInfo);
 
@@ -38,12 +38,26 @@ public class XDocTests
         var xDoc = new XDoc();
 
         var type = typeof(Dog);
-        var fieldInfo = type.GetField("Age");
+        var fieldInfo = type.GetField(nameof(Dog.Age));
 
         var typeDocumentation = xDoc.GetDocumentation(typeof(Dog));
         var fieldDocumentation = typeDocumentation.GetDocumentation(fieldInfo);
 
         Assert.Equal("Dog's Age", fieldDocumentation.Node.InnerText.Trim());
+    }
+    
+    [Fact]
+    public void GetDocumentation_MethodInfo_ShouldReturnMethodDocumentation()
+    {
+        var xDoc = new XDoc();
+
+        var type = typeof(Dog);
+        var methodInfo = type.GetMethod(nameof(Dog.GetInfo));
+
+        var typeDocumentation = xDoc.GetDocumentation(typeof(Dog));
+        var methodDocumentation = typeDocumentation.GetDocumentation(methodInfo);
+
+        Assert.Equal("Get some info", methodDocumentation.Node.InnerText.Trim());
     }
 
     [Fact]
