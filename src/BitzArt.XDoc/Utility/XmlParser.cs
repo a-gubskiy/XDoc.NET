@@ -64,7 +64,10 @@ internal class XmlParser
 
         // We could handle this case by finding and updating the existing object,
         // but I don't see a reason why this would be necessary.
-        if (_results.ContainsKey(type)) throw new InvalidOperationException("Invalid XML. Type nodes should always go first in the XML file");
+        if (_results.ContainsKey(type))
+        {
+            throw new InvalidOperationException("Invalid XML. Type nodes should always go first in the XML file");
+        }
 
         var typeDocumentation = new TypeDocumentation(_source, type, node);
 
