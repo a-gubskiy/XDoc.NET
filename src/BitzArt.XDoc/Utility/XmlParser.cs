@@ -51,6 +51,7 @@ internal class XmlParser
         {
             case 'T': ParseTypeNode(node, name[2..]); break;
             case 'P': ParsePropertyNode(node, name[2..]); break;
+            case 'F': ParseFieldNode(node, name[2..]); break;
             case 'M': break; //ParseMethodNode(node, name[2..]); break;
             default: break;
         };
@@ -75,6 +76,7 @@ internal class XmlParser
     private PropertyDocumentation ParsePropertyNode(XmlNode node, string name)
     {
         var index = name.LastIndexOf('.');
+        
         if (index == -1) throw new InvalidOperationException("Encountered invalid XML node.");
 
         var (typeName, memberName) = (name[..index], name[(index + 1)..]);
@@ -92,6 +94,29 @@ internal class XmlParser
         typeDocumentation.MemberData.Add(propertyInfo, propertyDocumentation);
 
         return propertyDocumentation;
+    }
+    
+    private FieldDocumentation ParseFieldNode(XmlNode node, string name)
+    {
+        var index = name.LastIndexOf('.');
+        
+        if (index == -1) throw new InvalidOperationException("Encountered invalid XML node.");
+
+        var (typeName, memberName) = (name[..index], name[(index + 1)..]);
+
+        var type = _assembly.GetType(typeName)
+                   ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
+        
+        var fieldInfo = type.GetField(memberName)
+                           ?? throw new InvalidOperationException($"Field '{memberName}' not found in type '{typeName}'.");
+
+        var typeDocumentation = ResolveOwnerType(type);
+
+        var fieldDocumentation = new FieldDocumentation(_source, typeDocumentation, fieldInfo, node);
+
+        typeDocumentation.MemberData.Add(fieldInfo, fieldDocumentation);
+
+        return fieldDocumentation;
     }
 
     private TypeDocumentation ResolveOwnerType(Type type)
