@@ -31,7 +31,7 @@ public class XDoc
     /// </summary>
     /// <param name="assembly">The <see cref="Assembly"/> to retrieve documentation for.</param>"/>
     /// <returns><see cref="AssemblyDocumentation"/> for the specified <see cref="Assembly"/>.</returns>
-    public AssemblyDocumentation GetDocumentation(Assembly assembly)
+    public AssemblyDocumentation Get(Assembly assembly)
         => _collectedAssemblies.TryGetValue(assembly, out var result)
             ? result
             : Collect(assembly);
@@ -52,8 +52,8 @@ public class XDoc
     /// <see cref="TypeDocumentation"/> for the specified <see cref="Type"/> if available;
     /// otherwise, <see langword="null"/>.
     /// </returns>
-    public TypeDocumentation? GetDocumentation(Type type)
-        => GetDocumentation(type.Assembly).GetDocumentation(type);
+    public TypeDocumentation? Get(Type type)
+        => Get(type.Assembly).GetDocumentation(type);
 
     /// <summary>
     /// Fetches documentation for the specified <see cref="PropertyInfo"/>.
@@ -63,6 +63,6 @@ public class XDoc
     /// <see cref="PropertyDocumentation"/> for the specified <see cref="PropertyInfo"/> if available;
     /// otherwise, <see langword="null"/>.
     /// </returns>
-    public PropertyDocumentation? GetDocumentation(PropertyInfo property)
-        => GetDocumentation(property.DeclaringType!)?.GetDocumentation(property);
+    public PropertyDocumentation? Get(PropertyInfo property)
+        => Get(property.DeclaringType!)?.GetDocumentation(property);
 }
