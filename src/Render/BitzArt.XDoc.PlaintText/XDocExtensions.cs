@@ -1,3 +1,5 @@
+using System.Text;
+using System.Xml;
 using BitzArt.XDoc;
 
 namespace Xdoc.Renderer.PlaintText;
@@ -7,7 +9,6 @@ namespace Xdoc.Renderer.PlaintText;
 /// </summary>
 public static class XDocExtensions
 {
-
     /// <summary>
     /// Get full representation of the type documentation in plain text.
     /// </summary>
@@ -34,6 +35,25 @@ public static class XDocExtensions
 
     private static string ToPlainText(ParsedContent parsedContent)
     {
-        throw new NotImplementedException();
+        var sb = new StringBuilder();
+
+        if (parsedContent.Parent != null)
+        {
+            sb.AppendLine(ToPlainText(parsedContent.Parent));
+        }
+
+        foreach (var reference in parsedContent.References)
+        {
+            sb.AppendLine(ToPlainText(reference));
+        }
+        
+        sb.AppendLine(Render(parsedContent.OriginalNode));
+
+        return sb.ToString();
+    }
+
+    private static string Render(XmlNode xmlNode)
+    {
+        return xmlNode.InnerText.Trim();
     }
 }
