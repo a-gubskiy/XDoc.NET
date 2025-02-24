@@ -48,7 +48,7 @@ public class XDocTests
 
         Assert.Equal("Dog's Age", fieldDocumentation!.Node.InnerText.Trim());
     }
-
+    
     [Fact]
     public void GetDocumentation_MethodInfo_ShouldReturnMethodDocumentation()
     {
