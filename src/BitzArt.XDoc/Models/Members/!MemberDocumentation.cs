@@ -10,12 +10,24 @@ public abstract class MemberDocumentation<TMember>
     where TMember : class
 {
     internal XDoc Source { get; private set; }
-
     internal TypeDocumentation ParentNode { get; private set; }
+
+    private ParsedContent? _parsedContent;
+
+    internal ParsedContent ParsedContent => _parsedContent ??= Resolve();
 
     internal XmlNode Node { get; set; }
 
     public Type DeclaringType => ParentNode.Type;
+
+    internal ParsedContent Resolve()
+    {
+        var builder = new ParsedContentBuilder();
+
+        var parsedContent = builder.Build(this);
+
+        return parsedContent;
+    }
 
     /// <summary>
     /// The <typeparamref name="TMember"/> this documentation if provided for.

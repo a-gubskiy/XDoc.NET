@@ -1,16 +1,19 @@
 using System.Collections.Immutable;
+using System.Xml;
 
 namespace BitzArt.XDoc;
 
 public record ParsedContent
 {
-    public IReadOnlyCollection<ParsedContent> Crefs { get; init; }
-    
+    public IReadOnlyCollection<ParsedContent> References { get; init; }
+
+    public XmlNode OriginalNode { get; init; }
+
     public ParsedContent? Parent { get; init; }
-    
+
     public ParsedContent()
     {
         Parent = null;
-        Crefs = ImmutableList<ParsedContent>.Empty;
+        References = ImmutableList<ParsedContent>.Empty;
     }
 }

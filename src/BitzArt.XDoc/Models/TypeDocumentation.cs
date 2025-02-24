@@ -10,6 +10,10 @@ public sealed class TypeDocumentation
 {
     internal readonly Dictionary<MemberInfo, object> MemberData;
 
+    private ParsedContent? _parsedContent;
+
+    internal ParsedContent ParsedContent => _parsedContent ??= Resolve();
+
     internal XDoc Source { get; private set; }
 
     internal XmlNode? Node { get; set; }
@@ -26,6 +30,15 @@ public sealed class TypeDocumentation
         Node = node;
 
         MemberData = [];
+    }
+
+    internal ParsedContent Resolve()
+    {
+        var builder = new ParsedContentBuilder();
+
+        var parsedContent = builder.Build(this);
+
+        return parsedContent;
     }
 
     /// <summary>
