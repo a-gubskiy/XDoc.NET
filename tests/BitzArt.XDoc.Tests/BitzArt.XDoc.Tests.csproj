@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
+        <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
     </PropertyGroup>
 
     <ItemGroup>
@@ -24,6 +24,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\BitzArt.XDoc\BitzArt.XDoc.csproj" />
+      <ProjectReference Include="..\MultiAssemblyTests\TestAssembly.B\TestAssembly.B.csproj" />
     </ItemGroup>
 
     <ItemGroup>
