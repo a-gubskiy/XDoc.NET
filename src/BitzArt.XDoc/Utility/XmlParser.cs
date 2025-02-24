@@ -94,52 +94,6 @@ internal class XmlParser
     
     private FieldDocumentation ParseFieldNode(XmlNode node, string name)
     {
-        var index = name.LastIndexOf('.');
-        
-        if (index == -1) throw new InvalidOperationException("Encountered invalid XML node.");
-
-        var (typeName, memberName) = (name[..index], name[(index + 1)..]);
-
-        var type = _assembly.GetType(typeName)
-                   ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
-        
-        var fieldInfo = type.GetField(memberName)
-                           ?? throw new InvalidOperationException($"Field '{memberName}' not found in type '{typeName}'.");
-
-        var typeDocumentation = ResolveOwnerType(type);
-
-        var fieldDocumentation = new FieldDocumentation(_source, typeDocumentation, fieldInfo, node);
-
-        typeDocumentation.MemberData.Add(fieldInfo, fieldDocumentation);
-
-        return fieldDocumentation;
-    }
-    
-    private MethodDocumentation ParseMethodNode(XmlNode node, string name)
-    {
-        var index = name.LastIndexOf('.');
-        
-        if (index == -1) throw new InvalidOperationException("Encountered invalid XML node.");
-
-        var (typeName, memberName) = (name[..index], name[(index + 1)..]);
-
-        var type = _assembly.GetType(typeName)
-                   ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
-        
-        var methodInfo = type.GetMethod(memberName)
-                           ?? throw new InvalidOperationException($"Method '{memberName}' not found in type '{typeName}'.");
-
-        var typeDocumentation = ResolveOwnerType(type);
-
-        var methodDocumentation = new MethodDocumentation(_source, typeDocumentation, methodInfo, node);
-
-        typeDocumentation.MemberData.Add(methodInfo, methodDocumentation);
-
-        return methodDocumentation;
-    }
-
-    private FieldDocumentation ParseFieldNode(XmlNode node, string name)
-    {
         var (type, memberName) = ResolveTypeAndMemberName(name);
         
         var fieldInfo = type.GetField(memberName)
