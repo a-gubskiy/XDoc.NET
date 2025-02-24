@@ -1,5 +1,8 @@
 ﻿namespace BitzArt.XDoc;
 
+/// <summary>
+/// Represents documentation for a member of a <see cref="Type"/>.
+/// </summary>
 public interface IMemberDocumentation
 {
     /// <summary>
