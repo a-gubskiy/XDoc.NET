@@ -12,7 +12,7 @@ public sealed class TypeDocumentation
 
     private ParsedContent? _parsedContent;
 
-    internal ParsedContent ParsedContent => _parsedContent ??= Resolve();
+    public ParsedContent ParsedContent => _parsedContent ??= Resolve();
 
     internal XDoc Source { get; private set; }
 

@@ -14,7 +14,7 @@ public abstract class MemberDocumentation<TMember>
 
     private ParsedContent? _parsedContent;
 
-    internal ParsedContent ParsedContent => _parsedContent ??= Resolve();
+    public ParsedContent ParsedContent => _parsedContent ??= Resolve();
 
     internal XmlNode Node { get; set; }
 

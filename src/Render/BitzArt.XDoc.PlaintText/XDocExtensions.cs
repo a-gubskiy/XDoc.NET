@@ -15,7 +15,9 @@ public static class XDocExtensions
     /// <returns></returns>
     public static string ToPlainText(this TypeDocumentation documentation)
     {
-        return "";
+        var parsedContent = documentation.ParsedContent;
+        
+        return ToPlainText(parsedContent);
     }
     
     /// <summary>
@@ -25,6 +27,13 @@ public static class XDocExtensions
     /// <returns></returns>
     public static string ToPlainText(this PropertyDocumentation documentation)
     {
-        return "";
+        var parsedContent = documentation.ParsedContent;
+        
+        return ToPlainText(parsedContent);
+    }
+
+    private static string ToPlainText(ParsedContent parsedContent)
+    {
+        throw new NotImplementedException();
     }
 }
