@@ -24,7 +24,7 @@ namespace BitzArt.XDoc;
 /// </summary>
 public class XDoc
 {
-    private readonly Dictionary<Assembly, AssemblyDocumentation> _fetchedAssemblies = [];
+    private readonly Dictionary<Assembly, AssemblyDocumentation> _collectedAssemblies = [];
 
     /// <summary>
     /// Fetches documentation for the specified <see cref="Assembly"/>.
@@ -32,14 +32,14 @@ public class XDoc
     /// <param name="assembly">The <see cref="Assembly"/> to retrieve documentation for.</param>"/>
     /// <returns><see cref="AssemblyDocumentation"/> for the specified <see cref="Assembly"/>.</returns>
     public AssemblyDocumentation GetDocumentation(Assembly assembly)
-        => _fetchedAssemblies.TryGetValue(assembly, out var result)
+        => _collectedAssemblies.TryGetValue(assembly, out var result)
             ? result
-            : Fetch(assembly);
+            : Collect(assembly);
 
-    private AssemblyDocumentation Fetch(Assembly assembly)
+    private AssemblyDocumentation Collect(Assembly assembly)
     {
         var result = new AssemblyDocumentation(this, assembly);
-        _fetchedAssemblies.Add(assembly, result);
+        _collectedAssemblies.Add(assembly, result);
 
         return result;
     }
