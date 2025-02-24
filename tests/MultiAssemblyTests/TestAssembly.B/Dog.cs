@@ -5,7 +5,7 @@ namespace TestAssembly.B;
 /// <summary>
 /// Test class B.
 /// </summary>
-public class Dog : Animal
+public class Dog : Animal, IDog
 {
     /// <summary>
     /// Dog's Age
@@ -17,14 +17,10 @@ public class Dog : Animal
     /// </summary>
     public string Name { get; set; } = "";
 
-    /// <summary>
-    /// Field one
-    /// </summary>
+    /// <inheritdoc/>
     public string Field1 { get; set; } = "";
 
-    /// <summary>
-    /// Field two
-    /// </summary>
+    /// <inheritdoc/>
     public string Field2 { get; set; } = "";
 
     /// <summary>
