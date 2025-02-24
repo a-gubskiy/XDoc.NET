@@ -3,7 +3,7 @@ using TestAssembly.A;
 namespace TestAssembly.B;
 
 /// <summary>
-/// Test class B.
+/// This is a class which represents a dog as defined by the interface <see cref="IDog"/>.
 /// </summary>
 public class Dog : Animal, IDog
 {
@@ -24,7 +24,7 @@ public class Dog : Animal, IDog
     public string Field2 { get; set; } = "";
 
     /// <summary>
-    /// Get some info
+    /// Get some about <see cref="Dog"/>
     /// </summary>
     /// <returns></returns>
     public string GetInfo()

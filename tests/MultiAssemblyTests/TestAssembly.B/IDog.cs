@@ -1,5 +1,8 @@
 namespace TestAssembly.B;
 
+/// <summary>
+/// Defines a dog.
+/// </summary>
 public interface IDog
 {
      /// <summary>
