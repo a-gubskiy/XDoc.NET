@@ -8,11 +8,27 @@ namespace BitzArt.XDoc.PlaintText.Tests;
 public class UnitTest1
 {
     [Fact]
-    public async Task ToPlainText_Type()
+    public async Task ToPlainText_CheckClass_ReturnNonEmptyResult()
     {
         var xDoc = new XDoc();
         var type = typeof(Dog);
+
         var str = xDoc.Get(type).ToPlainText();
+
+        Assert.NotEmpty(str);
+    }
+
+    [Fact]
+    public async Task ToPlainText_CheckProperty_ReturnNonEmptyResult()
+    {
+        var xDoc = new XDoc();
+        var type = typeof(Dog);
+        var propertyInfo = type.GetProperty(nameof(Dog.Field1));
+
+        var propertyDocumentation = xDoc.Get(propertyInfo!);
+        ParsedContent propertyDocumentationParsedContent = propertyDocumentation.ParsedContent;
+
+        var str = propertyDocumentation.ToPlainText();
 
         Assert.NotEmpty(str);
     }
@@ -25,14 +41,14 @@ public class UnitTest1
 
         // var propertyInfo = type.GetProperty(nameof(Dog.Field1));
         var propertyInfo = type.GetProperty(nameof(Dog.Name));
-        
+
         var propertyDocumentation = xDoc.Get(propertyInfo!)!;
-        
+
         var str = propertyDocumentation.ToPlainText();
         Assert.NotEmpty(str);
-    }  
-    
-    
+    }
+
+
     [Fact]
     public async Task TextXmlRendering()
     {
@@ -47,7 +63,7 @@ public class UnitTest1
                          Be carefully with this property.
                      </summary>
                      """;
-        
+
         XmlDocument xmlDoc = new XmlDocument();
         xmlDoc.LoadXml(xml);
 
@@ -55,10 +71,10 @@ public class UnitTest1
 
         var xmlRenderer = new XmlRenderer();
         var str = xmlRenderer.Render(xmlNode);
-        
+
         Assert.NotEmpty(str);
     }
-    
+
     [Fact]
     public async Task TextXmlRendering2()
     {
@@ -107,7 +123,7 @@ public class UnitTest1
                          </remarks>
                      </summary>
                      """;
-        
+
         XmlDocument xmlDoc = new XmlDocument();
         xmlDoc.LoadXml(xml);
 
@@ -115,9 +131,7 @@ public class UnitTest1
 
         var xmlRenderer = new XmlRenderer();
         var str = xmlRenderer.Render(xmlNode);
-        
+
         Assert.NotEmpty(str);
     }
-    
-
 }
