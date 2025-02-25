@@ -60,8 +60,6 @@ internal class XmlParser
             case 'M': ParseMethodNode(node, name[2..]); break;
             default: break;
         }
-
-        ;
     }
 
     private TypeDocumentation ParseTypeNode(XmlNode node, string name)
@@ -94,12 +92,19 @@ internal class XmlParser
 
         var (typeName, memberName) = (name[..index], name[(index + 1)..]);
 
-        var type = _assembly.GetType(typeName)
-                   ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
+        var type = _assembly.GetType(typeName);
+        
+        if (type == null)
+        {
+            throw new InvalidOperationException($"Type '{typeName}' not found.");
+        }
 
-        var propertyInfo = type.GetProperty(memberName)
-                           ?? throw new InvalidOperationException(
-                               $"Property '{memberName}' not found in type '{typeName}'.");
+        var propertyInfo = type.GetProperty(memberName);
+        
+        if (propertyInfo is null)
+        {
+            throw new InvalidOperationException($"Property '{memberName}' not found in type '{typeName}'.");
+        }
 
         var typeDocumentation = ResolveOwnerType(type);
 
@@ -118,11 +123,19 @@ internal class XmlParser
 
         var (typeName, memberName) = (name[..index], name[(index + 1)..]);
 
-        var type = _assembly.GetType(typeName)
-                   ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
+        var type = _assembly.GetType(typeName);
+        
+        if (type == null)
+        {
+            throw new InvalidOperationException($"Type '{typeName}' not found.");
+        }
 
-        var fieldInfo = type.GetField(memberName)
-                        ?? throw new InvalidOperationException($"Field '{memberName}' not found in type '{typeName}'.");
+        var fieldInfo = type.GetField(memberName);
+        
+        if (fieldInfo is null)
+        {
+            throw new InvalidOperationException($"Field '{memberName}' not found in type '{typeName}'.");
+        }
 
         var typeDocumentation = ResolveOwnerType(type);
 
@@ -173,6 +186,7 @@ internal class XmlParser
 
         result = new TypeDocumentation(_source, type, node: null);
         _results.Add(type, result);
+        
         return result;
     }
 }
