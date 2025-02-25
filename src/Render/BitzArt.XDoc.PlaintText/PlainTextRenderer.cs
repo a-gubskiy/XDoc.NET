@@ -1,5 +1,8 @@
 namespace Xdoc.Renderer.PlaintText;
 
+/// <summary>
+/// Renders plain text comments for classes, fields, properties and methods
+/// </summary>
 public class PlainTextRenderer
 {
     /*private readonly XDoc _documentStore;
