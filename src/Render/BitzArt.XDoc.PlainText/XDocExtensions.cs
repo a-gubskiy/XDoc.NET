@@ -46,7 +46,7 @@ public static class XDocExtensions
         }
         else
         {
-            var text = Renderer.Render(parsedContent.OriginalNode);
+            var text = Renderer.Render(parsedContent.Xml);
             
             sb.AppendLine(text);
         }

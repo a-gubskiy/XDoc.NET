@@ -21,7 +21,7 @@ public class ParsedContentBuilder
         {
             Parent = parent,
             References = references,
-            OriginalNode = xmlNode,
+            Xml = xmlNode,
             Type = type
         };
 
@@ -63,7 +63,7 @@ public class ParsedContentBuilder
             references.Add(new ParsedContent
             {
                 Type = type,
-                OriginalNode = typeDocumentation.Node,
+                Xml = typeDocumentation.Node,
                 References = GetReferences(typeDocumentation.Node, xDoc),
                 Parent = GetParent(typeDocumentation.Node, xDoc, type)
             });
@@ -114,7 +114,7 @@ public class ParsedContentBuilder
         {
             Parent = parent,
             References = references,
-            OriginalNode = xmlNode,
+            Xml = xmlNode,
             Type = type
         };
 

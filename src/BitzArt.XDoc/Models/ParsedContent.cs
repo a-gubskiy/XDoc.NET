@@ -3,6 +3,9 @@ using System.Xml;
 
 namespace BitzArt.XDoc;
 
+/// <summary>
+/// Represents resolver and parsed content from an XML node.
+/// </summary>
 public record ParsedContent
 {
     /// <summary>
@@ -13,7 +16,7 @@ public record ParsedContent
     /// <summary>
     /// XML node from which the content was parsed.
     /// </summary>
-    public required XmlNode OriginalNode { get; init; }
+    public required XmlNode Xml { get; init; }
     
     /// <summary>
     /// Represents the type of the parsed content.
