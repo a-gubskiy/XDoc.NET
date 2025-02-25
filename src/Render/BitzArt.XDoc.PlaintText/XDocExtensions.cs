@@ -61,8 +61,11 @@ public static class XDocExtensions
         return sb.ToString();
     }
 
-    private static string Render(XmlNode xmlNode)
+    public static string Render(XmlNode xmlNode)
     {
-        return xmlNode.InnerText.Trim();
+        var renderer = new XmlRenderer();
+        
+        return renderer.Render(xmlNode);
+        
     }
 }
