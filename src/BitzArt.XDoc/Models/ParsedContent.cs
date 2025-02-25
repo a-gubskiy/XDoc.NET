@@ -17,11 +17,8 @@ public record ParsedContent
     /// XML node from which the content was parsed.
     /// </summary>
     public required XmlNode? Xml { get; init; }
-    
-    /// <summary>
-    /// Represents the type of the parsed content.
-    /// </summary>
-    public required Type Type { get; init; }
+
+    public required string Name { get; set; }
 
     /// <summary>
     /// Parent of the parsed content.
@@ -34,5 +31,5 @@ public record ParsedContent
         References = ImmutableList<ParsedContent>.Empty;
     }
 
-    public override string ToString() => $"Type: {Type.Name} (References: {References.Count}, Parent: {Parent?.Type.Name ?? "None"})";
+    public override string ToString() => $"{Name} (References: {References.Count}, Parent: {Parent?.Name ?? "None"})";
 }

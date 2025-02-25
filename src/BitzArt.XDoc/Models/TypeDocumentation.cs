@@ -83,7 +83,9 @@ public sealed class TypeDocumentation
         where TMember : MemberInfo
     {
         if (member.DeclaringType != Type)
+        {
             throw new InvalidOperationException("The provided property is not defined in this type.");
+        }
 
         return member;
     }

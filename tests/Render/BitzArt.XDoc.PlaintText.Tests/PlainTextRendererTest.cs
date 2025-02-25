@@ -23,14 +23,21 @@ public class PlainTextRendererTest
     {
         var xDoc = new XDoc();
         var type = typeof(Dog);
-        var propertyInfo = type.GetProperty(nameof(Dog.Field1));
 
-        var propertyDocumentation = xDoc.Get(propertyInfo!);
-        ParsedContent propertyDocumentationParsedContent = propertyDocumentation.ParsedContent;
+        var field1Info = type.GetProperty(nameof(Dog.Field1));
+        var field2Info = type.GetProperty(nameof(Dog.Field2));
+        var nameInfo = type.GetProperty(nameof(Dog.Name));
+        var idInfo = type.GetProperty(nameof(Dog.Id));
 
-        var str = propertyDocumentation.ToPlainText();
+        var filed1Comment = xDoc.Get(field1Info!).ToPlainText();
+        var filed2Comment = xDoc.Get(field2Info!).ToPlainText();
+        var nameComment = xDoc.Get(nameInfo!).ToPlainText();
+        var idComment = xDoc.Get(idInfo!).ToPlainText();
 
-        Assert.NotEmpty(str);
+        Assert.NotEmpty(filed1Comment);
+        Assert.NotEmpty(filed2Comment);
+        Assert.NotEmpty(nameComment);
+        Assert.NotEmpty(idComment);
     }
 
     [Fact]

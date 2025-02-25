@@ -70,7 +70,7 @@ public static class XDocExtensions
 
         foreach (var reference in parsedContent.References)
         {
-            builder.AppendLine($" – {reference.Type.Name}");
+            builder.AppendLine($" – {reference.Name}");
             builder.AppendLine(ToPlainText(reference));
             builder.AppendLine();
         }

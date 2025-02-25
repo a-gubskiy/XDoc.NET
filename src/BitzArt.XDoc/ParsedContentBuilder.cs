@@ -46,7 +46,7 @@ public class ParsedContentBuilder
             Parent = parent,
             References = references,
             Xml = xmlNode,
-            Type = null
+            Name = memberInfo.Name
         };
     }
 
@@ -60,7 +60,7 @@ public class ParsedContentBuilder
             Parent = parent,
             References = references,
             Xml = xmlNode,
-            Type = type
+            Name = type.Name
         };
     }
 
@@ -96,7 +96,7 @@ public class ParsedContentBuilder
 
             references.Add(new ParsedContent
             {
-                Type = type,
+                Name = type.Name,
                 Xml = typeDocumentation?.Node,
                 References = GetReferences(typeDocumentation?.Node, xDoc),
                 Parent = GetParent(typeDocumentation?.Node, xDoc, type)
@@ -163,7 +163,7 @@ public class ParsedContentBuilder
 
                         return new ParsedContent
                         {
-                            Type = parentPropertyDocumentation.DeclaringType,
+                            Name = memberInfo.Name,
                             Xml = parentPropertyDocumentation.Node,
                             References = references,
                             Parent = parentMemberParent
