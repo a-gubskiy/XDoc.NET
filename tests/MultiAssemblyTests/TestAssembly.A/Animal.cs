@@ -1,6 +1,6 @@
 namespace TestAssembly.A;
 
-public abstract class Animal
+public abstract class Animal : IAnimal
 {
     /// <summary>
     /// Unique identifier.
@@ -11,4 +11,6 @@ public abstract class Animal
     /// Property of type <see cref="Cat"/> which we use for tests
     /// </summary>
     public Cat? Friend { get; set; }
+
+    public string Field1 { get; set; }
 }

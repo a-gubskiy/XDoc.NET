@@ -3,10 +3,8 @@ namespace TestAssembly.A;
 /// <inheritdoc />
 public class BlackCat : Cat
 {
-    /// <summary>
-    /// Field one
-    /// </summary>
-    public int Field1 { get; set; }
+    
+    // public int Field1 { get; set; } //this property can cause System.Reflection.AmbiguousMatchException
 
     /// <summary>
     /// Field two
