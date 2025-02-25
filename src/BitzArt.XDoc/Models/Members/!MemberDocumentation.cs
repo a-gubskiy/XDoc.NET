@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Reflection;
+using System.Xml;
 
 namespace BitzArt.XDoc;
 
@@ -7,7 +8,7 @@ namespace BitzArt.XDoc;
 /// </summary>
 /// <typeparam name="TMember">Type of the member.</typeparam>
 public abstract class MemberDocumentation<TMember> : IMemberDocumentation
-    where TMember : class
+    where TMember : MemberInfo
 {
     private ParsedContent? _parsedContent;
     
