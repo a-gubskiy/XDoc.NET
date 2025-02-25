@@ -52,7 +52,9 @@ public class XmlRenderer
         {
             var crefAttribute = element.Attributes["cref"];
             var nameAttribute = element.Attributes["name"];
-            string childText = ProcessChildren(element).Trim();
+            var elementAttribute = element.Attributes["type"];
+            
+            var childText = ProcessChildren(element).Trim();
 
             switch (element.Name)
             {
@@ -63,7 +65,7 @@ public class XmlRenderer
                         var crefValue = crefAttribute.Value;
                         if (crefValue.StartsWith("T:"))
                         {
-                            crefValue = crefValue.Substring(2);
+                            crefValue = crefValue[2..];
                         }
                         builder.Append(crefValue);
                     }
@@ -125,20 +127,23 @@ public class XmlRenderer
 
                 case "list":
                     builder.AppendLine();
-                    var listType = element.Attributes["type"]?.Value;
+                    
+                    var listType = elementAttribute?.Value;
+                    
                     foreach (XmlNode child in element.ChildNodes)
                     {
                         if (child.Name == "item")
                         {
                             var itemText = ProcessChildren(child).Trim();
                             
-                            string prefix = listType switch
+                            var prefix = listType switch
                             {
                                 "number" => "1. ",
                                 "bullet" => "– ",
                                 "table" => "* ",
                                 _ => "– "
                             };
+                            
                             builder.AppendLine(prefix + itemText);
                         }
                     }
@@ -174,10 +179,12 @@ public class XmlRenderer
     private string ProcessChildren(XmlNode node)
     {
         var builder = new StringBuilder();
+        
         foreach (XmlNode child in node.ChildNodes)
         {
             builder.Append(ProcessNode(child));
         }
+        
         return builder.ToString();
     }
 }
