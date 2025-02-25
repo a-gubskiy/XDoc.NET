@@ -1,5 +1,7 @@
-using System.Xml;
+using System;
+using System.Linq;
 using System.Text;
+using System.Xml;
 
 namespace Xdoc.Renderer.PlainText;
 
@@ -17,19 +19,11 @@ public class XmlRenderer
         }
 
         var text = ProcessNode(xmlNode);
-
-        // while (text.Contains("\n\n"))
-        // {
-        //     text = text.Replace("\n\n", "\n");
-        // }
-
-        return text;
-        // var text = Normalize(ProcessNode(xmlNode));
-        // return text;
+        return Normalize(text);
     }
 
     /// <summary>
-    /// Normalize the input string by removing empty lines and trimming each line.
+    /// Normalize the input string by removing extra empty lines and trimming each line.
     /// </summary>
     public static string Normalize(string input)
     {
@@ -39,9 +33,9 @@ public class XmlRenderer
         }
 
         var lines = input.Split('\n')
-            .Select(line => line.Trim())
+            .Select(line => line.TrimEnd())
             .Where(line => !string.IsNullOrWhiteSpace(line))
-            .ToList();
+            .ToArray();
 
         return string.Join("\n", lines);
     }
@@ -52,46 +46,35 @@ public class XmlRenderer
 
         if (node is XmlText textNode)
         {
-            var textNodeValue = textNode.Value?.Trim() ?? "";
-            
-            builder.Append(textNodeValue);
+            builder.Append(textNode.Value);
         }
         else if (node is XmlElement element)
         {
             var crefAttribute = element.Attributes["cref"];
             var nameAttribute = element.Attributes["name"];
-            var childText = ProcessChildren(element);
+            string childText = ProcessChildren(element).Trim();
 
-            childText = childText.Trim();
-            
             switch (element.Name)
             {
                 case "see":
                 case "seealso":
                     if (crefAttribute != null)
                     {
-                        try
+                        var crefValue = crefAttribute.Value;
+                        if (crefValue.StartsWith("T:"))
                         {
-                            var crefValue = crefAttribute.Value;
-
-                            var className = crefValue.Split('.').Last();
-                            builder.Append(className);
+                            crefValue = crefValue.Substring(2);
                         }
-                        catch (XmlException ex)
-                        {
-                            return "[Invalid XML documentation]";
-                        }
+                        builder.Append(crefValue);
                     }
-
                     break;
 
                 case "paramref":
                 case "typeparamref":
                     if (nameAttribute != null)
                     {
-                        builder.Append(" ").Append(nameAttribute.Value).Append(" ");
+                        builder.Append(nameAttribute.Value);
                     }
-
                     break;
 
                 case "typeparam":
@@ -99,14 +82,13 @@ public class XmlRenderer
                     break;
 
                 case "param":
-                    builder.Append($"\n(Parameter: {nameAttribute?.Value}) ");
+                    builder.Append("\n(Parameter: " + nameAttribute?.Value + ") ");
                     builder.Append(childText);
                     builder.AppendLine();
                     break;
 
                 case "returns":
-                    builder.Append("\nReturns: ");
-                    builder.Append(childText);
+                    builder.Append("\nReturns: " + childText);
                     builder.AppendLine();
                     break;
 
@@ -114,87 +96,70 @@ public class XmlRenderer
                     builder.Append("\nThrows ");
                     if (crefAttribute != null)
                     {
-                        var value = crefAttribute.Value.Split('.').Last();
+                        var value = crefAttribute.Value;
+                        if (value.StartsWith("T:"))
+                        {
+                            value = value.Substring(2);
+                        }
                         builder.Append(value);
                     }
-
-                    builder.Append(": ");
-                    builder.Append(childText);
+                    builder.Append(": " + childText);
                     builder.AppendLine();
                     break;
 
                 case "value":
-                    builder.Append("\nValue: ");
-                    builder.Append(childText);
+                    builder.Append("\nValue: " + childText);
                     builder.AppendLine();
                     break;
 
-
                 case "para":
                     builder.AppendLine();
-                    builder.AppendLine();
-                    builder.Append(childText);
-                    builder.AppendLine();
+                    builder.AppendLine(childText);
                     builder.AppendLine();
                     break;
 
                 case "remarks":
                     builder.AppendLine();
-                    builder.Append(childText);
-                    builder.AppendLine();
-                    break;
-
-                case "inheritdoc":
-                    builder.Append("\n[Inherited documentation]\n");
-                    break;
-
-                case "include":
-                    builder.Append("\n[Included documentation]\n");
+                    builder.AppendLine(childText);
                     break;
 
                 case "list":
-                    var listType = element.Attributes["type"]?.Value;
                     builder.AppendLine();
-
-                    var itemCount = 1;
-
+                    var listType = element.Attributes["type"]?.Value;
                     foreach (XmlNode child in element.ChildNodes)
                     {
                         if (child.Name == "item")
                         {
-                            // Handle numbered/bullet/table lists differently
-                            var prefix = listType switch
+                            var itemText = ProcessChildren(child).Trim();
+                            
+                            string prefix = listType switch
                             {
-                                "number" => $"{itemCount++}. ",
-                                "bullet" => "- ",
+                                "number" => "1. ",
+                                "bullet" => "– ",
                                 "table" => "* ",
-                                _ => "- "
+                                _ => "– "
                             };
-
-                            builder.Append(prefix);
-                            builder.Append(childText);
-                            builder.AppendLine();
+                            builder.AppendLine(prefix + itemText);
                         }
                     }
-
                     break;
 
                 case "code":
-                    builder.Append("```");
-                    builder.Append(childText);
+                    builder.AppendLine();
                     builder.AppendLine("```");
+                    builder.AppendLine(childText);
+                    builder.AppendLine("```");
+                    builder.AppendLine();
                     break;
 
                 case "example":
                     builder.AppendLine();
-                    builder.Append(childText);
+                    builder.AppendLine(childText);
                     builder.AppendLine();
                     break;
 
                 case "c":
-                    builder.Append("`");
-                    builder.Append(childText);
-                    builder.Append("`");
+                    builder.Append("`" + childText + "`");
                     break;
 
                 default:
@@ -203,29 +168,16 @@ public class XmlRenderer
             }
         }
 
-        var result = builder.ToString(); //.Trim();
-
-        return result;
+        return builder.ToString();
     }
 
     private string ProcessChildren(XmlNode node)
     {
         var builder = new StringBuilder();
-
-        for (var i = 0; i < node.ChildNodes.Count; i++)
+        foreach (XmlNode child in node.ChildNodes)
         {
-            var child = node.ChildNodes[i];
-
-            if (child != null)
-            {
-                var childValue = ProcessNode(child); //.Trim();
-                // builder.Append(' ');
-                builder.Append(childValue);
-            }
+            builder.Append(ProcessNode(child));
         }
-
-        var result = builder.ToString();
-
-        return result;
+        return builder.ToString();
     }
 }
