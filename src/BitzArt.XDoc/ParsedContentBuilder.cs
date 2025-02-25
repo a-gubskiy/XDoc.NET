@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
@@ -29,6 +30,11 @@ public class ParsedContentBuilder
 
     private IReadOnlyCollection<ParsedContent> GetReferences(XmlNode xmlNode, XDoc xDoc)
     {
+        if (xmlNode == null || string.IsNullOrWhiteSpace(xmlNode.InnerXml))
+        {
+            return ImmutableList<ParsedContent>.Empty;
+        }
+        
         var doc = XDocument.Parse(xmlNode.InnerXml);
 
         var refs = doc.Descendants("see")
@@ -45,7 +51,7 @@ public class ParsedContentBuilder
         foreach (var r in refs)
         {
             var typeName = r.Substring(2, r.Length - 2);
-            var type = Type.GetType(typeName);
+            var type = GetTypeInfo(typeName);
 
             if (type == null)
             {
@@ -64,6 +70,17 @@ public class ParsedContentBuilder
         }
 
         return references;
+    }
+
+    private Type? GetTypeInfo(string typeName)
+    {
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        
+        var type = assemblies
+            .Select(a => a.GetType(typeName, false))
+            .FirstOrDefault(t => t != null);
+
+        return type;
     }
 
     private ParsedContent? GetParent(XmlNode xmlNode, XDoc xDoc, Type type)
