@@ -33,7 +33,7 @@ internal class XmlParser
     internal Dictionary<Type, TypeDocumentation> Parse()
     {
         var nodeList = _xml.SelectNodes("/doc/members/member")
-            ?? throw new InvalidOperationException("No documentation found in the XML file.");
+                       ?? throw new InvalidOperationException("No documentation found in the XML file.");
 
         foreach (XmlNode node in nodeList) Parse(node);
 
@@ -42,10 +42,15 @@ internal class XmlParser
 
     private void Parse(XmlNode node)
     {
-        if (node.Attributes is null || node.Attributes.Count == 0) throw new InvalidOperationException("Invalid XML node.");
+        if (node.Attributes is null || node.Attributes.Count == 0)
+            throw new InvalidOperationException("Invalid XML node.");
 
-        var name = node.Attributes["name"]?.Value
-            ?? throw new InvalidOperationException($"No 'name' attribute found in XML node '{node.Value}'.");
+        var name = node.Attributes["name"]?.Value;
+
+        if (name == null)
+        {
+            throw new InvalidOperationException($"No 'name' attribute found in XML node '{node.Value}'.");
+        }
 
         switch (name[0])
         {
@@ -54,17 +59,25 @@ internal class XmlParser
             case 'F': ParseFieldNode(node, name[2..]); break;
             case 'M': ParseMethodNode(node, name[2..]); break;
             default: break;
-        };
+        }
+
+        ;
     }
 
     private TypeDocumentation ParseTypeNode(XmlNode node, string name)
     {
-        var type = _assembly.GetType(name)
-            ?? throw new InvalidOperationException($"Type '{name}' not found.");
+        var type = _assembly.GetType(name);
+        if (type == null)
+        {
+            throw new InvalidOperationException($"Type '{name}' not found.");
+        }
 
         // We could handle this case by finding and updating the existing object,
         // but I don't see a reason why this would be necessary.
-        if (_results.ContainsKey(type)) throw new InvalidOperationException("Invalid XML. Type nodes should always go first in the XML file");
+        if (_results.ContainsKey(type))
+        {
+            throw new InvalidOperationException("Invalid XML. Type nodes should always go first in the XML file");
+        }
 
         var typeDocumentation = new TypeDocumentation(_source, type, node);
 
@@ -76,16 +89,17 @@ internal class XmlParser
     private PropertyDocumentation ParsePropertyNode(XmlNode node, string name)
     {
         var index = name.LastIndexOf('.');
-        
+
         if (index == -1) throw new InvalidOperationException("Encountered invalid XML node.");
 
         var (typeName, memberName) = (name[..index], name[(index + 1)..]);
 
         var type = _assembly.GetType(typeName)
-            ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
+                   ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
 
         var propertyInfo = type.GetProperty(memberName)
-            ?? throw new InvalidOperationException($"Property '{memberName}' not found in type '{typeName}'.");
+                           ?? throw new InvalidOperationException(
+                               $"Property '{memberName}' not found in type '{typeName}'.");
 
         var typeDocumentation = ResolveOwnerType(type);
 
@@ -95,20 +109,20 @@ internal class XmlParser
 
         return propertyDocumentation;
     }
-    
+
     private FieldDocumentation ParseFieldNode(XmlNode node, string name)
     {
         var index = name.LastIndexOf('.');
-        
+
         if (index == -1) throw new InvalidOperationException("Encountered invalid XML node.");
 
         var (typeName, memberName) = (name[..index], name[(index + 1)..]);
 
         var type = _assembly.GetType(typeName)
                    ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
-        
+
         var fieldInfo = type.GetField(memberName)
-                           ?? throw new InvalidOperationException($"Field '{memberName}' not found in type '{typeName}'.");
+                        ?? throw new InvalidOperationException($"Field '{memberName}' not found in type '{typeName}'.");
 
         var typeDocumentation = ResolveOwnerType(type);
 
@@ -118,20 +132,28 @@ internal class XmlParser
 
         return fieldDocumentation;
     }
-    
+
     private MethodDocumentation ParseMethodNode(XmlNode node, string name)
     {
         var index = name.LastIndexOf('.');
-        
+
         if (index == -1) throw new InvalidOperationException("Encountered invalid XML node.");
 
         var (typeName, memberName) = (name[..index], name[(index + 1)..]);
 
-        var type = _assembly.GetType(typeName)
-                   ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
-        
-        var methodInfo = type.GetMethod(memberName)
-                           ?? throw new InvalidOperationException($"Method '{memberName}' not found in type '{typeName}'.");
+        var type = _assembly.GetType(typeName);
+
+        if (type == null)
+        {
+            throw new InvalidOperationException($"Type '{typeName}' not found.");
+        }
+
+        var methodInfo = type.GetMethod(memberName);
+
+        if (methodInfo is null)
+        {
+            throw new InvalidOperationException($"Method '{memberName}' not found in type '{typeName}'.");
+        }
 
         var typeDocumentation = ResolveOwnerType(type);
 
