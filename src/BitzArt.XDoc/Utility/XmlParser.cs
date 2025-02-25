@@ -109,7 +109,7 @@ internal class XmlParser
         
         if (fieldInfo is null)
         {
-            throw new InvalidOperationException($"Field '{memberName}' not found in type '{typeName}'.");
+            throw new InvalidOperationException($"Field '{memberName}' not found in type '{type.Name}'.");
         }
 
         var typeDocumentation = ResolveOwnerType(type);
@@ -130,7 +130,7 @@ internal class XmlParser
 
         if (methodInfo is null)
         {
-            throw new InvalidOperationException($"Method '{memberName}' not found in type '{typeName}'.");
+            throw new InvalidOperationException($"Method '{memberName}' not found in type '{type.Name}'.");
         }
 
         var typeDocumentation = ResolveOwnerType(type);

@@ -13,8 +13,6 @@ public sealed class TypeDocumentation
     
     private readonly Dictionary<MemberInfo, IMemberDocumentation> _memberData;
 
-    internal IReadOnlyDictionary<MemberInfo, IMemberDocumentation> MemberData => _memberData.ToFrozenDictionary();
-
     internal XDoc Source { get; private init; }
 
     internal XmlNode? Node { get; private init; }
@@ -29,7 +27,7 @@ public sealed class TypeDocumentation
     /// <summary>
     /// List of members declared by this <see cref="Type"/>.
     /// </summary>
-    public IReadOnlyDictionary<MemberInfo, IMemberDocumentation> MemberData => _memberData.ToFrozenDictionary();
+    internal IReadOnlyDictionary<MemberInfo, IMemberDocumentation> MemberData => _memberData.ToFrozenDictionary();
 
     internal TypeDocumentation(XDoc source, Type type, XmlNode? node)
     {
@@ -100,7 +98,7 @@ public sealed class TypeDocumentation
     /// <param name="documentation"></param>
     /// <typeparam name="T"></typeparam>
     internal void AddMemberData<T>(MemberInfo memberInfo, MemberDocumentation<T> documentation) 
-        where T : class
+        where T : MemberInfo
     {
         _memberData.Add(memberInfo, documentation);
     }
