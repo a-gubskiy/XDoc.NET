@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Reflection;
 using System.Xml;
 
@@ -8,20 +9,22 @@ namespace BitzArt.XDoc;
 /// </summary>
 public sealed class TypeDocumentation
 {
-    internal readonly Dictionary<MemberInfo, object> MemberData;
-
     private ParsedContent? _parsedContent;
+    
+    private readonly Dictionary<MemberInfo, IMemberDocumentation> _memberData;
 
+    internal IReadOnlyDictionary<MemberInfo, IMemberDocumentation> MemberData => _memberData.ToFrozenDictionary();
+
+    internal XDoc Source { get; private init; }
+
+    internal XmlNode? Node { get; private init; }
+    
     public ParsedContent ParsedContent => _parsedContent ??= Resolve();
-
-    internal XDoc Source { get; private set; }
-
-    internal XmlNode? Node { get; set; }
 
     /// <summary>
     /// The <see cref="Type"/> this documentation if provided for.
     /// </summary>
-    public Type Type { get; private set; }
+    public Type Type { get; private init; }
 
     internal TypeDocumentation(XDoc source, Type type, XmlNode? node)
     {
@@ -29,7 +32,7 @@ public sealed class TypeDocumentation
         Type = type;
         Node = node;
 
-        MemberData = [];
+        _memberData = new Dictionary<MemberInfo, IMemberDocumentation>();
     }
 
     internal ParsedContent Resolve()
@@ -70,7 +73,7 @@ public sealed class TypeDocumentation
     {
         var memberInfo = Validate(member);
 
-        return MemberData.GetValueOrDefault(memberInfo);
+        return _memberData.GetValueOrDefault(memberInfo);
     }
 
     private TMember Validate<TMember>(TMember member)
@@ -84,4 +87,14 @@ public sealed class TypeDocumentation
 
     /// <inheritdoc/>
     public override string ToString() => $"{nameof(TypeDocumentation)} for {Type.Name!}";
+
+    /// <summary>
+    /// Add documentation for a member
+    /// </summary>
+    /// <param name="memberInfo"></param>
+    /// <param name="memberDocumentation"></param>
+    internal void AddMemberData(MemberInfo memberInfo, IMemberDocumentation memberDocumentation)
+    {
+        _memberData.Add(memberInfo, memberDocumentation);
+    }
 }

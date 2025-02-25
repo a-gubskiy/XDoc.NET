@@ -7,12 +7,12 @@ namespace BitzArt.XDoc;
 /// </summary>
 public sealed class AssemblyDocumentation
 {
-    internal XDoc Source { get; private set; }
+    internal XDoc Source { get; private init; }
 
     /// <summary>
     /// The <see cref="System.Reflection.Assembly"/> this documentation is fetched for.
     /// </summary>
-    public Assembly Assembly { get; private set; }
+    public Assembly Assembly { get; private init; }
 
     // Type documentation found for this assembly.
     private readonly Dictionary<Type, TypeDocumentation> _typeData;
