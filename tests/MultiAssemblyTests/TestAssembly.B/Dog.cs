@@ -13,7 +13,8 @@ public class Dog : Animal, IDog
     public int Age;
     
     /// <summary>
-    /// Class B Name
+    /// Class B Name of specific <see cref="Dog"/>.
+    /// Not all <see cref="Animal"/>s can have a name.
     /// </summary>
     public string Name { get; set; } = "";
 
