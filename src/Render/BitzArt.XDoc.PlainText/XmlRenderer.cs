@@ -51,7 +51,7 @@ public class XmlRenderer
             throw new ArgumentException("Invalid text range: start index cannot be greater than end index.", nameof(input));
         }
 
-        var sb = new StringBuilder();
+        var builder = new StringBuilder();
         
         var lastLineWasEmpty = false;
 
@@ -66,12 +66,12 @@ public class XmlRenderer
                 continue;
             }
             
-            sb.AppendLine(line);
+            builder.AppendLine(line);
             
             lastLineWasEmpty = currentLineIsEmpty;
         }
 
-        var result = sb.ToString().TrimEnd();
+        var result = builder.ToString().TrimEnd();
         
         return result;
     }
@@ -120,6 +120,11 @@ public class XmlRenderer
         return endIndex;
     }
 
+    /// <summary>
+    /// Processes an XML node and its children, converting them to their plain text representation.
+    /// </summary>
+    /// <param name="node">The XML node to process. Can be a text node or an XML element.</param>
+    /// <returns>A string containing the plain text representation of the node and its children.</returns>
     private string ProcessNode(XmlNode node)
     {
         var builder = new StringBuilder();
@@ -282,15 +287,14 @@ public class XmlRenderer
 
     private static string RenderTextNode(XmlText textNode)
     {
-        StringBuilder builder = new StringBuilder(); 
-        var text = textNode.Value;
+        var builder = new StringBuilder(); 
 
-        if (!string.IsNullOrWhiteSpace(text))
+        if (!string.IsNullOrWhiteSpace(textNode.Value))
         {
             var cleanedText = new StringBuilder();
             var lastWasWhitespace = false;
                 
-            foreach (var c in text)
+            foreach (var c in textNode.Value)
             {
                 if (char.IsWhiteSpace(c))
                 {
@@ -311,7 +315,7 @@ public class XmlRenderer
         }
         else
         {
-            builder.Append(text);
+            builder.Append(textNode.Value);
         }
 
         return builder.ToString();
