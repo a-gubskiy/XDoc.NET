@@ -1,40 +1,59 @@
 using System.Collections.Immutable;
-using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 
 namespace BitzArt.XDoc;
 
+/// <summary>
+/// Builds parsed content objects by processing XML documentation nodes
+/// and resolving their references and inheritance hierarchy.
+/// </summary>
+/// <remarks>
+/// This class is responsible for:
+/// - Creating ParsedContent instances from TypeDocumentation and MemberDocumentation
+/// - Resolving XML documentation inheritance chains
+/// - Processing XML documentation references
+/// </remarks>
 public class ParsedContentBuilder
 {
-    public ParsedContent Build(TypeDocumentation typeDocumentation)
+    /// <summary>
+    /// Builds a ParsedContent object from <see cref="TypeDocumentation"/>  by processing its XML documentation and resolving references.
+    /// </summary>
+    /// <param name="typeDocumentation">The type documentation containing XML nodes and type information.</param>
+    /// <returns>A ParsedContent object containing resolved documentation, references and inheritance chain.</returns>
+    public ParsedContent Build(TypeDocumentation typeDocumentation) =>
+        GetParsedContent(typeDocumentation.Node, typeDocumentation.Source, typeDocumentation.Type);
+
+    /// <summary>
+    /// Builds a ParsedContent object from <see cref="MemberDocumentation{T}"/> by processing its XML documentation and resolving references.
+    /// </summary>
+    /// <param name="memberDocumentation">The member documentation containing XML nodes and member information.</param>
+    /// <returns>A <see cref="ParsedContent"/> object containing resolved documentation, references and inheritance chain.</returns>
+    /// <typeparam name="T">The type of the member being documented.</typeparam>
+    public ParsedContent Build<T>(MemberDocumentation<T> memberDocumentation) where T : class =>
+        GetParsedContent(memberDocumentation.Node, memberDocumentation.Source, memberDocumentation.DeclaringType);
+
+    private ParsedContent GetParsedContent(XmlNode? xmlNode, XDoc xDoc, Type type)
     {
-        var xmlNode = typeDocumentation.Node ?? new XmlDocument();
-        var xDoc = typeDocumentation.Source;
-        var type = typeDocumentation.Type;
-
         var parent = GetParent(xmlNode, xDoc, type);
-
         var references = GetReferences(xmlNode, xDoc);
 
-        var parsedContent = new ParsedContent
+        return new ParsedContent
         {
             Parent = parent,
             References = references,
             Xml = xmlNode,
             Type = type
         };
-
-        return parsedContent;
     }
 
-    private IReadOnlyCollection<ParsedContent> GetReferences(XmlNode xmlNode, XDoc xDoc)
+    private IReadOnlyCollection<ParsedContent> GetReferences(XmlNode? xmlNode, XDoc xDoc)
     {
         if (xmlNode == null || string.IsNullOrWhiteSpace(xmlNode.InnerXml))
         {
             return ImmutableList<ParsedContent>.Empty;
         }
-        
+
         var doc = XDocument.Parse(xmlNode.InnerXml);
 
         var refs = doc.Descendants("see")
@@ -43,8 +62,6 @@ public class ParsedContentBuilder
             .Select(o => o!)
             .Distinct()
             .ToList();
-
-        //xDoc.Get()
 
         var references = new List<ParsedContent>();
 
@@ -63,9 +80,9 @@ public class ParsedContentBuilder
             references.Add(new ParsedContent
             {
                 Type = type,
-                Xml = typeDocumentation.Node,
-                References = GetReferences(typeDocumentation.Node, xDoc),
-                Parent = GetParent(typeDocumentation.Node, xDoc, type)
+                Xml = typeDocumentation?.Node,
+                References = GetReferences(typeDocumentation?.Node, xDoc),
+                Parent = GetParent(typeDocumentation?.Node, xDoc, type)
             });
         }
 
@@ -74,50 +91,25 @@ public class ParsedContentBuilder
 
     private Type? GetTypeInfo(string typeName)
     {
-        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-        
-        var type = assemblies
+        var type = AppDomain.CurrentDomain
+            .GetAssemblies()
             .Select(a => a.GetType(typeName, false))
-            .FirstOrDefault(t => t != null);
+            .FirstOrDefault(t => t != null); // What if we have multiple types with the same name and namespace?
 
         return type;
     }
 
-    private ParsedContent? GetParent(XmlNode xmlNode, XDoc xDoc, Type type)
+    private ParsedContent? GetParent(XmlNode? xmlNode, XDoc xDoc, Type type)
     {
-        if (xmlNode?.FirstChild?.Name == "inheritdoc")
+        if (xmlNode?.FirstChild?.Name != "inheritdoc" || type.BaseType == null)
         {
-            var parentTypeDocumentation = xDoc.Get(type.BaseType);
-
-            var parent = GetParent(parentTypeDocumentation.Node, xDoc, type.BaseType);
-
-            return parent;
+            return null;
         }
-        // <member name="P:TestAssembly.B.Dog.Field1">
-        //     <inheritdoc/>
-        //     </member>
 
-        return null;
-    }
+        var parentTypeDocumentation = xDoc.Get(type.BaseType);
 
-    public ParsedContent Build<T>(MemberDocumentation<T> memberDocumentation) where T : class
-    {
-        var xmlNode = memberDocumentation.Node;
-        var xDoc = memberDocumentation.Source;
-        var type = memberDocumentation.DeclaringType;
+        var parent = GetParent(parentTypeDocumentation?.Node, xDoc, type.BaseType);
 
-        var parent = GetParent(xmlNode, xDoc, type);
-
-        var references = GetReferences(xmlNode, xDoc);
-
-        var parsedContent = new ParsedContent
-        {
-            Parent = parent,
-            References = references,
-            Xml = xmlNode,
-            Type = type
-        };
-
-        return parsedContent;
+        return parent;
     }
 }
