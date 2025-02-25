@@ -44,12 +44,16 @@ public class ParsedContentBuilder
 
         foreach (var r in refs)
         {
-            var prefix = r[..1];
             var typeName = r.Substring(2, r.Length - 2);
             var type = Type.GetType(typeName);
-            
+
+            if (type == null)
+            {
+                continue;
+            }
+
             var typeDocumentation = xDoc.Get(type);
-            
+
             references.Add(new ParsedContent
             {
                 Type = type,
