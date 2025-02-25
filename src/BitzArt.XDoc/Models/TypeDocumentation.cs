@@ -11,14 +11,16 @@ public sealed class TypeDocumentation
 {
     private readonly Dictionary<MemberInfo, IMemberDocumentation> _memberData;
 
-    internal XDoc Source { get; private set; }
+    internal IReadOnlyDictionary<MemberInfo, IMemberDocumentation> MemberData => _memberData.ToFrozenDictionary();
 
-    internal XmlNode? Node { get; set; }
+    internal XDoc Source { get; private init; }
+
+    internal XmlNode? Node { get; private init; }
 
     /// <summary>
     /// The <see cref="Type"/> this documentation if provided for.
     /// </summary>
-    public Type Type { get; private set; }
+    public Type Type { get; private init; }
 
     /// <summary>
     /// List of members declared by this <see cref="Type"/>.

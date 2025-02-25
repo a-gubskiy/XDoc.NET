@@ -9,11 +9,11 @@ namespace BitzArt.XDoc;
 public abstract class MemberDocumentation<TMember> : IMemberDocumentation
     where TMember : class
 {
-    internal XDoc Source { get; private set; }
+    internal XDoc Source { get; private init; }
 
-    internal TypeDocumentation ParentNode { get; private set; }
+    internal TypeDocumentation ParentNode { get; private init; }
 
-    internal XmlNode Node { get; set; }
+    internal XmlNode Node { get; private init; }
 
     /// <summary>
     /// The <see cref="Type"/> that declares the member.
