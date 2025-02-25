@@ -30,6 +30,12 @@ public class Dog : Animal, IDog
     public string Field2 { get; set; } = "";
 
     /// <summary>
+    /// Field three
+    /// </summary>
+    public double Field3 { get; set; }
+
+
+    /// <summary>
     /// Get some about <see cref="Dog"/>
     /// </summary>
     /// <returns></returns>
