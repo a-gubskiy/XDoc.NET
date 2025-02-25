@@ -1,10 +1,12 @@
 using System.Xml;
-using System;
 using System.Text;
-using System.Xml;
 
-namespace Xdoc.Renderer.PlaintText;
+namespace Xdoc.Renderer.PlainText;
 
+/// <summary>
+/// Renders XML documentation to plain text.
+/// <seealso href="https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/xmldoc/xml-documentation-comments">Microsoft specification</seealso>
+/// </summary>
 public class XmlRenderer
 {
     public string Render(XmlNode? xmlNode)
@@ -14,17 +16,13 @@ public class XmlRenderer
             return string.Empty;
         }
 
-
-        var text = Normalize(ProcessNodes(xmlNode));
-
+        var text = Normalize(ProcessNode(xmlNode));
         return text;
     }
 
     /// <summary>
-    /// Normalize the input string by removing empty lines and trimming the lines.
+    /// Normalize the input string by removing empty lines and trimming each line.
     /// </summary>
-    /// <param name="input"></param>
-    /// <returns></returns>
     public static string Normalize(string input)
     {
         if (string.IsNullOrWhiteSpace(input))
@@ -37,13 +35,10 @@ public class XmlRenderer
             .Where(line => !string.IsNullOrWhiteSpace(line))
             .ToList();
 
-        var result = string.Join("\n", lines);
-
-        return result;
+        return string.Join("\n", lines);
     }
 
-
-    private string ProcessNodes(XmlNode node)
+    private string ProcessNode(XmlNode node)
     {
         var builder = new StringBuilder();
 
@@ -53,33 +48,106 @@ public class XmlRenderer
         }
         else if (node is XmlElement element)
         {
-            var attribute = element.Attributes["cref"];
+            var crefAttribute = element.Attributes["cref"];
+            var nameAttribute = element.Attributes["name"];
 
-            if (element.Name == "see" && attribute != null)
+            switch (element.Name)
             {
-                var crefValue = attribute.Value;
-                var className = "";
+                case "see":
+                case "seealso":
+                    if (crefAttribute != null)
+                    {
+                        var crefValue = crefAttribute.Value;
+                        var className = crefValue.Split('.').Last();
+                        builder.Append(className);
+                    }
+                    break;
 
-                if (crefValue.Split('.').Length > 0)
-                {
-                    className = crefValue.Split('.')[^1];
-                }
-                else
-                {
-                    className = crefValue;
-                }
+                case "paramref":
+                case "typeparamref":
+                    if (nameAttribute != null)
+                    {
+                        builder.Append(nameAttribute.Value);
+                    }
+                    break;
 
-                builder.Append(className);
-            }
-            else
-            {
-                foreach (XmlNode child in element.ChildNodes)
-                {
-                    builder.Append(ProcessNodes(child));
-                }
+                case "typeparam":
+                    builder.Append($"(Type: {nameAttribute?.Value}) ");
+                    break;
+
+                case "param":
+                    builder.Append($"(Parameter: {nameAttribute?.Value}) ");
+                    ProcessChildren(element, builder);
+                    break;
+
+                case "returns":
+                    builder.Append("Returns: ");
+                    ProcessChildren(element, builder);
+                    break;
+
+                case "exception":
+                    builder.Append("Throws ");
+                    if (crefAttribute != null)
+                    {
+                        var value = crefAttribute.Value.Split('.').Last();
+                        builder.Append(value);
+                    }
+                    builder.Append(": ");
+                    ProcessChildren(element, builder);
+                    break;
+
+                case "value":
+                    builder.Append("Value: ");
+                    ProcessChildren(element, builder);
+                    break;
+
+                case "inheritdoc":
+                    builder.Append("[Inherited documentation]");
+                    break;
+
+                case "include":
+                    builder.Append("[Included documentation]");
+                    break;
+
+                case "list":
+                    foreach (XmlNode child in element.ChildNodes)
+                    {
+                        if (child.Name == "item")
+                        {
+                            builder.Append("\n- ");
+                            ProcessChildren(child, builder);
+                        }
+                    }
+                    break;
+
+                case "code":
+                    builder.Append("\n");
+                    ProcessChildren(element, builder);
+                    builder.Append("\n");
+                    break;
+
+                case "c":
+                    builder.Append("`");
+                    ProcessChildren(element, builder);
+                    builder.Append("`");
+                    break;
+
+                default:
+                    ProcessChildren(element, builder);
+                    break;
             }
         }
 
-        return builder.ToString();
+        return builder.ToString().Trim();
+    }
+
+    private void ProcessChildren(XmlNode node, StringBuilder builder)
+    {
+        foreach (XmlNode child in node.ChildNodes)
+        {
+            var childValue = ProcessNode(child);
+            builder.Append(childValue);
+            builder.Append(" ");
+        }
     }
 }
