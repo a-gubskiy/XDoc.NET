@@ -35,9 +35,6 @@ public class ParsedContentBuilder
     public ParsedContent Build<T>(MemberDocumentation<T> memberDocumentation) where T : MemberInfo =>
         GetParsedContent(memberDocumentation.Node, memberDocumentation.Source, memberDocumentation.Member);
 
-    public ParsedContent Build<T>(PropertyDocumentation memberDocumentation) where T : MemberInfo =>
-        GetParsedContent(memberDocumentation.Node, memberDocumentation.Source, memberDocumentation.Member);
-
     private ParsedContent GetParsedContent<TMember>(XmlNode? xmlNode, XDoc xDoc, TMember memberInfo)
         where TMember : MemberInfo
     {
@@ -133,6 +130,13 @@ public class ParsedContentBuilder
         return parent;
     }
 
+    /// <summary>
+    /// Retrieves the parent documentation for a member if it uses the inheritdoc tag.
+    /// </summary>
+    /// <param name="xmlNode">The XML documentation node of the member.</param>
+    /// <param name="xDoc">The XDoc instance containing documentation data.</param>
+    /// <param name="memberInfo">The member information to find parent documentation for.</param>
+    /// <returns>A <see cref="ParsedContent"/> object containing the parent's documentation, or null if no inheritance is specified.</returns>
     private ParsedContent? GetParent(XmlNode? xmlNode, XDoc xDoc, MemberInfo memberInfo)
     {
         if (xmlNode?.FirstChild?.Name == "inheritdoc")
@@ -155,8 +159,7 @@ public class ParsedContentBuilder
                         }
 
                         var references = GetReferences(parentPropertyDocumentation.Node, xDoc);
-                        var parentMemberParent = GetParent(parentPropertyDocumentation.Node, xDoc,
-                            parentPropertyDocumentation.DeclaringType);
+                        var parentMemberParent = GetParent(parentPropertyDocumentation.Node, xDoc, parentPropertyDocumentation.DeclaringType);
 
                         return new ParsedContent
                         {
