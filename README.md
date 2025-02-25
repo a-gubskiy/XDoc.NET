@@ -26,7 +26,6 @@ var typeComments = typeDocs.ToPlainText(); // Fully resolved type commens (inclu
 var xml = typeDocs.Node; //Contains the original XML node from .NET generated xml file
 var parsedContent = typeDocs.ParsedContent; // Triggers Resolve() if not previously resolved
 
-
 var a = parsedContent.OriginalNode;
 var b = parsedContent.References; // IEnumerable<ParsedContent>
 

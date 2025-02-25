@@ -41,13 +41,22 @@ public static class XDocExtensions
         {
             sb.AppendLine(ToPlainText(parsedContent.Parent));
         }
-
-        foreach (var reference in parsedContent.References)
+        else
         {
-            sb.AppendLine(ToPlainText(reference));
+            sb.AppendLine(Render(parsedContent.OriginalNode));
         }
-        
-        sb.AppendLine(Render(parsedContent.OriginalNode));
+
+        if (parsedContent.References.Any())
+        {
+            sb.AppendLine();
+            sb.AppendLine("References: ");
+            
+            foreach (var reference in parsedContent.References)
+            {
+                sb.AppendLine(ToPlainText(reference));
+                sb.AppendLine();
+            }
+        }
 
         return sb.ToString();
     }

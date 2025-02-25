@@ -7,7 +7,9 @@ public record ParsedContent
 {
     public IReadOnlyCollection<ParsedContent> References { get; init; }
 
-    public XmlNode OriginalNode { get; init; }
+    public required XmlNode OriginalNode { get; init; }
+    
+    public required Type Type { get; init; }
 
     public ParsedContent? Parent { get; init; }
 

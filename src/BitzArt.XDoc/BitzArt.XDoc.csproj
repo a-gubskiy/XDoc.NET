@@ -4,7 +4,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<RootNamespace>BitzArt.XDoc</RootNamespace>
     </PropertyGroup>
 
