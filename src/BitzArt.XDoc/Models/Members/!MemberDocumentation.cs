@@ -18,6 +18,9 @@ public abstract class MemberDocumentation<TMember> : IMemberDocumentation
 
     internal XmlNode Node { get; private init; }
 
+    /// <summary>
+    /// The <see cref="Type"/> that declares the member.
+    /// </summary>
     public Type DeclaringType => ParentNode.Type;
 
     public ParsedContent ParsedContent => _parsedContent ??= Resolve();

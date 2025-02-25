@@ -19,6 +19,7 @@ public class XDocTests
         Assert.Contains(members, m => m.Name == "Name");
         Assert.Contains(members, m => m.Name == "Field1");
         Assert.Contains(members, m => m.Name == "Field2");
+        Assert.Contains(members, m => m.Name == "GetInfo");
     }
 
     [Fact]
@@ -31,7 +32,7 @@ public class XDocTests
 
         var propertyDocumentation = xDoc.Get(propertyInfo!);
 
-        Assert.Equal("Field three", propertyDocumentation!.Node.InnerText.Trim());
+        Assert.Equal("Field one", propertyDocumentation!.Node.InnerText.Trim());
     }
 
     [Fact]
@@ -59,7 +60,7 @@ public class XDocTests
         var typeDocumentation = xDoc.Get(typeof(Dog));
         var methodDocumentation = typeDocumentation!.GetDocumentation(methodInfo!);
 
-        Assert.Equal("Get some about", methodDocumentation!.Node.InnerText.Trim());
+        Assert.Equal("Get some info", methodDocumentation!.Node.InnerText.Trim());
     }
 
     [Fact]
