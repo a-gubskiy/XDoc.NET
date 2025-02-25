@@ -58,6 +58,7 @@ public static class XDocExtensions
 
             foreach (var reference in parsedContent.References)
             {
+                sb.AppendLine($" – {reference.Type.Name}");
                 sb.AppendLine(ToPlainText(reference));
                 sb.AppendLine();
             }
