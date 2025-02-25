@@ -16,8 +16,16 @@ public class XmlRenderer
             return string.Empty;
         }
 
-        var text = Normalize(ProcessNode(xmlNode));
+        var text = ProcessNode(xmlNode);
+
+        // while (text.Contains("\n\n"))
+        // {
+        //     text = text.Replace("\n\n", "\n");
+        // }
+
         return text;
+        // var text = Normalize(ProcessNode(xmlNode));
+        // return text;
     }
 
     /// <summary>
@@ -44,31 +52,46 @@ public class XmlRenderer
 
         if (node is XmlText textNode)
         {
-            builder.Append(textNode.Value);
+            var textNodeValue = textNode.Value?.Trim() ?? "";
+            
+            builder.Append(textNodeValue);
         }
         else if (node is XmlElement element)
         {
             var crefAttribute = element.Attributes["cref"];
             var nameAttribute = element.Attributes["name"];
+            var childText = ProcessChildren(element);
 
+            childText = childText.Trim();
+            
             switch (element.Name)
             {
                 case "see":
                 case "seealso":
                     if (crefAttribute != null)
                     {
-                        var crefValue = crefAttribute.Value;
-                        var className = crefValue.Split('.').Last();
-                        builder.Append(className);
+                        try
+                        {
+                            var crefValue = crefAttribute.Value;
+
+                            var className = crefValue.Split('.').Last();
+                            builder.Append(className);
+                        }
+                        catch (XmlException ex)
+                        {
+                            return "[Invalid XML documentation]";
+                        }
                     }
+
                     break;
 
                 case "paramref":
                 case "typeparamref":
                     if (nameAttribute != null)
                     {
-                        builder.Append(nameAttribute.Value);
+                        builder.Append(" ").Append(nameAttribute.Value).Append(" ");
                     }
+
                     break;
 
                 case "typeparam":
@@ -76,78 +99,133 @@ public class XmlRenderer
                     break;
 
                 case "param":
-                    builder.Append($"(Parameter: {nameAttribute?.Value}) ");
-                    ProcessChildren(element, builder);
+                    builder.Append($"\n(Parameter: {nameAttribute?.Value}) ");
+                    builder.Append(childText);
+                    builder.AppendLine();
                     break;
 
                 case "returns":
-                    builder.Append("Returns: ");
-                    ProcessChildren(element, builder);
+                    builder.Append("\nReturns: ");
+                    builder.Append(childText);
+                    builder.AppendLine();
                     break;
 
                 case "exception":
-                    builder.Append("Throws ");
+                    builder.Append("\nThrows ");
                     if (crefAttribute != null)
                     {
                         var value = crefAttribute.Value.Split('.').Last();
                         builder.Append(value);
                     }
+
                     builder.Append(": ");
-                    ProcessChildren(element, builder);
+                    builder.Append(childText);
+                    builder.AppendLine();
                     break;
 
                 case "value":
-                    builder.Append("Value: ");
-                    ProcessChildren(element, builder);
+                    builder.Append("\nValue: ");
+                    builder.Append(childText);
+                    builder.AppendLine();
+                    break;
+
+
+                case "para":
+                    builder.AppendLine();
+                    builder.AppendLine();
+                    builder.Append(childText);
+                    builder.AppendLine();
+                    builder.AppendLine();
+                    break;
+
+                case "remarks":
+                    builder.AppendLine();
+                    builder.Append(childText);
+                    builder.AppendLine();
                     break;
 
                 case "inheritdoc":
-                    builder.Append("[Inherited documentation]");
+                    builder.Append("\n[Inherited documentation]\n");
                     break;
 
                 case "include":
-                    builder.Append("[Included documentation]");
+                    builder.Append("\n[Included documentation]\n");
                     break;
 
                 case "list":
+                    var listType = element.Attributes["type"]?.Value;
+                    builder.AppendLine();
+
+                    var itemCount = 1;
+
                     foreach (XmlNode child in element.ChildNodes)
                     {
                         if (child.Name == "item")
                         {
-                            builder.Append("\n- ");
-                            ProcessChildren(child, builder);
+                            // Handle numbered/bullet/table lists differently
+                            var prefix = listType switch
+                            {
+                                "number" => $"{itemCount++}. ",
+                                "bullet" => "- ",
+                                "table" => "* ",
+                                _ => "- "
+                            };
+
+                            builder.Append(prefix);
+                            builder.Append(childText);
+                            builder.AppendLine();
                         }
                     }
+
                     break;
 
                 case "code":
-                    builder.Append("\n");
-                    ProcessChildren(element, builder);
-                    builder.Append("\n");
+                    builder.Append("```");
+                    builder.Append(childText);
+                    builder.AppendLine("```");
+                    break;
+
+                case "example":
+                    builder.AppendLine();
+                    builder.Append(childText);
+                    builder.AppendLine();
                     break;
 
                 case "c":
                     builder.Append("`");
-                    ProcessChildren(element, builder);
+                    builder.Append(childText);
                     builder.Append("`");
                     break;
 
                 default:
-                    ProcessChildren(element, builder);
+                    builder.Append(childText);
                     break;
             }
         }
 
-        return builder.ToString().Trim();
+        var result = builder.ToString(); //.Trim();
+
+        return result;
     }
 
-    private void ProcessChildren(XmlNode node, StringBuilder builder)
+    private string ProcessChildren(XmlNode node)
     {
-        foreach (XmlNode child in node.ChildNodes)
+        var builder = new StringBuilder();
+
+        for (var i = 0; i < node.ChildNodes.Count; i++)
         {
-            var childValue = ProcessNode(child);
-            builder.Append(childValue);
-            builder.Append(" ");
+            var child = node.ChildNodes[i];
+
+            if (child != null)
+            {
+                var childValue = ProcessNode(child); //.Trim();
+                // builder.Append(' ');
+                builder.Append(childValue);
+            }
         }
+
+        var result = builder.ToString();
+
+        return result;
     }
 }
