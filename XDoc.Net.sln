@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc", "src\BitzArt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.Tests", "tests\BitzArt.XDoc.Tests\BitzArt.XDoc.Tests.csproj", "{D6F5A728-53AD-49F9-8BA0-1E72D0AF6A93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.PlaintText", "src\Render\BitzArt.XDoc.PlaintText\BitzArt.XDoc.PlaintText.csproj", "{95283F56-EFD3-4B32-AE26-4E486D186127}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.PlainText", "src\Render\BitzArt.XDoc.PlainText\BitzArt.XDoc.PlainText.csproj", "{95283F56-EFD3-4B32-AE26-4E486D186127}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.PlaintText.Tests", "tests\Render\BitzArt.XDoc.PlaintText.Tests\BitzArt.XDoc.PlaintText.Tests.csproj", "{4F4720A9-8DD2-4DFD-B217-A0FAFC6F60D0}"
 EndProject
