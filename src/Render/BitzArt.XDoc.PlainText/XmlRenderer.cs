@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using System.Text;
 using System.Xml;
 
@@ -11,6 +9,12 @@ namespace Xdoc.Renderer.PlainText;
 /// </summary>
 public class XmlRenderer
 {
+    
+    /// <summary>
+    /// Converts an XML documentation node to the plain text.
+    /// </summary>
+    /// <param name="xmlNode">The XML node to render.</param>
+    /// <returns>A plain text string representation of the XML node, or an empty string if the node is null.</returns>
     public string Render(XmlNode? xmlNode)
     {
         if (xmlNode == null)
@@ -136,7 +140,7 @@ public class XmlRenderer
 
     private string RenderXmlElement(XmlElement element)
     {
-        StringBuilder builder = new StringBuilder();
+        var builder = new StringBuilder();
             
         var crefAttribute = element.Attributes["cref"];
         var nameAttribute = element.Attributes["name"];
@@ -207,22 +211,16 @@ public class XmlRenderer
                 builder.Append("Value: " + ProcessChildren(element).Trim());
                 builder.AppendLine();
                 break;
-
+            
+            case "example":
             case "para":
-                builder.AppendLine();
-                builder.AppendLine();
-                builder.Append(ProcessChildren(element).Trim());
-                builder.AppendLine();
-                builder.AppendLine();
-                break;
-
             case "remarks":
                 builder.AppendLine();
                 builder.AppendLine();
                 builder.Append(ProcessChildren(element).Trim());
                 builder.AppendLine();
                 break;
-
+ 
             case "list":
                 builder.AppendLine();
                 builder.AppendLine();
@@ -266,12 +264,7 @@ public class XmlRenderer
                 builder.AppendLine();
                 break;
 
-            case "example":
-                builder.AppendLine();
-                builder.AppendLine();
-                builder.Append(ProcessChildren(element).Trim());
-                builder.AppendLine();
-                break;
+   
 
             case "c":
                 builder.Append("`" + ProcessChildren(element).Trim() + "`");
