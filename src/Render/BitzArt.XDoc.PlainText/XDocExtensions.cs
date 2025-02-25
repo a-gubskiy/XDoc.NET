@@ -1,6 +1,7 @@
 using System.Text;
 using System.Xml;
 using BitzArt.XDoc;
+using Xdoc.Renderer.PlainText;
 
 namespace Xdoc.Renderer.PlaintText;
 
