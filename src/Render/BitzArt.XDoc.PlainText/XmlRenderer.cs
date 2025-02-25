@@ -32,12 +32,49 @@ public class XmlRenderer
             return string.Empty;
         }
 
+        // Split the input into lines and process
         var lines = input.Split('\n')
             .Select(line => line.TrimEnd())
-            .Where(line => !string.IsNullOrWhiteSpace(line))
             .ToArray();
 
-        return string.Join("\n", lines);
+        // Remove blank lines at the start
+        int startIndex = 0;
+        while (startIndex < lines.Length && string.IsNullOrWhiteSpace(lines[startIndex]))
+        {
+            startIndex++;
+        }
+
+        // Remove blank lines at the end
+        int endIndex = lines.Length - 1;
+        while (endIndex >= 0 && string.IsNullOrWhiteSpace(lines[endIndex]))
+        {
+            endIndex--;
+        }
+
+        // Ensure we don't have an invalid range
+        if (startIndex > endIndex)
+        {
+            return string.Empty;
+        }
+
+        var result = new StringBuilder();
+        bool lastLineWasEmpty = false;
+
+        for (int i = startIndex; i <= endIndex; i++)
+        {
+            bool currentLineIsEmpty = string.IsNullOrWhiteSpace(lines[i]);
+            
+            // Skip consecutive empty lines
+            if (currentLineIsEmpty && lastLineWasEmpty)
+            {
+                continue;
+            }
+            
+            result.AppendLine(lines[i]);
+            lastLineWasEmpty = currentLineIsEmpty;
+        }
+
+        return result.ToString().TrimEnd();
     }
 
     private string ProcessNode(XmlNode node)
@@ -46,7 +83,38 @@ public class XmlRenderer
 
         if (node is XmlText textNode)
         {
-            builder.Append(textNode.Value);
+            // Preserve whitespace in text nodes but trim excessive whitespace
+            var text = textNode.Value;
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                // Manually normalize whitespace without regex
+                StringBuilder cleanedText = new StringBuilder();
+                bool lastWasWhitespace = false;
+                
+                foreach (char c in text)
+                {
+                    if (char.IsWhiteSpace(c))
+                    {
+                        if (!lastWasWhitespace)
+                        {
+                            cleanedText.Append(' ');
+                            lastWasWhitespace = true;
+                        }
+                    }
+                    else
+                    {
+                        cleanedText.Append(c);
+                        lastWasWhitespace = false;
+                    }
+                }
+                
+                builder.Append(cleanedText.ToString());
+            }
+            else
+            {
+                // Add the whitespace directly for empty/whitespace text nodes
+                builder.Append(text);
+            }
         }
         else if (node is XmlElement element)
         {
@@ -54,8 +122,6 @@ public class XmlRenderer
             var nameAttribute = element.Attributes["name"];
             var elementAttribute = element.Attributes["type"];
             
-            var childText = ProcessChildren(element).Trim();
-
             switch (element.Name)
             {
                 case "see":
@@ -84,18 +150,21 @@ public class XmlRenderer
                     break;
 
                 case "param":
-                    builder.Append("\n(Parameter: " + nameAttribute?.Value + ") ");
-                    builder.Append(childText);
+                    builder.AppendLine();
+                    builder.Append("(Parameter: " + nameAttribute?.Value + ") ");
+                    builder.Append(ProcessChildren(element).Trim());
                     builder.AppendLine();
                     break;
 
                 case "returns":
-                    builder.Append("\nReturns: " + childText);
+                    builder.AppendLine();
+                    builder.Append("Returns: " + ProcessChildren(element).Trim());
                     builder.AppendLine();
                     break;
 
                 case "exception":
-                    builder.Append("\nThrows ");
+                    builder.AppendLine();
+                    builder.Append("Throws ");
                     if (crefAttribute != null)
                     {
                         var value = crefAttribute.Value;
@@ -105,27 +174,33 @@ public class XmlRenderer
                         }
                         builder.Append(value);
                     }
-                    builder.Append(": " + childText);
+                    builder.Append(": " + ProcessChildren(element).Trim());
                     builder.AppendLine();
                     break;
 
                 case "value":
-                    builder.Append("\nValue: " + childText);
+                    builder.AppendLine();
+                    builder.Append("Value: " + ProcessChildren(element).Trim());
                     builder.AppendLine();
                     break;
 
                 case "para":
                     builder.AppendLine();
-                    builder.AppendLine(childText);
+                    builder.AppendLine();
+                    builder.Append(ProcessChildren(element).Trim());
+                    builder.AppendLine();
                     builder.AppendLine();
                     break;
 
                 case "remarks":
                     builder.AppendLine();
-                    builder.AppendLine(childText);
+                    builder.AppendLine();
+                    builder.Append(ProcessChildren(element).Trim());
+                    builder.AppendLine();
                     break;
 
                 case "list":
+                    builder.AppendLine();
                     builder.AppendLine();
                     
                     var listType = elementAttribute?.Value;
@@ -147,28 +222,38 @@ public class XmlRenderer
                             builder.AppendLine(prefix + itemText);
                         }
                     }
+                    builder.AppendLine();
                     break;
 
                 case "code":
                     builder.AppendLine();
+                    builder.AppendLine();
                     builder.AppendLine("```");
-                    builder.AppendLine(childText);
+                    
+                    // Get the original XML content to preserve formatting
+                    string codeContent = element.InnerText ?? "";
+                    
+                    // Trim only leading/trailing whitespace, preserve internal structure
+                    builder.Append(codeContent.Trim());
+                    
+                    builder.AppendLine();
                     builder.AppendLine("```");
                     builder.AppendLine();
                     break;
 
                 case "example":
                     builder.AppendLine();
-                    builder.AppendLine(childText);
+                    builder.AppendLine();
+                    builder.Append(ProcessChildren(element).Trim());
                     builder.AppendLine();
                     break;
 
                 case "c":
-                    builder.Append("`" + childText + "`");
+                    builder.Append("`" + ProcessChildren(element).Trim() + "`");
                     break;
 
                 default:
-                    builder.Append(childText);
+                    builder.Append(ProcessChildren(element).Trim());
                     break;
             }
         }
