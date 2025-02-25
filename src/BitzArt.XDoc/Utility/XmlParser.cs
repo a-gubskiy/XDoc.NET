@@ -91,7 +91,7 @@ internal class XmlParser
 
         var propertyDocumentation = new PropertyDocumentation(_source, typeDocumentation, propertyInfo, node);
 
-        typeDocumentation.MemberData.Add(propertyInfo, propertyDocumentation);
+        typeDocumentation.AddMemberData(propertyInfo, propertyDocumentation);
 
         return propertyDocumentation;
     }
@@ -114,7 +114,7 @@ internal class XmlParser
 
         var fieldDocumentation = new FieldDocumentation(_source, typeDocumentation, fieldInfo, node);
 
-        typeDocumentation.MemberData.Add(fieldInfo, fieldDocumentation);
+        typeDocumentation.AddMemberData(fieldInfo, fieldDocumentation);
 
         return fieldDocumentation;
     }
@@ -137,7 +137,7 @@ internal class XmlParser
 
         var methodDocumentation = new MethodDocumentation(_source, typeDocumentation, methodInfo, node);
 
-        typeDocumentation.MemberData.Add(methodInfo, methodDocumentation);
+        typeDocumentation.AddMemberData(methodInfo, methodDocumentation);
 
         return methodDocumentation;
     }
