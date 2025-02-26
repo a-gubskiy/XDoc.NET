@@ -1,90 +1,36 @@
 using System.Xml;
-using TestAssembly.B;
 using Xdoc.Renderer.PlainText;
-using Xdoc.Renderer.PlaintText;
 
 namespace BitzArt.XDoc.PlaintText.Tests;
 
-public class PlainTextRendererTest
+public class XmlRendererTests
 {
     [Fact]
-    public async Task ToPlainText_CheckClass_ReturnNonEmptyResult()
+    public void Render_SimpleXmlDoc_ShouldReturnFormattedText()
     {
-        var xDoc = new XDoc();
-        var type = typeof(Dog);
+        var xml = """
+                  <summary>
+                      Class B Name of specific <see cref="T:TestAssembly.B.Dog" />.
+                      Not all <see cref="T:TestAssembly.A.Animal" />s can have a name.
+                      <example>
+                          Dog: Dog.Name = "Rex"
+                      </example>
+                      <remarks></remarks>
+                      Be carefully with this property.
+                  </summary>
+                  """;
 
-        var str = xDoc.Get(type).ToPlainText();
-
-        Assert.NotEmpty(str);
-    }
-
-    [Fact]
-    public async Task ToPlainText_CheckProperty_ReturnNonEmptyResult()
-    {
-        var xDoc = new XDoc();
-        var type = typeof(Dog);
-        
-        var field1Info = type.GetProperty(nameof(Dog.Field1));
-        var field2Info = type.GetProperty(nameof(Dog.Field2));
-        var nameInfo = type.GetProperty(nameof(Dog.Name));
-        var idInfo = type.GetProperty(nameof(Dog.Id));
-
-        var filed1Comment = xDoc.Get(field1Info!).ToPlainText();
-        var filed2Comment = xDoc.Get(field2Info!).ToPlainText();
-        var nameComment = xDoc.Get(nameInfo!).ToPlainText();
-        var propertyDocumentation = xDoc.Get(idInfo!);
-        var idComment = propertyDocumentation.ToPlainText();
-
-        Assert.NotEmpty(filed1Comment);
-        Assert.NotEmpty(filed2Comment);
-        Assert.NotEmpty(nameComment);
-        Assert.NotEmpty(idComment);
-    }
-
-    [Fact]
-    public async Task ToPlainText_PropertyInfo()
-    {
-        var xDoc = new XDoc();
-        var type = typeof(Dog);
-
-        // var propertyInfo = type.GetProperty(nameof(Dog.Field1));
-        var propertyInfo = type.GetProperty(nameof(Dog.Name));
-
-        var propertyDocumentation = xDoc.Get(propertyInfo!)!;
-
-        var str = propertyDocumentation.ToPlainText();
-        Assert.NotEmpty(str);
-    }
-
-
-    [Fact]
-    public async Task TextXmlRendering()
-    {
-        string xml = """
-                     <summary>
-                         Class B Name of specific <see cref="T:TestAssembly.B.Dog" />.
-                         Not all <see cref="T:TestAssembly.A.Animal" />s can have a name.
-                         <example>
-                             Dog: Dog.Name = "Rex"
-                         </example>
-                         <remarks></remarks>
-                         Be carefully with this property.
-                     </summary>
-                     """;
-
-        XmlDocument xmlDoc = new XmlDocument();
-        xmlDoc.LoadXml(xml);
-
-        XmlNode xmlNode = xmlDoc.DocumentElement; // Get the root node
+        var xmlNode = GetXmlNode(xml);
 
         var xmlRenderer = new XmlRenderer();
         var str = xmlRenderer.Render(xmlNode);
 
-        Assert.NotEmpty(str);
+        Assert.Contains("Class B Name of specific TestAssembly.B.Dog", str);
+        Assert.Contains("Dog: Dog.Name = \"Rex\"", str);
     }
 
     [Fact]
-    public async Task TextXmlRendering2()
+    public void Render_ComplexXmlDoc_ShouldReturnFormattedText()
     {
         string xml = """
                      <summary>
@@ -132,14 +78,25 @@ public class PlainTextRendererTest
                      </summary>
                      """;
 
-        XmlDocument xmlDoc = new XmlDocument();
-        xmlDoc.LoadXml(xml);
-
-        XmlNode xmlNode = xmlDoc.DocumentElement; // Get the root node
+        var xmlNode = GetXmlNode(xml);
 
         var xmlRenderer = new XmlRenderer();
         var str = xmlRenderer.Render(xmlNode);
+        
+        Assert.Contains("```", str);
+        Assert.Contains("– Ensures proper initialization", str);
+        Assert.Contains("This method retrieves a specific MyNamespace.MyClass instance based on the provided id parameter.", str);
+        Assert.Contains("Console.WriteLine($\"Object Name: {obj.Name}\");", str);
+        Assert.Contains("Be careful when using this method with untrusted input", str);
+    }
 
-        Assert.NotEmpty(str);
+    private static XmlNode GetXmlNode(string xml)
+    {
+        var xmlDoc = new XmlDocument();
+        xmlDoc.LoadXml(xml);
+
+        XmlNode xmlNode = xmlDoc.DocumentElement!; // Get the node
+        
+        return xmlNode;
     }
 }

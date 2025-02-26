@@ -52,7 +52,6 @@ public class TestMemberNode
 public enum TestNodeType
 {
     Type,
-
     Field,
     Property,
     Method

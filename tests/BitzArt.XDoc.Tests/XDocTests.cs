@@ -5,7 +5,7 @@ namespace BitzArt.XDoc.Tests;
 public class XDocTests
 {
     [Fact]
-    public void GetDocumentation_ClassWithThreeFields_ShouldReturnMembersInfo()
+    public void Get_ClassWithThreeFields_ShouldReturnMembersInfo()
     {
         var xDoc = new XDoc();
 
@@ -23,7 +23,7 @@ public class XDocTests
     }
 
     [Fact]
-    public void GetDocumentation_PropertyInfo_ShouldReturnPropertyDocumentation()
+    public void Get_PropertyInfo_ShouldReturnPropertyDocumentation()
     {
         var xDoc = new XDoc();
 
@@ -36,7 +36,7 @@ public class XDocTests
     }
 
     [Fact]
-    public void GetDocumentation_FieldInfo_ShouldReturnFieldDocumentation()
+    public void Get_FieldInfo_ShouldReturnFieldDocumentation()
     {
         var xDoc = new XDoc();
 
@@ -50,7 +50,7 @@ public class XDocTests
     }
 
     [Fact]
-    public void GetDocumentation_MethodInfo_ShouldReturnMethodDocumentation()
+    public void Get_MethodInfo_ShouldReturnMethodDocumentation()
     {
         var xDoc = new XDoc();
 
@@ -64,7 +64,7 @@ public class XDocTests
     }
 
     [Fact]
-    public void GetDocumentation__ShouldThrowException()
+    public void Get_ObjectType_ShouldThrowXDocException()
     {
         var xDoc = new XDoc();
 
