@@ -9,7 +9,6 @@ namespace Xdoc.Renderer.PlainText;
 /// </summary>
 public class XmlRenderer
 {
-    
     /// <summary>
     /// Converts an XML documentation node to the plain text.
     /// </summary>
@@ -24,100 +23,45 @@ public class XmlRenderer
 
         var text = ProcessNode(xmlNode);
         var normalizedText = Normalize(text);
-        
+
         return normalizedText;
     }
 
     /// <summary>
     /// Normalize the input string by removing extra empty lines and trimming each line.
     /// </summary>
-    public static string Normalize(string input)
+    internal static string Normalize(string input)
     {
         if (string.IsNullOrWhiteSpace(input))
         {
             return string.Empty;
         }
 
-        // Split the input into lines and process
         var lines = input.Split('\n')
             .Select(line => line.TrimEnd())
             .ToList();
 
-        var startIndex = GetStartIndex(lines);
-        var endIndex = GetEndIndex(lines);
-
-        if (startIndex > endIndex)
-        {
-            throw new ArgumentException("Invalid text range: start index cannot be greater than end index.", nameof(input));
-        }
-
         var builder = new StringBuilder();
-        
+
         var lastLineWasEmpty = false;
 
-        for (var i = startIndex; i <= endIndex; i++)
+        foreach (var line in lines)
         {
-            var line = lines[i];
-            
             var currentLineIsEmpty = string.IsNullOrWhiteSpace(line);
-            
+
             if (currentLineIsEmpty && lastLineWasEmpty)
             {
                 continue;
             }
-            
+
             builder.AppendLine(line);
-            
+
             lastLineWasEmpty = currentLineIsEmpty;
         }
 
-        var result = builder.ToString().TrimEnd();
-        
+        var result = builder.ToString().Trim();
+
         return result;
-    }
-
-    /// <summary>
-    /// Gets the index of the first non-empty line in the list of strings.
-    /// </summary>
-    /// <param name="lines">The list of strings to process.</param>
-    /// <returns>The index of the first non-empty line, or the list count if all lines are empty.</returns>
-    /// <example>
-    /// For input ["", "text", "", ""], returns 1
-    /// For input ["", "", ""], returns 3
-    /// </example>
-    private static int GetStartIndex(IReadOnlyCollection<string> lines)
-    {
-        var startIndex = 0;
-        var line = lines.ElementAt(startIndex);
-        
-        while (startIndex < lines.Count && string.IsNullOrWhiteSpace(line))
-        {
-            startIndex++;
-        }
-
-        return startIndex;
-    }
-
-    /// <summary>
-    /// Gets the index of the last non-empty line in the list of strings.
-    /// </summary>
-    /// <param name="lines">The list of strings to process.</param>
-    /// <returns>The index of the last non-empty line, or -1 if all lines are empty or the list is empty.</returns>
-    /// <example>
-    /// For input ["", "text", "", ""], returns 1
-    /// For input ["", "", ""], returns -1
-    /// </example>
-    private static int GetEndIndex(IReadOnlyCollection<string> lines)
-    {
-        var endIndex = lines.Count - 1;
-        var line = lines.ElementAt(endIndex);
-        
-        while (endIndex >= 0 && string.IsNullOrWhiteSpace(line))
-        {
-            endIndex--;
-        }
-
-        return endIndex;
     }
 
     /// <summary>
@@ -127,173 +71,246 @@ public class XmlRenderer
     /// <returns>A string containing the plain text representation of the node and its children.</returns>
     private string ProcessNode(XmlNode node)
     {
-        var builder = new StringBuilder();
-
         if (node is XmlText textNode)
         {
-            builder.Append(RenderTextNode(textNode));
-        }
-        else if (node is XmlElement element)
-        {
-            builder.Append(RenderXmlElement(element));
+            return RenderTextNode(textNode);
         }
 
-        var result = builder.ToString();
-        
-        return result;
+        if (node is XmlElement element)
+        {
+            return RenderXmlElement(element);
+        }
+
+        return string.Empty;
     }
 
-    private string RenderXmlElement(XmlElement element)
+    internal string RenderXmlElement(XmlElement element)
     {
-        var builder = new StringBuilder();
-            
-        var crefAttribute = element.Attributes["cref"];
-        var nameAttribute = element.Attributes["name"];
-        var elementAttribute = element.Attributes["type"];
-            
         switch (element.Name)
         {
             case "see":
             case "seealso":
-                if (crefAttribute != null)
-                {
-                    var crefValue = crefAttribute.Value;
-                    if (crefValue.StartsWith("T:"))
-                    {
-                        crefValue = crefValue[2..];
-                    }
-                    builder.Append(crefValue);
-                }
-                break;
-
+                return RenderSeeBlock(element);
+    
             case "paramref":
             case "typeparamref":
-                if (nameAttribute != null)
-                {
-                    builder.Append(nameAttribute.Value);
-                }
-                break;
-
+                return RenderRefBlock(element);
+    
             case "typeparam":
-                builder.Append($"(Type: {nameAttribute?.Value}) ");
-                break;
-
+                return RenderTypeParamBlock(element);
+    
             case "param":
-                builder.AppendLine();
-                builder.Append("(Parameter: " + nameAttribute?.Value + ") ");
-                builder.Append(ProcessChildren(element).Trim());
-                builder.AppendLine();
-                break;
-
+                return RenderParamBlock(element);
+    
             case "returns":
-                builder.AppendLine();
-                builder.Append("Returns: " + ProcessChildren(element).Trim());
-                builder.AppendLine();
-                break;
-
+                return RenderReturnsBlock(element);
+    
             case "exception":
-                builder.AppendLine();
-                builder.Append("Throws ");
-                    
-                if (crefAttribute != null)
-                {
-                    var value = crefAttribute.Value;
-                        
-                    if (value.StartsWith("T:"))
-                    {
-                        value = value[2..];
-                    }
-                        
-                    builder.Append(value);
-                }
-                    
-                builder.Append(": " + ProcessChildren(element).Trim());
-                builder.AppendLine();
-                break;
-
+                return RenderExceptionBlock(element);
+    
             case "value":
-                builder.AppendLine();
-                builder.Append("Value: " + ProcessChildren(element).Trim());
-                builder.AppendLine();
-                break;
-            
+                return RenderValueBlock(element);
+    
+            case "list":
+                return RenderListBlock(element);
+    
+            case "code":
+                return RenderCodeBlock(element);
+    
+            case "c":
+                return RenderCBlock(element);
+    
             case "example":
             case "para":
             case "remarks":
-                builder.AppendLine();
-                builder.AppendLine();
-                builder.Append(ProcessChildren(element).Trim());
-                builder.AppendLine();
-                break;
- 
-            case "list":
-                builder.AppendLine();
-                builder.AppendLine();
-                    
-                var listType = elementAttribute?.Value;
-                    
-                foreach (XmlNode child in element.ChildNodes)
-                {
-                    if (child.Name != "item")
-                    {
-                        continue;
-                    }
-                        
-                    var itemText = ProcessChildren(child).Trim();
-                            
-                    var prefix = listType switch
-                    {
-                        "number" => "1. ",
-                        "bullet" => "– ",
-                        "table" => "* ",
-                        _ => "– "
-                    };
-                            
-                    builder.AppendLine(prefix + itemText);
-                }
-                    
-                builder.AppendLine();
-                break;
-
-            case "code":
-                builder.AppendLine();
-                builder.AppendLine();
-                builder.AppendLine("```");
-                    
-                var codeContent = element.InnerText ?? "";
-                    
-                builder.Append(codeContent);
-                    
-                builder.AppendLine();
-                builder.AppendLine("```");
-                builder.AppendLine();
-                break;
-
-   
-
-            case "c":
-                builder.Append("`" + ProcessChildren(element).Trim() + "`");
-                break;
-
             default:
-                builder.Append(ProcessChildren(element).Trim());
-                break;
+                return RenderDefaultBlock(element);
         }
-
-        var result = builder.ToString();
-        
-        return result;
     }
 
-    private static string RenderTextNode(XmlText textNode)
+    internal string RenderDefaultBlock(XmlElement element)
     {
-        var builder = new StringBuilder(); 
+        var builder = new StringBuilder();
+
+        builder.AppendLine();
+        builder.Append(ProcessChildren(element).Trim());
+
+        return builder.ToString();
+    }
+
+    internal string RenderCBlock(XmlElement element)
+    {
+        return "`" + ProcessChildren(element).Trim() + "`";
+    }
+
+    internal string RenderReturnsBlock(XmlElement element)
+    {
+        var builder = new StringBuilder();
+        builder.AppendLine();
+        builder.Append("Returns: " + ProcessChildren(element).Trim());
+        builder.AppendLine();
+
+        return builder.ToString();
+    }
+
+    internal string RenderTypeParamBlock(XmlElement element)
+    {
+        var nameAttribute = element.Attributes["name"];
+
+        if (nameAttribute != null)
+        {
+            return $"(Type: {nameAttribute?.Value}) ";
+        }
+
+        return string.Empty;
+    }
+
+    internal string RenderRefBlock(XmlElement element)
+    {
+        var nameAttribute = element.Attributes["name"];
+
+        if (nameAttribute != null)
+        {
+            return nameAttribute.Value;
+        }
+
+        return string.Empty;
+    }
+
+    internal string RenderValueBlock(XmlElement element)
+    {
+        var builder = new StringBuilder();
+        builder.AppendLine();
+        builder.Append("Value: " + ProcessChildren(element).Trim());
+        builder.AppendLine();
+
+        return builder.ToString();
+    }
+
+    internal string RenderParamBlock(XmlElement element)
+    {
+        var builder = new StringBuilder();
+
+        var nameAttribute = element.Attributes["name"];
+
+        builder.AppendLine();
+        builder.Append("(Parameter: " + nameAttribute?.Value + ") ");
+        builder.Append(ProcessChildren(element).Trim());
+        builder.AppendLine();
+
+        return builder.ToString();
+    }
+
+    internal string RenderCodeBlock(XmlElement element)
+    {
+        var builder = new StringBuilder();
+
+        builder.AppendLine();
+        builder.AppendLine();
+        builder.AppendLine("```");
+
+        var codeContent = element.InnerText ?? "";
+
+        builder.Append(codeContent);
+
+        builder.AppendLine();
+        builder.AppendLine("```");
+        builder.AppendLine();
+
+        return builder.ToString();
+    }
+
+    internal string RenderListBlock(XmlElement element)
+    {
+        var builder = new StringBuilder();
+
+        builder.AppendLine();
+        builder.AppendLine();
+
+        var elementAttribute = element.Attributes["type"];
+        var listType = elementAttribute?.Value;
+
+        foreach (XmlNode child in element.ChildNodes)
+        {
+            if (child.Name != "item")
+            {
+                continue;
+            }
+
+            var itemText = ProcessChildren(child).Trim();
+
+            var prefix = listType switch
+            {
+                "number" => "1. ",
+                "bullet" => "– ",
+                "table" => "* ",
+                _ => "– "
+            };
+
+            builder.AppendLine(prefix + itemText);
+        }
+
+        builder.AppendLine();
+
+        return builder.ToString();
+    }
+
+    internal string RenderExceptionBlock(XmlElement element)
+    {
+        var crefAttribute = element.Attributes["cref"];
+
+        var builder = new StringBuilder();
+
+        builder.AppendLine();
+        builder.Append("Throws ");
+
+        if (crefAttribute != null)
+        {
+            var value = crefAttribute.Value;
+
+            if (value.StartsWith("T:"))
+            {
+                value = value[2..];
+            }
+
+            builder.Append(value);
+        }
+
+        builder.Append(": " + ProcessChildren(element).Trim());
+        builder.AppendLine();
+
+        return builder.ToString();
+    }
+
+    internal string RenderSeeBlock(XmlElement element)
+    {
+        var crefAttribute = element.Attributes["cref"];
+
+        if (crefAttribute != null)
+        {
+            var crefValue = crefAttribute.Value;
+
+            if (crefValue.StartsWith("T:"))
+            {
+                crefValue = crefValue[2..];
+            }
+
+            return crefValue;
+        }
+
+        return string.Empty;
+    }
+
+    internal static string RenderTextNode(XmlText textNode)
+    {
+        var builder = new StringBuilder();
 
         if (!string.IsNullOrWhiteSpace(textNode.Value))
         {
+            //Refactor it or remove
             var cleanedText = new StringBuilder();
             var lastWasWhitespace = false;
-                
+
             foreach (var c in textNode.Value)
             {
                 if (char.IsWhiteSpace(c))
@@ -310,7 +327,7 @@ public class XmlRenderer
                     lastWasWhitespace = false;
                 }
             }
-                
+
             builder.Append(cleanedText.ToString());
         }
         else
@@ -324,14 +341,14 @@ public class XmlRenderer
     private string ProcessChildren(XmlNode node)
     {
         var builder = new StringBuilder();
-        
+
         foreach (XmlNode child in node.ChildNodes)
         {
             builder.Append(ProcessNode(child));
         }
 
         var result = builder.ToString();
-        
+
         return result;
     }
 }

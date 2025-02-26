@@ -11,7 +11,7 @@ public sealed class TypeDocumentation
 {
     private ParsedContent? _parsedContent;
     
-    private readonly Dictionary<MemberInfo, IMemberDocumentation> _memberData;
+    private readonly Dictionary<string, IMemberDocumentation> _memberData;
 
     internal XDoc Source { get; private init; }
 
@@ -27,7 +27,7 @@ public sealed class TypeDocumentation
     /// <summary>
     /// List of members declared by this <see cref="Type"/>.
     /// </summary>
-    internal IReadOnlyDictionary<MemberInfo, IMemberDocumentation> MemberData => _memberData.ToFrozenDictionary();
+    internal IReadOnlyDictionary<string, IMemberDocumentation> MemberData => _memberData.ToFrozenDictionary();
 
     internal TypeDocumentation(XDoc source, Type type, XmlNode? node)
     {
@@ -76,7 +76,7 @@ public sealed class TypeDocumentation
     {
         var memberInfo = Validate(member);
 
-        return _memberData.GetValueOrDefault(memberInfo);
+        return _memberData.GetValueOrDefault(memberInfo.Name);
     }
 
     private TMember Validate<TMember>(TMember member)
@@ -102,6 +102,6 @@ public sealed class TypeDocumentation
     internal void AddMemberData<T>(MemberInfo memberInfo, MemberDocumentation<T> documentation) 
         where T : MemberInfo
     {
-        _memberData.Add(memberInfo, documentation);
+        _memberData.Add(memberInfo.Name, documentation);
     }
 }
