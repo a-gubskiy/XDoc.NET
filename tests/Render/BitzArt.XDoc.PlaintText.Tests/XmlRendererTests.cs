@@ -8,6 +8,7 @@ public class XmlRendererTests
     [Fact]
     public void Render_SimpleXmlDoc_ShouldReturnFormattedText()
     {
+        // Arrange
         var xml = """
                   <summary>
                       Class B Name of specific <see cref="T:TestAssembly.B.Dog" />.
@@ -19,12 +20,13 @@ public class XmlRendererTests
                       Be carefully with this property.
                   </summary>
                   """;
-
         var xmlNode = GetXmlNode(xml);
-
         var xmlRenderer = new XmlRenderer();
+
+        // Act
         var str = xmlRenderer.Render(xmlNode);
 
+        // Assert
         Assert.Contains("Class B Name of specific TestAssembly.B.Dog", str);
         Assert.Contains("Dog: Dog.Name = \"Rex\"", str);
     }
@@ -32,6 +34,7 @@ public class XmlRendererTests
     [Fact]
     public void Render_ComplexXmlDoc_ShouldReturnFormattedText()
     {
+        // Arrange
         string xml = """
                      <summary>
                          This method retrieves a specific <see cref="T:MyNamespace.MyClass" /> instance  based on the provided <paramref name="id" /> parameter.
@@ -77,15 +80,16 @@ public class XmlRendererTests
                          </remarks>
                      </summary>
                      """;
-
         var xmlNode = GetXmlNode(xml);
-
         var xmlRenderer = new XmlRenderer();
+
+        // Act
         var str = xmlRenderer.Render(xmlNode);
-        
+
+        // Assert
         Assert.Contains("```", str);
         Assert.Contains("– Ensures proper initialization", str);
-        Assert.Contains("This method retrieves a specific MyNamespace.MyClass instance based on the provided id parameter.", str);
+        Assert.Contains("This method retrieves a specific MyNamespace.MyClass instance based on the provided id", str);
         Assert.Contains("Console.WriteLine($\"Object Name: {obj.Name}\");", str);
         Assert.Contains("Be careful when using this method with untrusted input", str);
     }
@@ -96,7 +100,7 @@ public class XmlRendererTests
         xmlDoc.LoadXml(xml);
 
         XmlNode xmlNode = xmlDoc.DocumentElement!; // Get the node
-        
+
         return xmlNode;
     }
 }

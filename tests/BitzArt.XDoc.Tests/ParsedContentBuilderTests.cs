@@ -28,7 +28,7 @@ public class ParsedContentBuilderTests
         // Assert
         Assert.Equal("SimpleClass", result.Name);
         Assert.Null(result.Parent);
-        Assert.Empty(result.DeclaredReferences);
+        Assert.Empty(result.References);
         Assert.NotNull(result.Xml);
     }
 
@@ -59,8 +59,8 @@ public class ParsedContentBuilderTests
         var result = _builder.Build(typeDoc);
 
         // Assert
-        Assert.NotEmpty(result.DeclaredReferences);
-        Assert.Equal("SimpleClass", result.DeclaredReferences.First());
+        Assert.NotEmpty(result.References);
+        Assert.Equal("SimpleClass", result.References.Keys.First());
     }
     
     private XmlNode CreateXmlNode(string xml)

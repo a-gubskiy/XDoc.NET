@@ -39,14 +39,12 @@ public class ParsedContentBuilder
         where TMember : MemberInfo
     {
         var parent = GetParent(xmlNode, xDoc, memberInfo);
-        var declaredReferences = GetDeclaredReferences(xmlNode);
-        var references = GetReferences(declaredReferences, xDoc);
+        var references = GetReferences(xmlNode, xDoc);
 
         return new ParsedContent
         {
             Parent = parent,
-            ResolvedReferences = references,
-            DeclaredReferences = declaredReferences,
+            References = references,
             Xml = xmlNode,
             Name = memberInfo.Name,
         };
@@ -55,43 +53,43 @@ public class ParsedContentBuilder
     private ParsedContent GetParsedContent(XmlNode? xmlNode, XDoc xDoc, Type type)
     {
         var parent = GetParent(xmlNode, xDoc, type);
-        var declaredReferences = GetDeclaredReferences(xmlNode);
-        var references = GetReferences(declaredReferences, xDoc);
+        var references = GetReferences(xmlNode, xDoc);
 
         return new ParsedContent
         {
             Parent = parent,
-            ResolvedReferences = references,
-            DeclaredReferences = declaredReferences,
+            References = references,
             Xml = xmlNode,
             Name = type.Name
         };
     }
 
-    private IReadOnlyCollection<ParsedContent> GetReferences(IReadOnlyCollection<string> declaredReferences, XDoc xDoc)
+    private IReadOnlyDictionary<string, ParsedContent?> GetReferences(XmlNode? node, XDoc xDoc)
     {
-        var references = new List<ParsedContent>();
+        var references = new Dictionary<string, ParsedContent?>();
+
+        var declaredReferences = GetDeclaredReferences(node);
 
         foreach (var typeName in declaredReferences)
         {
             var type = GetTypeInfo(typeName);
 
-            if (type == null)
+            if (type != null)
             {
-                continue;
+                var typeDocumentation = xDoc.Get(type);
+
+                references.Add(typeName, new ParsedContent
+                {
+                    Name = type.Name,
+                    Xml = typeDocumentation?.Node,
+                    References = GetReferences(typeDocumentation?.Node, xDoc),
+                    Parent = GetParent(typeDocumentation?.Node, xDoc, type)
+                });
             }
-
-            var typeDocumentation = xDoc.Get(type);
-            var typeDeclaredReferences = GetDeclaredReferences(typeDocumentation?.Node);
-
-            references.Add(new ParsedContent
+            else
             {
-                Name = type.Name,
-                Xml = typeDocumentation?.Node,
-                ResolvedReferences = GetReferences(typeDeclaredReferences, xDoc),
-                DeclaredReferences = typeDeclaredReferences,
-                Parent = GetParent(typeDocumentation?.Node, xDoc, type)
-            });
+                references.Add(typeName, null);
+            }
         }
 
         return references;
@@ -144,23 +142,10 @@ public class ParsedContentBuilder
         }
 
         var parentTypeDocumentation = xDoc.Get(type.BaseType);
-        
+
         var parsedContent = GetParsedContent(parentTypeDocumentation?.Node, xDoc, type.BaseType);
 
         return parsedContent;
-
-        // new ParsedContent
-        // {
-        //     Name = ,
-        //     References = ,
-        //     Xml = ,
-        //     DeclaredReferences = ,
-        //     Parent = ,
-        // };
-        //
-        // var parent = GetParent(parentTypeDocumentation?.Node, xDoc, type.BaseType);
-        //
-        // return parent;
     }
 
     /// <summary>
@@ -191,25 +176,27 @@ public class ParsedContentBuilder
                             continue;
                         }
 
-                        var declaredReferences = GetDeclaredReferences(parentPropertyDocumentation.Node);
-                        var references = GetReferences(declaredReferences, xDoc);
-                        var parentMemberParent = GetParent(parentPropertyDocumentation.Node, xDoc, parentPropertyDocumentation.DeclaringType);
+                        var parentMemberParent = GetParent(
+                            parentPropertyDocumentation.Node,
+                            xDoc,
+                            parentPropertyDocumentation.DeclaringType);
 
                         return new ParsedContent
                         {
                             Name = memberInfo.Name,
                             Xml = parentPropertyDocumentation.Node,
-                            ResolvedReferences = references,
-                            DeclaredReferences = declaredReferences,
+                            References = GetReferences(parentPropertyDocumentation?.Node, xDoc),
                             Parent = parentMemberParent
                         };
                     }
                     else if (parentMember is FieldInfo parentFieldInfo)
                     {
+                        // TODO: implement later
                         // xDoc.Get(parentFieldInfo);
                     }
                     else if (parentMember is MethodInfo parentMethodInfo)
                     {
+                        // TODO: implement later
                         // xDoc.Get(parentMethodInfo);
                     }
                 }

@@ -9,20 +9,21 @@ namespace BitzArt.XDoc;
 public record ParsedContent
 {
     /// <summary>
-    /// List of resolved references to other parsed content.
+    /// List of references.
+    /// If references are not found, the dictionary will be empty.
+    /// If reference is found, the dictionary will contain the reference name and the parsed content.
+    /// If the reference is not resolved, the value will be null.
     /// </summary>
-    public required IReadOnlyCollection<ParsedContent> ResolvedReferences { get; init; }
-
-    /// <summary>
-    /// List of references declared in the XML node.
-    /// </summary>
-    public required IReadOnlyCollection<string> DeclaredReferences { get; init; }
+    public required IReadOnlyDictionary<string, ParsedContent?> References { get; init; }
 
     /// <summary>
     /// XML node from which the content was parsed.
     /// </summary>
     public required XmlNode? Xml { get; init; }
 
+    /// <summary>
+    /// Name of the parsed content.
+    /// </summary>
     public required string Name { get; init; }
 
     /// <summary>
@@ -33,8 +34,8 @@ public record ParsedContent
     public ParsedContent()
     {
         Parent = null;
-        ResolvedReferences = ImmutableList<ParsedContent>.Empty;
+        References = ImmutableDictionary<string, ParsedContent?>.Empty;
     }
 
-    public override string ToString() => $"{Name} (References: {ResolvedReferences.Count}, Parent: {Parent?.Name ?? "None"})";
+    public override string ToString() => $"{Name} (References: {References.Count}, Parent: {Parent?.Name ?? "None"})";
 }
