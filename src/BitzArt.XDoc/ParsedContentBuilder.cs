@@ -39,52 +39,41 @@ public class ParsedContentBuilder
         where TMember : MemberInfo
     {
         var parent = GetParent(xmlNode, xDoc, memberInfo);
-        var references = GetReferences(xmlNode, xDoc);
+        var declaredReferences = GetDeclaredReferences(xmlNode);
+        var references = GetReferences(declaredReferences, xDoc);
 
         return new ParsedContent
         {
             Parent = parent,
-            References = references,
+            ResolvedReferences = references,
+            DeclaredReferences = declaredReferences,
             Xml = xmlNode,
-            Name = memberInfo.Name
+            Name = memberInfo.Name,
         };
     }
 
     private ParsedContent GetParsedContent(XmlNode? xmlNode, XDoc xDoc, Type type)
     {
         var parent = GetParent(xmlNode, xDoc, type);
-        var references = GetReferences(xmlNode, xDoc);
+        var declaredReferences = GetDeclaredReferences(xmlNode);
+        var references = GetReferences(declaredReferences, xDoc);
 
         return new ParsedContent
         {
             Parent = parent,
-            References = references,
+            ResolvedReferences = references,
+            DeclaredReferences = declaredReferences,
             Xml = xmlNode,
             Name = type.Name
         };
     }
 
-    private IReadOnlyCollection<ParsedContent> GetReferences(XmlNode? xmlNode, XDoc xDoc)
+    private IReadOnlyCollection<ParsedContent> GetReferences(IReadOnlyCollection<string> declaredReferences, XDoc xDoc)
     {
-        if (xmlNode == null || string.IsNullOrWhiteSpace(xmlNode.InnerXml))
-        {
-            return ImmutableList<ParsedContent>.Empty;
-        }
-
-        var doc = XDocument.Parse(xmlNode.InnerXml);
-
-        var refs = doc.Descendants("see")
-            .Select(e => e.Attribute("cref")?.Value)
-            .Where(value => !string.IsNullOrWhiteSpace(value))
-            .Select(o => o!)
-            .Distinct()
-            .ToList();
-
         var references = new List<ParsedContent>();
 
-        foreach (var r in refs)
+        foreach (var typeName in declaredReferences)
         {
-            var typeName = r.Substring(2, r.Length - 2);
             var type = GetTypeInfo(typeName);
 
             if (type == null)
@@ -93,12 +82,14 @@ public class ParsedContentBuilder
             }
 
             var typeDocumentation = xDoc.Get(type);
+            var typeDeclaredReferences = GetDeclaredReferences(typeDocumentation?.Node);
 
             references.Add(new ParsedContent
             {
                 Name = type.Name,
                 Xml = typeDocumentation?.Node,
-                References = GetReferences(typeDocumentation?.Node, xDoc),
+                ResolvedReferences = GetReferences(typeDeclaredReferences, xDoc),
+                DeclaredReferences = typeDeclaredReferences,
                 Parent = GetParent(typeDocumentation?.Node, xDoc, type)
             });
         }
@@ -106,6 +97,35 @@ public class ParsedContentBuilder
         return references;
     }
 
+    /// <summary>
+    /// Retrieves a collection of declared references from an XML documentation node.
+    /// </summary>
+    /// <param name="xmlNode"></param>
+    /// <returns></returns>
+    internal IReadOnlyCollection<string> GetDeclaredReferences(XmlNode? xmlNode)
+    {
+        if (xmlNode == null || string.IsNullOrWhiteSpace(xmlNode.InnerXml))
+        {
+            return ImmutableList<string>.Empty;
+        }
+
+        var doc = XDocument.Parse(xmlNode.InnerXml);
+
+        var refs = doc.Descendants("see")
+            .Select(e => e.Attribute("cref")?.Value)
+            .Where(value => !string.IsNullOrWhiteSpace(value))
+            .Select(o => o.Substring(2, o.Length - 2))
+            .Distinct()
+            .ToImmutableList();
+
+        return refs;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="typeName"></param>
+    /// <returns></returns>
     private Type? GetTypeInfo(string typeName)
     {
         var type = AppDomain.CurrentDomain
@@ -124,10 +144,23 @@ public class ParsedContentBuilder
         }
 
         var parentTypeDocumentation = xDoc.Get(type.BaseType);
+        
+        var parsedContent = GetParsedContent(parentTypeDocumentation?.Node, xDoc, type.BaseType);
 
-        var parent = GetParent(parentTypeDocumentation?.Node, xDoc, type.BaseType);
+        return parsedContent;
 
-        return parent;
+        // new ParsedContent
+        // {
+        //     Name = ,
+        //     References = ,
+        //     Xml = ,
+        //     DeclaredReferences = ,
+        //     Parent = ,
+        // };
+        //
+        // var parent = GetParent(parentTypeDocumentation?.Node, xDoc, type.BaseType);
+        //
+        // return parent;
     }
 
     /// <summary>
@@ -158,14 +191,16 @@ public class ParsedContentBuilder
                             continue;
                         }
 
-                        var references = GetReferences(parentPropertyDocumentation.Node, xDoc);
+                        var declaredReferences = GetDeclaredReferences(parentPropertyDocumentation.Node);
+                        var references = GetReferences(declaredReferences, xDoc);
                         var parentMemberParent = GetParent(parentPropertyDocumentation.Node, xDoc, parentPropertyDocumentation.DeclaringType);
 
                         return new ParsedContent
                         {
                             Name = memberInfo.Name,
                             Xml = parentPropertyDocumentation.Node,
-                            References = references,
+                            ResolvedReferences = references,
+                            DeclaredReferences = declaredReferences,
                             Parent = parentMemberParent
                         };
                     }

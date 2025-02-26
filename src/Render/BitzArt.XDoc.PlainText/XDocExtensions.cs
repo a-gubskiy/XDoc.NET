@@ -53,7 +53,7 @@ public static class XDocExtensions
             builder.AppendLine(Renderer.Render(parsedContent.Xml));
         }
 
-        if (parsedContent.References.Any())
+        if (parsedContent.ResolvedReferences.Any())
         {
             builder.Append(RenderReference(parsedContent));
         }
@@ -68,7 +68,7 @@ public static class XDocExtensions
         builder.AppendLine();
         builder.AppendLine("References: ");
 
-        foreach (var reference in parsedContent.References)
+        foreach (var reference in parsedContent.ResolvedReferences)
         {
             builder.AppendLine($" – {reference.Name}");
             builder.AppendLine(ToPlainText(reference));

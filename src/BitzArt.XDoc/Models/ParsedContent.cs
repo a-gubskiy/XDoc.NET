@@ -9,16 +9,21 @@ namespace BitzArt.XDoc;
 public record ParsedContent
 {
     /// <summary>
-    /// List of references to other parsed content.
+    /// List of resolved references to other parsed content.
     /// </summary>
-    public IReadOnlyCollection<ParsedContent> References { get; init; }
+    public required IReadOnlyCollection<ParsedContent> ResolvedReferences { get; init; }
+
+    /// <summary>
+    /// List of references declared in the XML node.
+    /// </summary>
+    public required IReadOnlyCollection<string> DeclaredReferences { get; init; }
 
     /// <summary>
     /// XML node from which the content was parsed.
     /// </summary>
     public required XmlNode? Xml { get; init; }
 
-    public required string Name { get; set; }
+    public required string Name { get; init; }
 
     /// <summary>
     /// Parent of the parsed content.
@@ -28,8 +33,8 @@ public record ParsedContent
     public ParsedContent()
     {
         Parent = null;
-        References = ImmutableList<ParsedContent>.Empty;
+        ResolvedReferences = ImmutableList<ParsedContent>.Empty;
     }
 
-    public override string ToString() => $"{Name} (References: {References.Count}, Parent: {Parent?.Name ?? "None"})";
+    public override string ToString() => $"{Name} (References: {ResolvedReferences.Count}, Parent: {Parent?.Name ?? "None"})";
 }
