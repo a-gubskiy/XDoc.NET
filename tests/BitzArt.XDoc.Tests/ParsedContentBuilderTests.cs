@@ -4,12 +4,10 @@ namespace BitzArt.XDoc.Tests;
 
 public class ParsedContentBuilderTests
 {
-    private readonly ParsedContentBuilder _builder;
     private readonly XDoc _xDoc;
 
     public ParsedContentBuilderTests()
     {
-        _builder = new ParsedContentBuilder();
         _xDoc = new XDoc();
     }
 
@@ -23,12 +21,12 @@ public class ParsedContentBuilderTests
             CreateXmlNode("<doc><summary>Simple class</summary></doc>"));
 
         // Act
-        var result = _builder.Build(typeDoc);
+        var result = ParsedContentBuilder.Build(typeDoc);
 
         // Assert
         Assert.Equal("SimpleClass", result.Name);
         Assert.Null(result.Parent);
-        Assert.Empty(result.References);
+        Assert.Empty(result.GetReferences());
         Assert.NotNull(result.Xml);
     }
 
@@ -39,7 +37,7 @@ public class ParsedContentBuilderTests
         var typeDoc = new TypeDocumentation(_xDoc, typeof(DerivedClass), CreateXmlNode("<doc><inheritdoc/></doc>"));
 
         // Act
-        var result = _builder.Build(typeDoc);
+        var result = ParsedContentBuilder.Build(typeDoc);
 
         // Assert
         Assert.Equal("DerivedClass", result.Name);
@@ -56,11 +54,11 @@ public class ParsedContentBuilderTests
             CreateXmlNode("<doc><summary>See <see cref=\"T:SimpleClass\"/></summary></doc>"));
 
         // Act
-        var result = _builder.Build(typeDoc);
+        var result = ParsedContentBuilder.Build(typeDoc);
 
         // Assert
-        Assert.NotEmpty(result.References);
-        Assert.Equal("SimpleClass", result.References.Keys.First());
+        Assert.NotEmpty(result.GetReferences());
+        Assert.Equal("SimpleClass", result.GetReferences().Keys.First());
     }
     
     private XmlNode CreateXmlNode(string xml)

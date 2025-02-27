@@ -10,13 +10,13 @@ namespace BitzArt.XDoc;
 public sealed class TypeDocumentation
 {
     private ParsedContent? _parsedContent;
-    
+
     private readonly Dictionary<MemberInfo, IMemberDocumentation> _memberData;
 
     internal XDoc Source { get; private init; }
 
     internal XmlNode? Node { get; private init; }
-    
+
     public ParsedContent ParsedContent => _parsedContent ??= Resolve();
 
     /// <summary>
@@ -40,9 +40,7 @@ public sealed class TypeDocumentation
 
     internal ParsedContent Resolve()
     {
-        var builder = new ParsedContentBuilder();
-
-        var parsedContent = builder.Build(this);
+        var parsedContent = ParsedContentBuilder.Build(this);
 
         return parsedContent;
     }
@@ -52,10 +50,8 @@ public sealed class TypeDocumentation
     /// </summary>
     /// <param name="property">The <see cref="PropertyInfo"/> to retrieve documentation for.</param>
     /// <returns><see cref="PropertyDocumentation"/> for the specified <see cref="PropertyInfo"/> if available; otherwise, <see langword="null"/>.</returns>
-    public PropertyDocumentation? GetDocumentation(PropertyInfo property)
-    {
-        return (PropertyDocumentation?)GetDocumentation<PropertyInfo>(property);
-    }
+    public PropertyDocumentation? GetDocumentation(PropertyInfo property) 
+        => (PropertyDocumentation?)GetDocumentation<PropertyInfo>(property);
 
     /// <summary>
     /// Gets the documentation for a <see cref="MethodInfo"/> declared by this <see cref="Type"/>.
@@ -91,11 +87,6 @@ public sealed class TypeDocumentation
 
         if (member.DeclaringType != member.ReflectedType)
         {
-            // if (member is PropertyInfo propertyInfo)
-            // {
-            //     throw new InvalidOperationException($"The provided property '{propertyInfo.Name}' is not declared by this type.");
-            // }
-
             return member switch
             {
                 PropertyInfo propertyInfo => (TMember)(MemberInfo)member.DeclaringType.GetProperty(propertyInfo.Name)!,
@@ -115,7 +106,7 @@ public sealed class TypeDocumentation
     /// <param name="memberInfo"></param>
     /// <param name="documentation"></param>
     /// <typeparam name="T"></typeparam>
-    internal void AddMemberData<T>(MemberInfo memberInfo, MemberDocumentation<T> documentation) 
+    internal void AddMemberData<T>(MemberInfo memberInfo, MemberDocumentation<T> documentation)
         where T : MemberInfo
     {
         _memberData.Add(memberInfo, documentation);

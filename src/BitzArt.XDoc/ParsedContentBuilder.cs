@@ -16,15 +16,15 @@ namespace BitzArt.XDoc;
 /// - Resolving XML documentation inheritance chains
 /// - Processing XML documentation references
 /// </remarks>
-public class ParsedContentBuilder
+internal static class ParsedContentBuilder
 {
     /// <summary>
     /// Builds a ParsedContent object from <see cref="TypeDocumentation"/>  by processing its XML documentation and resolving references.
     /// </summary>
     /// <param name="typeDocumentation">The type documentation containing XML nodes and type information.</param>
     /// <returns>A ParsedContent object containing resolved documentation, references and inheritance chain.</returns>
-    public ParsedContent Build(TypeDocumentation typeDocumentation) =>
-        GetParsedContent(typeDocumentation.Node, typeDocumentation.Source, typeDocumentation.Type);
+    public static ParsedContent Build(TypeDocumentation typeDocumentation)
+        => GetParsedContent(typeDocumentation.Node, typeDocumentation.Source, typeDocumentation.Type);
 
     /// <summary>
     /// Builds a ParsedContent object from <see cref="MemberDocumentation{T}"/> by processing its XML documentation and resolving references.
@@ -32,39 +32,37 @@ public class ParsedContentBuilder
     /// <param name="memberDocumentation">The member documentation containing XML nodes and member information.</param>
     /// <returns>A <see cref="ParsedContent"/> object containing resolved documentation, references and inheritance chain.</returns>
     /// <typeparam name="T">The type of the member being documented.</typeparam>
-    public ParsedContent Build<T>(MemberDocumentation<T> memberDocumentation) where T : MemberInfo =>
-        GetParsedContent(memberDocumentation.Node, memberDocumentation.Source, memberDocumentation.Member);
+    public static ParsedContent Build<T>(MemberDocumentation<T> memberDocumentation) where T : MemberInfo
+        => GetParsedContent(memberDocumentation.Node, memberDocumentation.Source, memberDocumentation.Member);
 
-    private ParsedContent GetParsedContent<TMember>(XmlNode? xmlNode, XDoc xDoc, TMember memberInfo)
+    private static ParsedContent GetParsedContent<TMember>(XmlNode? xmlNode, XDoc xDoc, TMember memberInfo)
         where TMember : MemberInfo
     {
         var parent = GetParent(xmlNode, xDoc, memberInfo);
         var references = GetReferences(xmlNode, xDoc);
 
-        return new ParsedContent
+        return new ParsedContent(references)
         {
             Parent = parent,
-            References = references,
             Xml = xmlNode,
             Name = memberInfo.Name,
         };
     }
 
-    private ParsedContent GetParsedContent(XmlNode? xmlNode, XDoc xDoc, Type type)
+    private static ParsedContent GetParsedContent(XmlNode? xmlNode, XDoc xDoc, Type type)
     {
         var parent = GetParent(xmlNode, xDoc, type);
         var references = GetReferences(xmlNode, xDoc);
 
-        return new ParsedContent
+        return new ParsedContent(references)
         {
             Parent = parent,
-            References = references,
             Xml = xmlNode,
             Name = type.Name
         };
     }
 
-    private IReadOnlyDictionary<string, ParsedContent?> GetReferences(XmlNode? node, XDoc xDoc)
+    private static IReadOnlyDictionary<string, ParsedContent?> GetReferences(XmlNode? node, XDoc xDoc)
     {
         var references = new Dictionary<string, ParsedContent?>();
 
@@ -78,11 +76,10 @@ public class ParsedContentBuilder
             {
                 var typeDocumentation = xDoc.Get(type);
 
-                references.Add(typeName, new ParsedContent
+                references.Add(typeName, new ParsedContent(GetReferences(typeDocumentation?.Node, xDoc))
                 {
                     Name = type.Name,
                     Xml = typeDocumentation?.Node,
-                    References = GetReferences(typeDocumentation?.Node, xDoc),
                     Parent = GetParent(typeDocumentation?.Node, xDoc, type)
                 });
             }
@@ -100,7 +97,7 @@ public class ParsedContentBuilder
     /// </summary>
     /// <param name="xmlNode"></param>
     /// <returns></returns>
-    internal IReadOnlyCollection<string> GetDeclaredReferences(XmlNode? xmlNode)
+    private static IReadOnlyCollection<string> GetDeclaredReferences(XmlNode? xmlNode)
     {
         if (xmlNode == null || string.IsNullOrWhiteSpace(xmlNode.InnerXml))
         {
@@ -124,7 +121,7 @@ public class ParsedContentBuilder
     /// </summary>
     /// <param name="typeName"></param>
     /// <returns></returns>
-    private Type? GetTypeInfo(string typeName)
+    private static Type? GetTypeInfo(string typeName)
     {
         var type = AppDomain.CurrentDomain
             .GetAssemblies()
@@ -134,7 +131,7 @@ public class ParsedContentBuilder
         return type;
     }
 
-    private ParsedContent? GetParent(XmlNode? xmlNode, XDoc xDoc, Type type)
+    private static ParsedContent? GetParent(XmlNode? xmlNode, XDoc xDoc, Type type)
     {
         if (xmlNode?.FirstChild?.Name != "inheritdoc" || type.BaseType == null)
         {
@@ -155,7 +152,7 @@ public class ParsedContentBuilder
     /// <param name="xDoc">The XDoc instance containing documentation data.</param>
     /// <param name="memberInfo">The member information to find parent documentation for.</param>
     /// <returns>A <see cref="ParsedContent"/> object containing the parent's documentation, or null if no inheritance is specified.</returns>
-    private ParsedContent? GetParent(XmlNode? xmlNode, XDoc xDoc, MemberInfo memberInfo)
+    private static ParsedContent? GetParent(XmlNode? xmlNode, XDoc xDoc, MemberInfo memberInfo)
     {
         if (xmlNode?.FirstChild?.Name == "inheritdoc")
         {
@@ -165,7 +162,7 @@ public class ParsedContentBuilder
             {
                 var parentMembers = parent.GetMember(memberInfo.Name);
 
-                foreach (MemberInfo parentMember in parentMembers)
+                foreach (var parentMember in parentMembers)
                 {
                     if (parentMember is PropertyInfo parentPropertyInfo)
                     {
@@ -181,11 +178,10 @@ public class ParsedContentBuilder
                             xDoc,
                             parentPropertyDocumentation.DeclaringType);
 
-                        return new ParsedContent
+                        return new ParsedContent(GetReferences(parentPropertyDocumentation?.Node, xDoc))
                         {
                             Name = memberInfo.Name,
-                            Xml = parentPropertyDocumentation.Node,
-                            References = GetReferences(parentPropertyDocumentation?.Node, xDoc),
+                            Xml = parentPropertyDocumentation?.Node,
                             Parent = parentMemberParent
                         };
                     }
@@ -211,7 +207,7 @@ public class ParsedContentBuilder
     /// </summary>
     /// <param name="memberInfo">The member information to analyze.</param>
     /// <returns>A frozen set of <see cref="Type"/> objects representing parent types and interfaces.</returns>
-    public IReadOnlyCollection<Type> GetParentTypes(MemberInfo memberInfo)
+    private static IReadOnlyCollection<Type> GetParentTypes(MemberInfo memberInfo)
     {
         var result = new List<Type>();
 

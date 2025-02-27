@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using System.Xml;
 
 namespace BitzArt.XDoc;
@@ -14,7 +13,7 @@ public record ParsedContent
     /// If reference is found, the dictionary will contain the reference name and the parsed content.
     /// If the reference is not resolved, the value will be null.
     /// </summary>
-    public required IReadOnlyDictionary<string, ParsedContent?> References { get; init; }
+    private readonly IReadOnlyDictionary<string, ParsedContent?> _references;
 
     /// <summary>
     /// XML node from which the content was parsed.
@@ -31,11 +30,18 @@ public record ParsedContent
     /// </summary>
     public ParsedContent? Parent { get; init; }
 
-    public ParsedContent()
+    internal ParsedContent(IReadOnlyDictionary<string, ParsedContent?> references)
     {
         Parent = null;
-        References = ImmutableDictionary<string, ParsedContent?>.Empty;
+
+        _references = references;
     }
 
-    public override string ToString() => $"{Name} (References: {References.Count}, Parent: {Parent?.Name ?? "None"})";
+    public override string ToString()
+        => $"{Name} (References: {_references.Count}, Parent: {Parent?.Name ?? "None"})";
+
+    public IReadOnlyDictionary<string, ParsedContent?> GetReferences()
+    {
+        return _references;
+    }
 }

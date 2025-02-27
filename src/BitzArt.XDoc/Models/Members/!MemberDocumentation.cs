@@ -28,9 +28,7 @@ public abstract class MemberDocumentation<TMember> : IMemberDocumentation
 
     internal ParsedContent Resolve()
     {
-        var builder = new ParsedContentBuilder();
-
-        var parsedContent = builder.Build(this);
+        var parsedContent = ParsedContentBuilder.Build(this);
 
         return parsedContent;
     }
