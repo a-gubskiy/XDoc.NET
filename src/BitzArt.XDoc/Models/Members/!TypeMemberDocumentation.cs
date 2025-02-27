@@ -16,7 +16,7 @@ public abstract class TypeMemberDocumentation<TMember> : MemberDocumentation
 
     internal TypeDocumentation ParentNode { get; private init; }
 
-    internal XmlNode Node { get; private init; }
+    // internal XmlNode Node { get; private init; }
 
     /// <summary>
     /// The <see cref="Type"/> that declares the member.

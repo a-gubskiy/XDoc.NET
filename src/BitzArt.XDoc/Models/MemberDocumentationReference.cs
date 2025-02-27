@@ -12,5 +12,5 @@ public abstract class MemberDocumentationReference
     /// <summary>
     /// Requirement target (resolved via cref / inheritdoc)
     /// </summary>
-    public  MemberDocumentation Target { get; internal set; }
+    public MemberDocumentation Target { get; internal set; }
 }

@@ -15,7 +15,7 @@ public sealed class TypeDocumentation : MemberDocumentation
 
     internal XDoc Source { get; private init; }
 
-    internal XmlNode? Node { get; private init; }
+    // internal XmlNode? Node { get; private init; }
 
     // public ParsedContent ParsedContent => _parsedContent ??= Resolve();
 

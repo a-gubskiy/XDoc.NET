@@ -1,3 +1,4 @@
+using System.Xml;
 using BitzArt.XDoc.Resolvers;
 
 namespace BitzArt.XDoc;
@@ -11,6 +12,8 @@ public abstract class MemberDocumentation
     // Documentation of a code member:
     // - Type as a member of an Assembly;
     // - MemberInfo as a member of Type.
+
+    internal XmlNode? Node { get; init; }
 
     private bool _isResolved = false;
     private InheritanceMemberDocumentationReference? _inherited;
