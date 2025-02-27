@@ -18,19 +18,19 @@ namespace BitzArt.XDoc;
 /// </remarks>
 internal class ParsedContentResolver
 {
-    private readonly IDocumentation _documentation;
+    private readonly MemberDocumentation _documentation;
     
     // private readonly XDoc _source;
     // private readonly XmlNode? _node;
 
-    private ParsedContentResolver(IDocumentation documentation)
+    private ParsedContentResolver(MemberDocumentation documentation)
     {
         _documentation = documentation;
         // _node = documentation.Node;
         // _source = documentation.Source;
     }
 
-    public static ParsedContent Resolve(IDocumentation documentation)
+    public static ParsedContent Resolve(MemberDocumentation documentation)
     {
         return new ParsedContentResolver(documentation).Resolve();
     }
@@ -55,8 +55,8 @@ internal class ParsedContentResolver
             if (type != null)
             {
                 var typeDocumentation = _documentation.Source.Get(type);
-                
-                new ParsedContent(documentation, internalReferences)
+
+                new ParsedContent(documentation, internalReferences);
 
                 references.Add(typeName, new ParsedContent(GetReferences(typeDocumentation?.Node, _documentation.Source))
                 {
@@ -111,7 +111,7 @@ internal class ParsedContentResolver
         return type;
     }
 
-    public static ParsedContent? GetInheritedContent(IDocumentation documentation)
+    public static ParsedContent? GetInheritedContent(MemberDocumentation documentation)
     {
         var node = documentation.Node;
             
@@ -157,19 +157,19 @@ internal class ParsedContentResolver
     //     return GetInheritedContentByTarget(target);
     // }
 
-    private static IDocumentation GetTarget(XmlAttribute crefAttribute)
+    private static MemberDocumentation GetTarget(XmlAttribute crefAttribute)
     {
         var type = crefAttribute.Value.Substring(2, crefAttribute.Value.Length - 2);
 
         
     }
 
-    private static IDocumentation GetParent(IDocumentation documentation)
+    private static MemberDocumentation GetParent(MemberDocumentation documentation)
     {
         throw new NotImplementedException();
     }
 
-    private ParsedContent? GetInheritedContentByTarget(IDocumentation documentation)
+    private ParsedContent? GetInheritedContentByTarget(MemberDocumentation documentation)
     {
     }
 

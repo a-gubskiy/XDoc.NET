@@ -7,7 +7,7 @@ namespace BitzArt.XDoc;
 /// Contains documentation for a member of a <see cref="Type"/>.
 /// </summary>
 /// <typeparam name="TMember">Type of the member.</typeparam>
-public abstract class MemberDocumentation<TMember> : IMemberDocumentation
+public abstract class TypeMemberDocumentation<TMember> : MemberDocumentation
     where TMember : MemberInfo
 {
     private ParsedContent? _parsedContent;
@@ -17,10 +17,6 @@ public abstract class MemberDocumentation<TMember> : IMemberDocumentation
     internal TypeDocumentation ParentNode { get; private init; }
 
     internal XmlNode Node { get; private init; }
-    
-    XmlNode IDocumentation.Node => Node;
-    
-    XDoc IDocumentation.Source => Source;
 
     /// <summary>
     /// The <see cref="Type"/> that declares the member.
@@ -42,7 +38,7 @@ public abstract class MemberDocumentation<TMember> : IMemberDocumentation
     /// </summary>
     public TMember Member { get; private set; }
 
-    internal MemberDocumentation(XDoc source, TypeDocumentation parentNode, TMember member, XmlNode node)
+    internal TypeMemberDocumentation(XDoc source, TypeDocumentation parentNode, TMember member, XmlNode node)
     {
         Source = source;
         Member = member;

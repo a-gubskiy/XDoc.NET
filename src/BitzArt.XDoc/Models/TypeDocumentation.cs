@@ -7,19 +7,15 @@ namespace BitzArt.XDoc;
 /// <summary>
 /// Holds information about documentation of a <see cref="System.Type"/>.
 /// </summary>
-public sealed class TypeDocumentation : ITypeDocumentation
+public sealed class TypeDocumentation : MemberDocumentation
 {
     private ParsedContent? _parsedContent;
 
-    private readonly Dictionary<MemberInfo, IMemberDocumentation> _memberData;
+    private readonly Dictionary<MemberInfo, MemberDocumentation> _memberData;
 
     internal XDoc Source { get; private init; }
 
     internal XmlNode? Node { get; private init; }
-
-    XmlNode? IDocumentation.Node => Node;
-
-    XDoc IDocumentation.Source => Source;
 
     public ParsedContent ParsedContent => _parsedContent ??= Resolve();
 
@@ -31,7 +27,7 @@ public sealed class TypeDocumentation : ITypeDocumentation
     /// <summary>
     /// List of members declared by this <see cref="Type"/>.
     /// </summary>
-    internal IReadOnlyDictionary<MemberInfo, IMemberDocumentation> MemberData => _memberData.ToFrozenDictionary();
+    internal IReadOnlyDictionary<MemberInfo, MemberDocumentation> MemberData => _memberData.ToFrozenDictionary();
 
     internal TypeDocumentation(XDoc source, Type type, XmlNode? node)
     {
@@ -110,7 +106,7 @@ public sealed class TypeDocumentation : ITypeDocumentation
     /// <param name="memberInfo"></param>
     /// <param name="documentation"></param>
     /// <typeparam name="T"></typeparam>
-    internal void AddMemberData<T>(MemberInfo memberInfo, MemberDocumentation<T> documentation)
+    internal void AddMemberData<T>(MemberInfo memberInfo, TypeMemberDocumentation<T> documentation)
         where T : MemberInfo
     {
         _memberData.Add(memberInfo, documentation);

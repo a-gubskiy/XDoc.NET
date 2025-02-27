@@ -7,7 +7,7 @@ namespace BitzArt.XDoc;
 /// </summary>
 public record ParsedContent
 {
-    public IDocumentation Documentation { get; private set; }
+    public MemberDocumentation Documentation { get; private set; }
 
     /// <summary>
     /// List of references.
@@ -30,7 +30,7 @@ public record ParsedContent
     }
 
 
-    internal ParsedContent(IDocumentation documentation, IReadOnlyDictionary<string, ParsedContent?> references)
+    internal ParsedContent(MemberDocumentation documentation, IReadOnlyDictionary<string, ParsedContent?> references)
     {
         Documentation = documentation;
         
