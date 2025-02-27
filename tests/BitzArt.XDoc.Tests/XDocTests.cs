@@ -19,7 +19,7 @@ public class XDocTests
         // Assert
         Assert.Contains(members, m => m.Name == "Age");
         Assert.Contains(members, m => m.Name == "Name");
-        Assert.Contains(members, m => m.Name == "Field1");
+        Assert.Contains(members, m => m.Name == "Property1");
         Assert.Contains(members, m => m.Name == "Field2");
         Assert.Contains(members, m => m.Name == "GetInfo");
     }
