@@ -1,5 +1,6 @@
 using System.Text;
 using System.Xml;
+using BitzArt.XDoc;
 
 namespace Xdoc.Renderer.PlainText;
 
@@ -12,16 +13,16 @@ public class XmlRenderer
     /// <summary>
     /// Converts an XML documentation node to the plain text.
     /// </summary>
-    /// <param name="xmlNode">The XML node to render.</param>
-    /// <returns>A plain text string representation of the XML node, or an empty string if the node is null.</returns>
-    public string Render(XmlNode? xmlNode)
+    /// <param name="documentation"></param>
+    /// <returns></returns>
+    public string Render(MemberDocumentation? documentation)
     {
-        if (xmlNode == null)
+        if (documentation == null)
         {
             return string.Empty;
         }
 
-        var text = ProcessNode(xmlNode);
+        var text = Process(documentation);
         var normalizedText = Normalize(text);
 
         return normalizedText;
@@ -64,25 +65,49 @@ public class XmlRenderer
         return result;
     }
 
-    /// <summary>
-    /// Processes an XML node and its children, converting them to their plain text representation.
-    /// </summary>
-    /// <param name="node">The XML node to process. Can be a text node or an XML element.</param>
-    /// <returns>A string containing the plain text representation of the node and its children.</returns>
-    private string ProcessNode(XmlNode node)
-    {
-        if (node is XmlText textNode)
-        {
-            return RenderTextNode(textNode);
-        }
 
-        if (node is XmlElement element)
+    private string Process(MemberDocumentation? documentation)
+    {
+        if (documentation is TypeDocumentation typeDocumentation)
         {
-            return RenderXmlElement(element);
+            return Process(typeDocumentation);
+        }
+        else if (documentation is PropertyDocumentation propertyDocumentation)
+        {
+            return Process(propertyDocumentation);
+        }
+        else if (documentation is FieldDocumentation fieldDocumentation)
+        {
+            return Process(fieldDocumentation);
+        }
+        else if (documentation is MethodDocumentation methodDocumentation)
+        {
+            return Process(methodDocumentation);
         }
 
         return string.Empty;
     }
+
+    private string Process(TypeDocumentation typeDocumentation)
+    {
+        throw new NotImplementedException();
+    }
+
+    private string Process(FieldDocumentation fieldDocumentation)
+    {
+        throw new NotImplementedException();
+    }
+
+    private string Process(MethodDocumentation methodDocumentation)
+    {
+        throw new NotImplementedException();
+    }
+
+    private string Process(PropertyDocumentation propertyDocumentation)
+    {
+        throw new NotImplementedException();
+    }
+
 
     internal string RenderXmlElement(XmlElement element)
     {
@@ -91,35 +116,35 @@ public class XmlRenderer
             case "see":
             case "seealso":
                 return RenderSeeBlock(element);
-    
+
             case "paramref":
             case "typeparamref":
                 return RenderRefBlock(element);
-    
+
             case "typeparam":
                 return RenderTypeParamBlock(element);
-    
+
             case "param":
                 return RenderParamBlock(element);
-    
+
             case "returns":
                 return RenderReturnsBlock(element);
-    
+
             case "exception":
                 return RenderExceptionBlock(element);
-    
+
             case "value":
                 return RenderValueBlock(element);
-    
+
             case "list":
                 return RenderListBlock(element);
-    
+
             case "code":
                 return RenderCodeBlock(element);
-    
+
             case "c":
                 return RenderCBlock(element);
-    
+
             case "example":
             case "para":
             case "remarks":
@@ -344,7 +369,8 @@ public class XmlRenderer
 
         foreach (XmlNode child in node.ChildNodes)
         {
-            builder.Append(ProcessNode(child));
+            throw new NotImplementedException();
+            // builder.Append(Process(child));
         }
 
         var result = builder.ToString();

@@ -1,26 +1,27 @@
+using BitzArt.XDoc.Resolvers;
+
 namespace BitzArt.XDoc;
 
-// This class is intended to replace IDocumentation interface
+/// <summary>
+/// All documentation classes should inherit from this class.
+/// This class contains code applicable to any member documentation (both Type & MemberInfo).
+/// </summary>
 public abstract class MemberDocumentation
 {
     // Documentation of a code member:
     // - Type as a member of an Assembly;
     // - MemberInfo as a member of Type.
 
-    // All documentation classes should inherit from this class
-
-    // Class contains code applicable to any member documentation (both Type & MemberInfo)
-
     private bool _isResolved = false;
     private InheritanceMemberDocumentationReference? _inherited;
     private IReadOnlyCollection<MemberDocumentationReference>? _references;
-    
+
     public InheritanceMemberDocumentationReference? Inherited
     {
         get
         {
             OnRequireResolve();
-            
+
             return _inherited;
         }
     }
@@ -30,7 +31,7 @@ public abstract class MemberDocumentation
         get
         {
             OnRequireResolve();
-            
+
             return _references;
         }
     }
@@ -42,8 +43,8 @@ public abstract class MemberDocumentation
             return;
         }
 
-        // resolve Inherited & References
-        // ...
+        _inherited = InheritanceResolver.Resolve(this);
+        _references = CrefResolver.Resolve(this);
 
         _isResolved = true;
     }

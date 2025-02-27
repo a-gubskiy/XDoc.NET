@@ -2,7 +2,7 @@ namespace BitzArt.XDoc.Resolvers;
 
 public class CrefResolver
 {
-    internal ParsedContent Resolve(MemberDocumentation documentation)
+    internal static IReadOnlyCollection<MemberDocumentationReference> Resolve(MemberDocumentation documentation)
     {
         throw new NotImplementedException();
     }

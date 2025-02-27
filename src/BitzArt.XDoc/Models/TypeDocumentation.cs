@@ -9,7 +9,7 @@ namespace BitzArt.XDoc;
 /// </summary>
 public sealed class TypeDocumentation : MemberDocumentation
 {
-    private ParsedContent? _parsedContent;
+    // private ParsedContent? _parsedContent;
 
     private readonly Dictionary<MemberInfo, MemberDocumentation> _memberData;
 
@@ -17,7 +17,7 @@ public sealed class TypeDocumentation : MemberDocumentation
 
     internal XmlNode? Node { get; private init; }
 
-    public ParsedContent ParsedContent => _parsedContent ??= Resolve();
+    // public ParsedContent ParsedContent => _parsedContent ??= Resolve();
 
     /// <summary>
     /// The <see cref="Type"/> this documentation if provided for.
@@ -38,12 +38,12 @@ public sealed class TypeDocumentation : MemberDocumentation
         _memberData = [];
     }
 
-    internal ParsedContent Resolve()
-    {
-        var parsedContent = ParsedContentResolver.Resolve(this);
-
-        return parsedContent;
-    }
+    // internal ParsedContent Resolve()
+    // {
+    //     var parsedContent = ParsedContentResolver.Resolve(this);
+    //
+    //     return parsedContent;
+    // }
 
     /// <summary>
     /// Gets the documentation for a <see cref="PropertyInfo"/> declared by this <see cref="Type"/>.

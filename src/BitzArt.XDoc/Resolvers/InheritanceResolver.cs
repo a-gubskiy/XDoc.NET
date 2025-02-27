@@ -1,8 +1,8 @@
 namespace BitzArt.XDoc.Resolvers;
 
-public class InhertenceResolver
+public class InheritanceResolver
 {
-    internal ParsedContent Resolve(MemberDocumentation documentation)
+    internal static InheritanceMemberDocumentationReference Resolve(MemberDocumentation documentation)
     {
         throw new NotImplementedException();
     }

@@ -10,77 +10,58 @@ namespace Xdoc.Renderer.PlaintText;
 public static class XDocExtensions
 {
     private static readonly XmlRenderer Renderer = new XmlRenderer();
-
+    
     /// <summary>
-    /// Get full representation of the type documentation in plain text.
+    /// Renders the documentation of a <see cref="Type"/> as plain text.
     /// </summary>
     /// <param name="documentation"></param>
     /// <returns></returns>
-    public static string ToPlainText(this TypeDocumentation? documentation) =>
-        ToPlainText(documentation?.ParsedContent);
-
-    /// <summary>
-    /// Get full representation of the property documentation in plain text.
-    /// </summary>
-    /// <param name="documentation"></param>
-    /// <returns></returns>
-    public static string ToPlainText(this PropertyDocumentation? documentation) =>
-        ToPlainText(documentation?.ParsedContent);
-
-    /// <summary>
-    /// Converts a <see cref="ParsedContent"/> object to its plain text representation,
-    /// including parent documentation and references.
-    /// </summary>
-    /// <param name="parsedContent">
-    /// The parsed content to convert, containing XML documentation.
-    /// </param>
-    /// <returns>A string containing the plain text representation of the documentation.</returns>
-    private static string ToPlainText(ParsedContent? parsedContent)
+    public static string ToPlainText(this MemberDocumentation? documentation)
     {
-        if (parsedContent == null)
+        if (documentation == null)
         {
             return string.Empty;
         }
 
         var builder = new StringBuilder();
 
-        if (parsedContent.InheritedContent != null)
+        if (documentation.Inherited != null)
         {
-            builder.AppendLine(ToPlainText(parsedContent.InheritedContent));
+            builder.AppendLine(ToPlainText(documentation.Inherited.Target));
         }
         else
         {
-            builder.AppendLine(Renderer.Render(parsedContent.Xml));
+            builder.AppendLine(Renderer.Render(documentation));
         }
 
-        if (parsedContent.GetReferences().Any())
+        if (documentation.References.Any())
         {
-            builder.Append(RenderReference(parsedContent));
+            builder.Append(RenderReference(documentation.References));
         }
 
         return builder.ToString().Trim();
     }
 
-    private static string RenderReference(ParsedContent parsedContent)
+    private static string RenderReference(IReadOnlyCollection<MemberDocumentationReference> references)
     {
         var builder = new StringBuilder();
 
         builder.AppendLine();
         builder.AppendLine("References: ");
 
-        foreach (var reference in parsedContent.GetReferences())
+        foreach (var reference in references)
         {
-            var name = ResolveName(reference.Value.Documentation);
+            var name = ResolveName(reference.Target);
             
             builder.AppendLine($" – {name}");
-            builder.AppendLine(ToPlainText(reference.Value));
+            builder.AppendLine(ToPlainText(reference.Target));
             builder.AppendLine();
         }
 
         return builder.ToString();
     }
 
-    private static string ResolveName(IDocumentation documentation)
+    private static string ResolveName(MemberDocumentation documentation)
     {
         throw new NotImplementedException();
     }
