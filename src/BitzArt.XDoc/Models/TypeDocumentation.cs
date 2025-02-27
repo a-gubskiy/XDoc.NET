@@ -7,7 +7,7 @@ namespace BitzArt.XDoc;
 /// <summary>
 /// Holds information about documentation of a <see cref="System.Type"/>.
 /// </summary>
-public sealed class TypeDocumentation
+public sealed class TypeDocumentation : ITypeDocumentation
 {
     private ParsedContent? _parsedContent;
 
@@ -16,6 +16,10 @@ public sealed class TypeDocumentation
     internal XDoc Source { get; private init; }
 
     internal XmlNode? Node { get; private init; }
+
+    XmlNode? IDocumentation.Node => Node;
+
+    XDoc IDocumentation.Source => Source;
 
     public ParsedContent ParsedContent => _parsedContent ??= Resolve();
 
@@ -40,7 +44,7 @@ public sealed class TypeDocumentation
 
     internal ParsedContent Resolve()
     {
-        var parsedContent = ParsedContentBuilder.Build(this);
+        var parsedContent = ParsedContentResolver.Resolve(this);
 
         return parsedContent;
     }
@@ -50,7 +54,7 @@ public sealed class TypeDocumentation
     /// </summary>
     /// <param name="property">The <see cref="PropertyInfo"/> to retrieve documentation for.</param>
     /// <returns><see cref="PropertyDocumentation"/> for the specified <see cref="PropertyInfo"/> if available; otherwise, <see langword="null"/>.</returns>
-    public PropertyDocumentation? GetDocumentation(PropertyInfo property) 
+    public PropertyDocumentation? GetDocumentation(PropertyInfo property)
         => (PropertyDocumentation?)GetDocumentation<PropertyInfo>(property);
 
     /// <summary>

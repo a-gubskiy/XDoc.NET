@@ -7,6 +7,8 @@ namespace BitzArt.XDoc;
 /// </summary>
 public record ParsedContent
 {
+    public IDocumentation Documentation { get; private set; }
+
     /// <summary>
     /// List of references.
     /// If references are not found, the dictionary will be empty.
@@ -15,30 +17,28 @@ public record ParsedContent
     /// </summary>
     private readonly IReadOnlyDictionary<string, ParsedContent?> _references;
 
-    /// <summary>
-    /// XML node from which the content was parsed.
-    /// </summary>
-    public required XmlNode? Xml { get; init; }
+    private ParsedContent? _inheritedContent;
 
     /// <summary>
-    /// Name of the parsed content.
+    /// Inherited documentation content.
     /// </summary>
-    public required string Name { get; init; }
+    public ParsedContent? InheritedContent => _inheritedContent ??= ResolveInheritedContent();
 
-    /// <summary>
-    /// Parent of the parsed content.
-    /// </summary>
-    public ParsedContent? Parent { get; init; }
-
-    internal ParsedContent(IReadOnlyDictionary<string, ParsedContent?> references)
+    private ParsedContent? ResolveInheritedContent()
     {
-        Parent = null;
+        return ParsedContentResolver.GetInheritedContent(Documentation);
+    }
 
+
+    internal ParsedContent(IDocumentation documentation, IReadOnlyDictionary<string, ParsedContent?> references)
+    {
+        Documentation = documentation;
+        
         _references = references;
     }
 
     public override string ToString()
-        => $"{Name} (References: {_references.Count}, Parent: {Parent?.Name ?? "None"})";
+        => $"(References: {_references.Count}";
 
     public IReadOnlyDictionary<string, ParsedContent?> GetReferences()
     {

@@ -11,7 +11,7 @@ public class Dog : Animal, IDog
     /// Dog's Age
     /// </summary>
     public int Age;
-    
+
     /// <summary>
     /// Class B Name of specific <see cref="Dog"/>.
     /// Not all <see cref="Animal"/>s can have a name.
@@ -23,10 +23,10 @@ public class Dog : Animal, IDog
     /// </summary>
     public string Name { get; set; } = "";
 
-    // /// <inheritdoc/>
-    // public string Property1 { get; set; } = "";
+    /// <inheritdoc />
+    public new string Property1 { get; set; } = "";
 
-    /// <inheritdoc/>
+    /// 123 <inheritdoc cref="Name" />
     public string Field2 { get; set; } = "";
 
     /// <summary>

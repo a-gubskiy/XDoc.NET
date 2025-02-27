@@ -17,6 +17,10 @@ public abstract class MemberDocumentation<TMember> : IMemberDocumentation
     internal TypeDocumentation ParentNode { get; private init; }
 
     internal XmlNode Node { get; private init; }
+    
+    XmlNode IDocumentation.Node => Node;
+    
+    XDoc IDocumentation.Source => Source;
 
     /// <summary>
     /// The <see cref="Type"/> that declares the member.
@@ -28,7 +32,7 @@ public abstract class MemberDocumentation<TMember> : IMemberDocumentation
 
     internal ParsedContent Resolve()
     {
-        var parsedContent = ParsedContentBuilder.Build(this);
+        var parsedContent = ParsedContentResolver.Resolve(this);
 
         return parsedContent;
     }

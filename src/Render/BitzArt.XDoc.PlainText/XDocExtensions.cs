@@ -44,9 +44,9 @@ public static class XDocExtensions
 
         var builder = new StringBuilder();
 
-        if (parsedContent.Parent != null)
+        if (parsedContent.InheritedContent != null)
         {
-            builder.AppendLine(ToPlainText(parsedContent.Parent));
+            builder.AppendLine(ToPlainText(parsedContent.InheritedContent));
         }
         else
         {
@@ -70,11 +70,18 @@ public static class XDocExtensions
 
         foreach (var reference in parsedContent.GetReferences())
         {
-            builder.AppendLine($" – {reference.Value?.Name}");
+            var name = ResolveName(reference.Value.Documentation);
+            
+            builder.AppendLine($" – {name}");
             builder.AppendLine(ToPlainText(reference.Value));
             builder.AppendLine();
         }
 
         return builder.ToString();
+    }
+
+    private static string ResolveName(IDocumentation documentation)
+    {
+        throw new NotImplementedException();
     }
 }
