@@ -23,8 +23,8 @@ public class Dog : Animal, IDog
     /// </summary>
     public string Name { get; set; } = "";
 
-    /// <inheritdoc/>
-    public string Field1 { get; set; } = "";
+    // /// <inheritdoc/>
+    // public string Property1 { get; set; } = "";
 
     /// <inheritdoc/>
     public string Field2 { get; set; } = "";
@@ -41,6 +41,6 @@ public class Dog : Animal, IDog
     /// <returns></returns>
     public string GetInfo()
     {
-        return $"Field1: {Field1}, Field2: {Field2}";
+        return $"Field1: {Property1}, Field2: {Field2}";
     }
 }

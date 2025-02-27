@@ -3,8 +3,14 @@ namespace TestAssembly.A;
 public interface IAnimal
 {
     /// <summary>
-    /// This is field one.
-    /// New line field description.
+    /// This is property one.
+    /// New line property description.
     /// </summary>
-    string Field1 { get; set; }
+    string Property1 { get; set; }
+    
+    /// <summary>
+    /// Return value of <c ref="Property1"/>.
+    /// </summary>
+    /// <returns></returns>
+    string GetProperty1() => Property1;
 }

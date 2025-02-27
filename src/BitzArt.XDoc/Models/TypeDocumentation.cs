@@ -11,7 +11,7 @@ public sealed class TypeDocumentation
 {
     private ParsedContent? _parsedContent;
     
-    private readonly Dictionary<string, IMemberDocumentation> _memberData;
+    private readonly Dictionary<MemberInfo, IMemberDocumentation> _memberData;
 
     internal XDoc Source { get; private init; }
 
@@ -27,7 +27,7 @@ public sealed class TypeDocumentation
     /// <summary>
     /// List of members declared by this <see cref="Type"/>.
     /// </summary>
-    internal IReadOnlyDictionary<string, IMemberDocumentation> MemberData => _memberData.ToFrozenDictionary();
+    internal IReadOnlyDictionary<MemberInfo, IMemberDocumentation> MemberData => _memberData.ToFrozenDictionary();
 
     internal TypeDocumentation(XDoc source, Type type, XmlNode? node)
     {
@@ -53,7 +53,9 @@ public sealed class TypeDocumentation
     /// <param name="property">The <see cref="PropertyInfo"/> to retrieve documentation for.</param>
     /// <returns><see cref="PropertyDocumentation"/> for the specified <see cref="PropertyInfo"/> if available; otherwise, <see langword="null"/>.</returns>
     public PropertyDocumentation? GetDocumentation(PropertyInfo property)
-        => (PropertyDocumentation?)GetDocumentation<PropertyInfo>(property);
+    {
+        return (PropertyDocumentation?)GetDocumentation<PropertyInfo>(property);
+    }
 
     /// <summary>
     /// Gets the documentation for a <see cref="MethodInfo"/> declared by this <see cref="Type"/>.
@@ -76,7 +78,7 @@ public sealed class TypeDocumentation
     {
         var memberInfo = Validate(member);
 
-        return _memberData.GetValueOrDefault(memberInfo.Name);
+        return _memberData.GetValueOrDefault(memberInfo);
     }
 
     private TMember Validate<TMember>(TMember member)
@@ -85,6 +87,20 @@ public sealed class TypeDocumentation
         if (member.DeclaringType != Type)
         {
             throw new InvalidOperationException("The provided property is not defined in this type.");
+        }
+
+        if (member.DeclaringType != member.ReflectedType)
+        {
+            // if (member is PropertyInfo propertyInfo)
+            // {
+            //     throw new InvalidOperationException($"The provided property '{propertyInfo.Name}' is not declared by this type.");
+            // }
+
+            return member switch
+            {
+                PropertyInfo propertyInfo => (TMember)(MemberInfo)member.DeclaringType.GetProperty(propertyInfo.Name)!,
+                // Method ...
+            };
         }
 
         return member;
@@ -102,6 +118,6 @@ public sealed class TypeDocumentation
     internal void AddMemberData<T>(MemberInfo memberInfo, MemberDocumentation<T> documentation) 
         where T : MemberInfo
     {
-        _memberData.Add(memberInfo.Name, documentation);
+        _memberData.Add(memberInfo, documentation);
     }
 }

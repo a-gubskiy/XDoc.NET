@@ -13,15 +13,15 @@ public class XDocTests
         // Act
         var typeDocumentation = xDoc.Get(typeof(Dog));
         var members = typeDocumentation!.MemberData.Keys
-            .OrderBy(o => o)
+            .OrderBy(o => o.Name)
             .ToList();
 
         // Assert
-        Assert.Contains(members, m => m == "Age");
-        Assert.Contains(members, m => m == "Name");
-        Assert.Contains(members, m => m == "Field1");
-        Assert.Contains(members, m => m == "Field2");
-        Assert.Contains(members, m => m == "GetInfo");
+        Assert.Contains(members, m => m.Name == "Age");
+        Assert.Contains(members, m => m.Name == "Name");
+        Assert.Contains(members, m => m.Name == "Field1");
+        Assert.Contains(members, m => m.Name == "Field2");
+        Assert.Contains(members, m => m.Name == "GetInfo");
     }
 
     [Fact]

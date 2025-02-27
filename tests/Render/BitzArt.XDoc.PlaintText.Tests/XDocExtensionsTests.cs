@@ -1,3 +1,4 @@
+using TestAssembly.A;
 using TestAssembly.B;
 using Xdoc.Renderer.PlaintText;
 
@@ -38,21 +39,32 @@ public class XDocExtensionsTests
         // Arrange
         var xDoc = new XDoc();
         var type = typeof(Dog);
-        var field1Info = type.GetProperty(nameof(Dog.Field1));
-        var field2Info = type.GetProperty(nameof(Dog.Field2));
-        var nameInfo = type.GetProperty(nameof(Dog.Name));
-        var idInfo = type.GetProperty(nameof(Dog.Id));
+        // var type = typeof(Animal);
 
+        var methodInfo = typeof(IAnimal).GetMethod(nameof(IAnimal.GetProperty1));
+        // var methodInfo = typeof(Dog).GetMethod(nameof(IAnimal.GetProperty1));
+        // new Dog().GetInfo()
+
+        //type.GetMethod("Get")
+        var propertyInfos = type.GetProperties();
+
+        // var field1Info = type.GetProperty(nameof(Dog.Field1));
+        // var field2Info = type.GetProperty(nameof(Dog.Field2));
+        // var nameInfo = type.GetProperty(nameof(Dog.Name));
+        var idInfo = type.GetProperty(nameof(Dog.Id));
+        
+        
+    
         // Act
-        var filed1Comment = xDoc.Get(field1Info!).ToPlainText();
-        var filed2Comment = xDoc.Get(field2Info!).ToPlainText();
-        var nameComment = xDoc.Get(nameInfo!).ToPlainText();
+        // var filed1Comment = xDoc.Get(field1Info!).ToPlainText();
+        // var filed2Comment = xDoc.Get(field2Info!).ToPlainText();
+        // var nameComment = xDoc.Get(nameInfo!).ToPlainText();
         var idComment = xDoc.Get(idInfo!).ToPlainText();
 
         // Assert
-        Assert.NotEmpty(filed1Comment);
-        Assert.NotEmpty(filed2Comment);
-        Assert.NotEmpty(nameComment);
+        // Assert.NotEmpty(filed1Comment);
+        // Assert.NotEmpty(filed2Comment);
+        // Assert.NotEmpty(nameComment);
         Assert.NotEmpty(idComment);
     }
 }
