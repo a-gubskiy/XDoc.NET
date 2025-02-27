@@ -6,23 +6,25 @@ namespace BitzArt.XDoc.Resolvers;
 
 public class CrefResolver
 {
-    private readonly XDoc _source;
+    // private readonly XDoc _source;
+    //
+    // public CrefResolver(XDoc source)
+    // {
+    //     _source = source;
+    // }
 
-    public CrefResolver(XDoc source)
-    {
-        _source = source;
-    }
-    
-    internal static IReadOnlyCollection<MemberDocumentationReference> Resolve(MemberDocumentation documentation)
+    public static IReadOnlyCollection<MemberDocumentationReference> Resolve(MemberDocumentation documentation)
     {
         if (documentation.Node == null || string.IsNullOrWhiteSpace(documentation.Node.InnerXml))
         {
             return ImmutableList<MemberDocumentationReference>.Empty;
         }
-        
+
+        var source = documentation.Source;
+
         var result = new List<MemberDocumentationReference>();
-        
-       var doc = XDocument.Parse(documentation.Node.InnerXml);
+
+        var doc = XDocument.Parse(documentation.Node.InnerXml);
 
         var refs = doc.Descendants("see")
             .Select(e => e.Attribute("cref")?.Value)
@@ -33,25 +35,34 @@ public class CrefResolver
 
         foreach (var r in refs)
         {
-            
-            //var cref = crefNode.InnerText;
-
             if (string.IsNullOrWhiteSpace(r))
             {
                 continue;
             }
 
-            throw new NotImplementedException();
+            var type = GetType(r);
+            var target = source.Get(type);
+            
+            var reference = new SeeMemberDocumentationReference
+            {
+                Target = target,
+                RequirementNode = documentation.Node,
+                ReferencedType = r
+            };
 
-            // _source.Get()
-
-            // result.Add(new MemberDocumentationReference
-            // {
-            //     Target = ,
-            //     RequirementNode = 
-            // });
+            result.Add(reference);
         }
 
         return result;
+    }
+    
+    private static Type GetType(string typeName)
+    {
+        var type = AppDomain.CurrentDomain
+            .GetAssemblies()
+            .Select(a => a.GetType(typeName, false))
+            .FirstOrDefault(t => t != null); // What if we have multiple types with the same name and namespace?
+
+        return type;
     }
 }

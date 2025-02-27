@@ -13,12 +13,6 @@ public sealed class TypeDocumentation : MemberDocumentation
 
     private readonly Dictionary<MemberInfo, MemberDocumentation> _memberData;
 
-    internal XDoc Source { get; private init; }
-
-    // internal XmlNode? Node { get; private init; }
-
-    // public ParsedContent ParsedContent => _parsedContent ??= Resolve();
-
     /// <summary>
     /// The <see cref="Type"/> this documentation if provided for.
     /// </summary>
@@ -37,13 +31,6 @@ public sealed class TypeDocumentation : MemberDocumentation
 
         _memberData = [];
     }
-
-    // internal ParsedContent Resolve()
-    // {
-    //     var parsedContent = ParsedContentResolver.Resolve(this);
-    //
-    //     return parsedContent;
-    // }
 
     /// <summary>
     /// Gets the documentation for a <see cref="PropertyInfo"/> declared by this <see cref="Type"/>.

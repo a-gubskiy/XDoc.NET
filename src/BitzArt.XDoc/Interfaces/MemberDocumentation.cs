@@ -15,6 +15,8 @@ public abstract class MemberDocumentation
 
     internal XmlNode? Node { get; init; }
 
+    internal XDoc Source { get; init; }
+
     private bool _isResolved = false;
     private InheritanceMemberDocumentationReference? _inherited;
     private IReadOnlyCollection<MemberDocumentationReference>? _references;

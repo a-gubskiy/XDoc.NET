@@ -10,28 +10,12 @@ namespace BitzArt.XDoc;
 public abstract class TypeMemberDocumentation<TMember> : MemberDocumentation
     where TMember : MemberInfo
 {
-    // private ParsedContent? _parsedContent;
-    
-    internal XDoc Source { get; private init; }
-
     internal TypeDocumentation ParentNode { get; private init; }
-
-    // internal XmlNode Node { get; private init; }
 
     /// <summary>
     /// The <see cref="Type"/> that declares the member.
     /// </summary>
     public Type DeclaringType => ParentNode.Type;
-
-    // public ParsedContent ParsedContent => _parsedContent ??= Resolve();
-
-
-    // internal ParsedContent Resolve()
-    // {
-    //     var parsedContent = ParsedContentResolver.Resolve(this);
-    //
-    //     return parsedContent;
-    // }
 
     /// <summary>
     /// The <typeparamref name="TMember"/> this documentation if provided for.
