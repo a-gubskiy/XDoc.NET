@@ -4,15 +4,8 @@ using System.Xml.Linq;
 
 namespace BitzArt.XDoc.Resolvers;
 
-public class CrefResolver
+internal static class CrefResolver
 {
-    // private readonly XDoc _source;
-    //
-    // public CrefResolver(XDoc source)
-    // {
-    //     _source = source;
-    // }
-
     public static IReadOnlyCollection<MemberDocumentationReference> Resolve(MemberDocumentation documentation)
     {
         if (documentation.Node == null || string.IsNullOrWhiteSpace(documentation.Node.InnerXml))
@@ -29,25 +22,20 @@ public class CrefResolver
         var refs = doc.Descendants("see")
             .Select(e => e.Attribute("cref")?.Value)
             .Where(value => !string.IsNullOrWhiteSpace(value))
-            .Select(o => o.Substring(2, o.Length - 2))
+            .Select(o => o!.Substring(2, o.Length - 2))
             .Distinct()
             .ToImmutableList();
 
-        foreach (var r in refs)
+        foreach (var referencedType in refs)
         {
-            if (string.IsNullOrWhiteSpace(r))
-            {
-                continue;
-            }
+            var type = GetType(referencedType);
+            var target = GetTypeDocumentation(type, source);
 
-            var type = GetType(r);
-            var target = source.Get(type);
-            
             var reference = new SeeMemberDocumentationReference
             {
                 Target = target,
                 RequirementNode = documentation.Node,
-                ReferencedType = r
+                ReferencedType = referencedType
             };
 
             result.Add(reference);
@@ -55,9 +43,28 @@ public class CrefResolver
 
         return result;
     }
-    
-    private static Type GetType(string typeName)
+
+    private static TypeDocumentation? GetTypeDocumentation(Type? type, XDoc source)
     {
+        try
+        {
+            var target = type is null ? null : source.Get(type);
+            return target;
+        }
+        catch (XDocException ex)
+        {
+            //We're trying to get documentation for a type that is not documented
+            return null;
+        }
+    }
+
+    private static Type? GetType(string? typeName)
+    {
+        if (string.IsNullOrWhiteSpace(typeName))
+        {
+            return null;
+        }
+
         var type = AppDomain.CurrentDomain
             .GetAssemblies()
             .Select(a => a.GetType(typeName, false))

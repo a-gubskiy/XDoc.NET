@@ -7,6 +7,15 @@ namespace TestAssembly.B;
 /// </summary>
 public class Dog : Animal, IDog
 {
+    /// <summary>See <see cref="T:System.String"/> for details.</summary>
+    public int PropertyWIthSingleSee { get; set; }
+
+    /// <summary>
+    /// See <see cref=""""/> and
+    /// <see cref=""T:System.String""/> for details.
+    /// </summary>
+    public string PropertyWIthInalidCref { get; set; }
+
     /// <summary>
     /// Dog's Age
     /// </summary>

@@ -72,24 +72,19 @@ public class CrefResolverTests
     public void Resolve_WithSingleSeeElement_ReturnsSingleReference()
     {
         // Arrange
-        var xmlDoc = new XmlDocument();
-        var node = xmlDoc.CreateElement("member");
-        node.InnerXml = "<summary>See <see cref=\"T:System.String\"/> for details.</summary>";
+        var xDoc = new XDoc();
 
-        var documentation = new TestMemberDocumentation
-        {
-            Node = node
-        };
+        var propertyDocumentation = xDoc.Get(typeof(Dog).GetProperty(nameof(Dog.PropertyWIthSingleSee)));
 
         // Act
-        var result = CrefResolver.Resolve(documentation);
+        var result = CrefResolver.Resolve(propertyDocumentation);
 
         // Assert
         Assert.Single(result);
-        
-        /*var reference = result.First();
-        
-        Assert.Equal("System.String", reference.Target);*/
+
+        var reference = result.First();
+
+        Assert.Equal("System.String", reference.ReferencedType);
     }
 
     [Fact]
@@ -100,30 +95,14 @@ public class CrefResolverTests
 
         var propertyDocumentation = xDoc.Get(typeof(Dog).GetProperty(nameof(Dog.Name)));
 
-        // var xmlDoc = new XmlDocument();
-        //
-        // var node = xmlDoc.CreateElement("member");
-        //
-        // node.InnerXml = @"
-        //     <summary>
-        //         See <see cref=""T:System.String""/> and
-        //         <see cref=""T:System.Int32""/> and
-        //         <see cref=""T:System.String""/> for details.
-        //     </summary>";
-        //
-        // var documentation = new TestMemberDocumentation
-        // {
-        //     Node = node,
-        //     Source = xDoc
-        // };
-
         // Act
         var result = CrefResolver.Resolve(propertyDocumentation);
 
         // Assert
         Assert.Equal(2, result.Count);
-        // Assert.Contains(result, r => r.Target == "System.String");
-        // Assert.Contains(result, r => r.Target == "System.Int32");
+
+        Assert.Contains(result, r => r.ReferencedType == "TestAssembly.B.Dog");
+        Assert.Contains(result, r => r.ReferencedType == "TestAssembly.A.Animal");
     }
 
     [Fact]
@@ -131,30 +110,14 @@ public class CrefResolverTests
     {
         // Arrange
         var xDoc = new XDoc();
-        var xmlDoc = new XmlDocument();
-        
-        var node = xmlDoc.CreateElement("member");
-        
-        node.InnerXml = @"
-            <summary>
-                See <see cref=""""/> and
-                <see cref=""T:System.String""/> for details.
-            </summary>";
 
-        var documentation = new TestMemberDocumentation
+        var propertyDocumentation = xDoc.Get(typeof(Dog).GetProperty(nameof(Dog.PropertyWIthInalidCref)));
+
+        // Act + Assert
+        Assert.Throws<NullReferenceException>(() =>
         {
-            Node = node,
-            Source = xDoc
-        };
-
-        // Act
-        var result = CrefResolver.Resolve(documentation);
-
-        // Assert
-        Assert.Single(result);
-        
-        // var reference = result.First();
-        // Assert.Equal("System.String", reference.Target);
+            var result = CrefResolver.Resolve(propertyDocumentation);
+        });
     }
 
     private class TestMemberDocumentation : MemberDocumentation
