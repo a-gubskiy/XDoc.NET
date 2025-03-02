@@ -10,11 +10,11 @@
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <DocumentationFile>bin\Debug\BitzArt.XDoc.Tests.xml</DocumentationFile>
+        <DocumentationFile>bin\Debug\BitzArt.XDoc.Tests.xml</DocumentationFile>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <DocumentationFile>bin\Release\BitzArt.XDoc.Tests.xml</DocumentationFile>
+        <DocumentationFile>bin\Release\BitzArt.XDoc.Tests.xml</DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -31,8 +31,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\BitzArt.XDoc\BitzArt.XDoc.csproj" />
-      <ProjectReference Include="..\MultiAssemblyTests\TestAssembly.B\TestAssembly.B.csproj" />
+        <ProjectReference Include="..\..\src\BitzArt.XDoc\BitzArt.XDoc.csproj"/>
+        <ProjectReference Include="..\MultiAssemblyTests\TestAssembly.B\TestAssembly.B.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

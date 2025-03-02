@@ -56,6 +56,46 @@ public class XDocTests
     }
 
     [Fact]
+    public void Get_FieldInfoForNuGetType_ShouldReturnFieldDocumentation()
+    {
+        // Arrange
+        // var xDoc = new XDoc();
+        
+        var type = typeof(Newtonsoft.Json.JsonSerializer);
+
+        // var fieldInfo = type.GetProperty(nameof(DateTime.Hour));
+
+        var xmlDocumentationFilePath = XmlUtility.GetXmlDocumentationFilePath(type.Assembly);
+
+        Assert.NotEmpty(xmlDocumentationFilePath);
+    }
+
+    [Fact]
+    public void Get_FieldInfoForBCLType_ShouldReturnFieldDocumentation()
+    {
+        // Arrange
+        // var xDoc = new XDoc();
+        var type = typeof(DateTime);
+        
+        // var fieldInfo = type.GetProperty(nameof(DateTime.Hour));
+
+        var xmlDocumentationFilePath = XmlUtility.GetXmlDocumentationFilePath(type.Assembly);
+        
+        Assert.NotEmpty(xmlDocumentationFilePath);
+        
+        
+        
+
+        // var typeDocumentation = xDoc.Get(type);
+        //
+        // // Act
+        // var fieldDocumentation = typeDocumentation!.GetDocumentation(fieldInfo!);
+        //
+        // // Assert
+        // Assert.Equal("Dog's Age", fieldDocumentation!.Node.InnerText.Trim());
+    }
+
+    [Fact]
     public void Get_MethodInfo_ShouldReturnMethodDocumentation()
     {
         // Arrange
