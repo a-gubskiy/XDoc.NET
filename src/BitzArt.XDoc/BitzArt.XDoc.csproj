@@ -21,10 +21,6 @@
         </AssemblyAttribute>
     </ItemGroup>
 
-    <!--    <ItemGroup>-->
-    <!--        <None Include="build\**" Pack="true" PackagePath="build"/>-->
-    <!--    </ItemGroup>-->
-
     <Import Project="build/BitzArt.XDoc.targets" Condition="Exists('build/BitzArt.XDoc.targets')"/>
 
 </Project>

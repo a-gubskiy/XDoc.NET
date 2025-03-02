@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Version>0.0.2-alpha</Version>
+        <AssemblyVersion>0.0.2</AssemblyVersion>
+        <FileVersion>0.0.2</FileVersion>
+        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <DocumentationFile>bin\Debug\XDoc.IncludeXmlDocumentation.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <DocumentationFile>bin\Release\XDoc.IncludeXmlDocumentation.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- Include the targets file in the NuGet package -->
+        <None Include="build\XDoc.targets" Pack="true" PackagePath="build" />
+        <!-- Include this package's XML documentation -->
+        <None Include="$(DocumentationFile)" Pack="true" PackagePath="lib\$(TargetFramework)" />
+    </ItemGroup>
+
+</Project>
