@@ -28,7 +28,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="XDoc.IncludeXmlDocumentation" Version="0.0.2-alpha" />
+        <PackageReference Include="XDoc.IncludeXmlDocumentation" Version="0.0.3-alpha" />
     </ItemGroup>
 
     <ItemGroup>

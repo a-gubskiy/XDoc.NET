@@ -1,0 +1,23 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Target Name="CopyXmlDocumentationFiles" AfterTargets="CopyFilesToOutputDirectory">
+        <ItemGroup>
+            <!-- Include XML docs from referenced assemblies -->
+            <XmlDocs Include="@(ReferencePath->'%(RootDir)%(Directory)%(Filename).xml')"
+                     Condition="Exists('%(RootDir)%(Directory)%(Filename).xml') AND '%(ReferencePath.NuGetPackageId)' != 'XDoc.IncludeXmlDocumentation'"/>
+
+            <!-- Include XML docs from project references (more specific path) -->
+            <XmlDocs Include="@(ProjectReference->'%(RootDir)%(Directory)%(RelativeDir)$(OutDir)%(Filename).xml')"
+                     Condition="Exists('%(RootDir)%(Directory)%(RelativeDir)$(OutDir)%(Filename).xml')"/>
+
+            <!-- Fallback for project references -->
+            <XmlDocs Include="@(ProjectReference->'%(RootDir)%(Directory)bin\$(Configuration)\$(TargetFramework)\%(Filename).xml')"
+                     Condition="Exists('%(RootDir)%(Directory)bin\$(Configuration)\$(TargetFramework)\%(Filename).xml')"/>
+        </ItemGroup>
+
+        <Copy SourceFiles="@(XmlDocs)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true"
+              Condition="'@(XmlDocs)' != ''"/>
+        <Message Text="Copied XML documentation files to output directory: @(XmlDocs->Count()) files" Importance="high" />
+        <Message Text="Files copied: @(XmlDocs->'%(Filename)%(Extension)')" Importance="normal"
+                 Condition="'@(XmlDocs)' != ''"/>
+    </Target>
+</Project>
