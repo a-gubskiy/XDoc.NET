@@ -48,8 +48,7 @@ internal static class CrefResolver
     {
         try
         {
-            var target = type is null ? null : source.Get(type);
-            return target;
+            return type is null ? null : source.Get(type);
         }
         catch (XDocException ex)
         {
@@ -64,7 +63,7 @@ internal static class CrefResolver
         {
             return null;
         }
-
+        
         var type = AppDomain.CurrentDomain
             .GetAssemblies()
             .Select(a => a.GetType(typeName, false))

@@ -11,8 +11,6 @@ public class InheritanceResolver
             return null;
         }
         
-        
-        
         throw new NotImplementedException();
     }
 }
