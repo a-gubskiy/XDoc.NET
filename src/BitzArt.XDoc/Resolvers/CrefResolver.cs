@@ -26,32 +26,15 @@ internal static class CrefResolver
 
         foreach (var referencedType in refs)
         {
-            var type = GetType(referencedType);
-
             var reference = new SeeMemberDocumentationReference
             {
                 RequirementNode = documentation.Node,
+                CrefValue = referencedType
             };
 
             result.Add(reference);
         }
 
         return result;
-    }
-
-
-    private static Type? GetType(string? typeName)
-    {
-        if (string.IsNullOrWhiteSpace(typeName))
-        {
-            return null;
-        }
-        
-        var type = AppDomain.CurrentDomain
-            .GetAssemblies()
-            .Select(a => a.GetType(typeName, false))
-            .FirstOrDefault(t => t != null); // What if we have multiple types with the same name and namespace?
-
-        return type;
     }
 }

@@ -15,5 +15,8 @@ public abstract class Animal : BaseAnimal, IAnimal
     /// </summary>
     public Cat? Friend { get; set; }
 
-    public string Property1 { get; set; }
+    /// <summary>
+    /// Description of Property1
+    /// </summary>
+    public virtual string Property1 { get; set; }
 }

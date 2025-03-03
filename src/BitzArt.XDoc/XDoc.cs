@@ -65,4 +65,32 @@ public class XDoc
     /// </returns>
     public PropertyDocumentation? Get(PropertyInfo property)
         => Get(property.DeclaringType!)?.GetDocumentation(property);
+
+    /// <summary>
+    /// Fetches documentation for the specified <see cref="MethodInfo"/>.
+    /// </summary>
+    /// <param name="methodInfo">
+    /// The <see cref="MethodInfo"/> to retrieve documentation for.
+    /// </param>
+    /// <returns>
+    /// <see cref="MethodDocumentation"/> for the specified <see cref="MethodInfo"/> if available;
+    /// otherwise, <see langword="null"/>.
+    /// </returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public MethodDocumentation? Get(MethodInfo methodInfo) 
+        => Get(methodInfo.DeclaringType!)?.GetDocumentation(methodInfo);
+
+    /// <summary>
+    /// Fetches documentation for the specified <see cref="FieldInfo"/>.
+    /// </summary>
+    /// <param name="fieldInfo">
+    /// The <see cref="FieldInfo"/> to retrieve documentation for.
+    /// </param>
+    /// <returns>
+    /// <see cref="FieldDocumentation"/> for the specified <see cref="FieldInfo"/> if available;
+    /// otherwise, <see langword="null"/>.
+    /// </returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public FieldDocumentation? Get(FieldInfo fieldInfo) 
+        => Get(fieldInfo.DeclaringType!)?.GetDocumentation(fieldInfo);
 }

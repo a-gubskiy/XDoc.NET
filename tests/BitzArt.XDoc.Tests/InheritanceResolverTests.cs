@@ -15,7 +15,7 @@ public class InheritanceResolverTests
         };
 
         // Act
-        var result = InheritanceResolver.Resolve(documentation);
+        var result = InheritanceResolver.ResolveInheritance(documentation);
 
         // Assert
         Assert.Null(result);
@@ -33,7 +33,7 @@ public class InheritanceResolverTests
         };
 
         // Act
-        var result = InheritanceResolver.Resolve(documentation);
+        var result = InheritanceResolver.ResolveInheritance(documentation);
 
         // Assert
         Assert.Null(result);
@@ -52,7 +52,7 @@ public class InheritanceResolverTests
         };
 
         // Act
-        var result = InheritanceResolver.Resolve(documentation);
+        var result = InheritanceResolver.ResolveInheritance(documentation);
 
         // Assert
         Assert.Null(result);
@@ -71,7 +71,7 @@ public class InheritanceResolverTests
         };
 
         // Act
-        var result = InheritanceResolver.Resolve(documentation);
+        var result = InheritanceResolver.ResolveInheritance(documentation);
 
         // Assert
         Assert.NotNull(result);

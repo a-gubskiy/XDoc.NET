@@ -33,7 +33,7 @@ public class Dog : Animal, IDog
     public string Name { get; set; } = "";
 
     /// <inheritdoc />
-    public new string Property1 { get; set; } = "";
+    public override string Property1 { get; set; } = "";
 
     /// 123 <inheritdoc cref="Name" />
     public string Field2 { get; set; } = "";

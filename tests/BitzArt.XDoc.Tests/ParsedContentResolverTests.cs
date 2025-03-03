@@ -1,4 +1,5 @@
 using System.Xml;
+using TestAssembly.B;
 
 namespace BitzArt.XDoc.Tests;
 
@@ -11,24 +12,17 @@ public class ParsedContentResolverTests
         _xDoc = new XDoc();
     }
 
-    // [Fact]
-    // public void Build_TypeWithoutReferences_ShouldReturnBasicParsedContent()
-    // {
-    //     // Arrange
-    //     var typeDoc = new TypeDocumentation(
-    //         _xDoc, 
-    //         typeof(SimpleClass),
-    //         CreateXmlNode("<doc><summary>Simple class</summary></doc>"));
-    //
-    //     // Act
-    //     var result = ParsedContentResolver.Resolve(typeDoc);
-    //
-    //     // Assert
-    //     Assert.Equal("SimpleClass", result.Name);
-    //     Assert.Null(result.InheritedContent);
-    //     Assert.Empty(result.GetReferences());
-    //     Assert.NotNull(result.Xml);
-    // }
+    [Fact]
+    public void Build_TypeWithoutReferences_ShouldReturnBasicParsedContent()
+    {
+        // Arrange
+        var propertyDocumentation = _xDoc.Get(typeof(Dog)).GetDocumentation(typeof(Dog).GetProperty(nameof(Dog.Property1)));
+
+        var inheritanceMemberDocumentationReference = propertyDocumentation.Inherited;
+
+        Assert.NotNull(propertyDocumentation);
+        Assert.NotNull(inheritanceMemberDocumentationReference);
+    }
 
     // [Fact]
     // public void Build_TypeWithInheritDoc_ShouldReturnParsedContentWithParent()

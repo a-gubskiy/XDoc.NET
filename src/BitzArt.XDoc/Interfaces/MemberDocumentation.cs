@@ -30,7 +30,7 @@ public abstract class MemberDocumentation
             return _inherited;
         }
     }
-
+    
     public IReadOnlyCollection<MemberDocumentationReference> References
     {
         get
@@ -48,7 +48,7 @@ public abstract class MemberDocumentation
             return;
         }
 
-        _inherited = InheritanceResolver.Resolve(this);
+        _inherited = InheritanceResolver.ResolveInheritance(this);
         _references = CrefResolver.Resolve(this);
 
         _isResolved = true;
