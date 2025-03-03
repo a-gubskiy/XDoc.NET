@@ -13,8 +13,6 @@ internal static class CrefResolver
             return ImmutableList<MemberDocumentationReference>.Empty;
         }
 
-        var source = documentation.Source;
-
         var result = new List<MemberDocumentationReference>();
 
         var doc = XDocument.Parse(documentation.Node.InnerXml);
@@ -29,13 +27,10 @@ internal static class CrefResolver
         foreach (var referencedType in refs)
         {
             var type = GetType(referencedType);
-            var target = GetTypeDocumentation(type, source);
 
             var reference = new SeeMemberDocumentationReference
             {
-                Target = target,
                 RequirementNode = documentation.Node,
-                ReferencedType = referencedType
             };
 
             result.Add(reference);
@@ -44,18 +39,6 @@ internal static class CrefResolver
         return result;
     }
 
-    private static TypeDocumentation? GetTypeDocumentation(Type? type, XDoc source)
-    {
-        try
-        {
-            return type is null ? null : source.Get(type);
-        }
-        catch (XDocException ex)
-        {
-            //We're trying to get documentation for a type that is not documented
-            return null;
-        }
-    }
 
     private static Type? GetType(string? typeName)
     {

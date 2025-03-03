@@ -27,38 +27,21 @@ public static class XDocExtensions
 
         if (documentation.Inherited != null)
         {
-            builder.AppendLine(ToPlainText(documentation.Inherited.Target));
+            builder.AppendLine(ToPlainText(documentation.Inherited));
         }
         else
         {
             builder.AppendLine(Renderer.Render(documentation));
         }
 
-        if (documentation.References.Any())
-        {
-            builder.Append(RenderReference(documentation.References));
-        }
+        
 
         return builder.ToString().Trim();
     }
 
-    private static string RenderReference(IReadOnlyCollection<MemberDocumentationReference> references)
+    private static string ToPlainText(MemberDocumentationReference reference)
     {
-        var builder = new StringBuilder();
-
-        builder.AppendLine();
-        builder.AppendLine("References: ");
-
-        foreach (var reference in references)
-        {
-            var name = ResolveName(reference.Target);
-            
-            builder.AppendLine($" – {name}");
-            builder.AppendLine(ToPlainText(reference.Target));
-            builder.AppendLine();
-        }
-
-        return builder.ToString();
+        throw new NotImplementedException();
     }
 
     private static string ResolveName(MemberDocumentation documentation)

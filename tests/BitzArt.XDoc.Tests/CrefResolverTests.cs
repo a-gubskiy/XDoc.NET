@@ -68,24 +68,6 @@ public class CrefResolverTests
         Assert.Empty(result);
     }
 
-    [Fact]
-    public void Resolve_WithSingleSeeElement_ReturnsSingleReference()
-    {
-        // Arrange
-        var xDoc = new XDoc();
-
-        var propertyDocumentation = xDoc.Get(typeof(Dog).GetProperty(nameof(Dog.PropertyWIthSingleSee)));
-
-        // Act
-        var result = CrefResolver.Resolve(propertyDocumentation);
-
-        // Assert
-        Assert.Single(result);
-
-        var reference = result.First();
-
-        Assert.Equal("System.String", reference.ReferencedType);
-    }
 
     [Fact]
     public void Resolve_WithMultipleSeeElements_ReturnsDistinctReferences()
@@ -100,9 +82,6 @@ public class CrefResolverTests
 
         // Assert
         Assert.Equal(2, result.Count);
-
-        Assert.Contains(result, r => r.ReferencedType == "TestAssembly.B.Dog");
-        Assert.Contains(result, r => r.ReferencedType == "TestAssembly.A.Animal");
     }
 
     [Fact]

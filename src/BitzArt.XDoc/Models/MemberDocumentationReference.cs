@@ -9,10 +9,5 @@ public abstract class MemberDocumentationReference
     /// </summary>
     public XmlNode RequirementNode { get; internal init; }
 
-    /// <summary>
-    /// Requirement target (resolved via cref / inheritdoc)
-    /// </summary>
-    public MemberDocumentation? Target { get; internal init; }
-
-    public string? ReferencedType { get; internal init; }
+    public string CrefValue { get; set; }
 }
