@@ -1,6 +1,4 @@
-using System.Text;
 using BitzArt.XDoc;
-using Xdoc.Renderer.PlainText;
 
 namespace Xdoc.Renderer.PlaintText;
 
@@ -9,8 +7,8 @@ namespace Xdoc.Renderer.PlaintText;
 /// </summary>
 public static class XDocExtensions
 {
-    private static readonly XmlRenderer Renderer = new XmlRenderer();
-    
+    private static readonly IXmlRenderer Renderer = new SimpleXmlRenderer(); //new XmlRenderer();
+
     /// <summary>
     /// Renders the documentation of a <see cref="Type"/> as plain text.
     /// </summary>
@@ -23,29 +21,6 @@ public static class XDocExtensions
             return string.Empty;
         }
 
-        var builder = new StringBuilder();
-
-        if (documentation.Inherited != null)
-        {
-            builder.AppendLine(ToPlainText(documentation.Inherited));
-        }
-        else
-        {
-            builder.AppendLine(Renderer.Render(documentation));
-        }
-
-        
-
-        return builder.ToString().Trim();
-    }
-
-    private static string ToPlainText(MemberDocumentationReference reference)
-    {
-        throw new NotImplementedException();
-    }
-
-    private static string ResolveName(MemberDocumentation documentation)
-    {
-        throw new NotImplementedException();
+        return Renderer.Render(documentation);
     }
 }
