@@ -8,7 +8,7 @@ namespace Xdoc.Renderer.PlainText;
 /// Renders XML documentation to plain text.
 /// <seealso href="https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/xmldoc/xml-documentation-comments">Microsoft specification</seealso>
 /// </summary>
-public class XmlRenderer
+public class XmlRenderer : IXmlRenderer
 {
     /// <summary>
     /// Converts an XML documentation node to the plain text.
@@ -369,12 +369,16 @@ public class XmlRenderer
 
         foreach (XmlNode child in node.ChildNodes)
         {
-            throw new NotImplementedException();
-            // builder.Append(Process(child));
+            builder.Append(Process(child));
         }
 
         var result = builder.ToString();
 
         return result;
+    }
+
+    private bool Process(XmlNode xmlNode)
+    {
+        throw new NotImplementedException();
     }
 }
