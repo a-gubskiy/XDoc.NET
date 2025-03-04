@@ -7,7 +7,16 @@ public abstract class MemberDocumentationReference
     /// <summary>
     /// Actual XML node that caused this requirement
     /// </summary>
-    public XmlNode RequirementNode { get; internal init; }
+    public XmlNode RequirementNode { get; private init; }
+
+    /// <summary>
+    /// Default constructor
+    /// </summary>
+    /// <param name="requirementNode"></param>
+    protected MemberDocumentationReference(XmlNode requirementNode)
+    {
+        RequirementNode = requirementNode;
+    }
 }
 
 /// <summary>
@@ -17,7 +26,21 @@ public abstract class MemberDocumentationReference
 /// </summary>
 public class InheritanceMemberDocumentationReference : MemberDocumentationReference
 {
-    public Type TargetType { get; internal set; }
+    /// <summary>
+    /// Default constructor
+    /// </summary>
+    /// <param name="requirementNode"></param>
+    /// <param name="targetType"></param>
+    public InheritanceMemberDocumentationReference(XmlNode requirementNode, Type targetType)
+        : base(requirementNode)
+    {
+        TargetType = targetType;
+    }
+
+    /// <summary>
+    /// The type that this node is inheriting from
+    /// </summary>
+    public Type TargetType { get; private set; }
 }
 
 /// <summary>
@@ -25,5 +48,18 @@ public class InheritanceMemberDocumentationReference : MemberDocumentationRefere
 /// </summary>
 public class SeeMemberDocumentationReference : MemberDocumentationReference
 {
-    public string CrefValue { get; internal set; } = "";
+    /// <summary>
+    /// Default constructor
+    /// </summary>
+    /// <param name="requirementNode"></param>
+    /// <param name="crefValue"></param>
+    public SeeMemberDocumentationReference(XmlNode requirementNode, string crefValue) : base(requirementNode)
+    {
+        CrefValue = crefValue;
+    }
+
+    /// <summary>
+    /// The cref value of the <see> node
+    /// </summary>
+    public string CrefValue { get; private set; }
 }

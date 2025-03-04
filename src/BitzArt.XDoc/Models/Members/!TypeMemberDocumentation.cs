@@ -10,23 +10,22 @@ namespace BitzArt.XDoc;
 public abstract class TypeMemberDocumentation<TMember> : MemberDocumentation
     where TMember : MemberInfo
 {
-    internal TypeDocumentation ParentNode { get; private init; }
+    private readonly TypeDocumentation _declaringTypeDocumentation;
 
     /// <summary>
     /// The <see cref="Type"/> that declares the member.
     /// </summary>
-    public Type DeclaringType => ParentNode.Type;
+    public Type DeclaringType => _declaringTypeDocumentation.Type;
 
     /// <summary>
     /// The <typeparamref name="TMember"/> this documentation if provided for.
     /// </summary>
     public TMember Member { get; private set; }
 
-    internal TypeMemberDocumentation(IXDoc source, TypeDocumentation parentNode, TMember member, XmlNode node)
+    internal TypeMemberDocumentation(IXDoc source, TypeDocumentation declaringTypeDocumentation, TMember member, XmlNode node)
+        : base(source, node)
     {
-        Source = source;
         Member = member;
-        ParentNode = parentNode;
-        Node = node;
+        _declaringTypeDocumentation = declaringTypeDocumentation;
     }
 }

@@ -5,7 +5,7 @@ namespace BitzArt.XDoc.Resolvers;
 
 public class InheritanceResolver
 {
-    private IXDoc _source;
+    private readonly IXDoc _source;
 
     private InheritanceResolver(IXDoc documentationSource)
     {
@@ -21,29 +21,21 @@ public class InheritanceResolver
 
     private InheritanceMemberDocumentationReference? Resolve(MemberDocumentation documentation)
     {
-        if (documentation.Node == null || string.IsNullOrWhiteSpace(documentation.Node.InnerXml))
+        if (string.IsNullOrWhiteSpace(documentation?.Node?.InnerXml))
         {
             return null;
         }
 
-        if (documentation is TypeDocumentation typeDocumentation)
+        var result = documentation switch
         {
-            return Resolve(typeDocumentation);
-        }
-        else if (documentation is MethodDocumentation methodDocumentation)
-        {
-            return Resolve(methodDocumentation);
-        }
-        else if (documentation is PropertyDocumentation propertyDocumentation)
-        {
-            return Resolve(propertyDocumentation);
-        }
-        else if (documentation is FieldDocumentation fieldDocumentation)
-        {
-            return Resolve(fieldDocumentation);
-        }
-
-        return ResolveGeneric(documentation);
+            TypeDocumentation typeDocumentation => Resolve(typeDocumentation),
+            MethodDocumentation methodDocumentation => Resolve(methodDocumentation),
+            PropertyDocumentation propertyDocumentation => Resolve(propertyDocumentation),
+            FieldDocumentation fieldDocumentation => Resolve(fieldDocumentation),
+            _ => ResolveGeneric(documentation)
+        };
+        
+        return result;
     }
 
     /// <summary>
@@ -59,11 +51,7 @@ public class InheritanceResolver
             return null;
         }
 
-        return new InheritanceMemberDocumentationReference
-        {
-            RequirementNode = documentation.Node,
-            TargetType = null
-        };
+        return new InheritanceMemberDocumentationReference(documentation.Node!, null);
     }
 
     private InheritanceMemberDocumentationReference? Resolve(TypeDocumentation typeDocumentation)
@@ -156,10 +144,6 @@ public class InheritanceResolver
             return null;
         }
 
-        return new InheritanceMemberDocumentationReference
-        {
-            RequirementNode = memberDocumentation.Node,
-            TargetType = targetType
-        };
+        return new InheritanceMemberDocumentationReference(memberDocumentation.Node!, targetType);
     }
 }

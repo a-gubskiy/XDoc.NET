@@ -9,8 +9,6 @@ namespace BitzArt.XDoc;
 /// </summary>
 public sealed class TypeDocumentation : MemberDocumentation
 {
-    // private ParsedContent? _parsedContent;
-
     private readonly Dictionary<MemberInfo, MemberDocumentation> _memberData;
 
     /// <summary>
@@ -24,10 +22,9 @@ public sealed class TypeDocumentation : MemberDocumentation
     internal IReadOnlyDictionary<MemberInfo, MemberDocumentation> MemberData => _memberData.ToFrozenDictionary();
 
     internal TypeDocumentation(IXDoc source, Type type, XmlNode? node)
+        : base(source, node)
     {
-        Source = source;
         Type = type;
-        Node = node;
 
         _memberData = [];
     }

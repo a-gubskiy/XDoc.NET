@@ -26,11 +26,7 @@ internal static class CrefResolver
 
         foreach (var referencedType in refs)
         {
-            var reference = new SeeMemberDocumentationReference
-            {
-                RequirementNode = documentation.Node,
-                CrefValue = referencedType
-            };
+            var reference = new SeeMemberDocumentationReference(documentation.Node, referencedType);
 
             result.Add(reference);
         }

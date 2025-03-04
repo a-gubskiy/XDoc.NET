@@ -8,8 +8,8 @@ namespace BitzArt.XDoc;
 /// </summary>
 public sealed class PropertyDocumentation : TypeMemberDocumentation<PropertyInfo>
 {
-    internal PropertyDocumentation(IXDoc source, TypeDocumentation parentNode, PropertyInfo property, XmlNode node)
-        : base(source, parentNode, property, node)
+    internal PropertyDocumentation(IXDoc source, TypeDocumentation declaringTypeDocumentation, PropertyInfo property, XmlNode node)
+        : base(source, declaringTypeDocumentation, property, node)
     {
     }
 }

@@ -9,10 +9,7 @@ public class InheritanceResolverTests
     public void Resolve_WithNullNode_ReturnsNull()
     {
         // Arrange
-        var documentation = new TestMemberDocumentation
-        {
-            Node = null
-        };
+        var documentation = new TestMemberDocumentation(null!, null!);
 
         // Act
         var result = InheritanceResolver.ResolveInheritance(documentation);
@@ -27,10 +24,7 @@ public class InheritanceResolverTests
         // Arrange
         var xmlDoc = new XmlDocument();
         var node = xmlDoc.CreateElement("member");
-        var documentation = new TestMemberDocumentation
-        {
-            Node = node
-        };
+        var documentation = new TestMemberDocumentation(null!, node);
 
         // Act
         var result = InheritanceResolver.ResolveInheritance(documentation);
@@ -46,10 +40,7 @@ public class InheritanceResolverTests
         var xmlDoc = new XmlDocument();
         var node = xmlDoc.CreateElement("member");
         node.InnerXml = "<summary>Test documentation</summary>";
-        var documentation = new TestMemberDocumentation
-        {
-            Node = node
-        };
+        var documentation = new TestMemberDocumentation(null!, node);
 
         // Act
         var result = InheritanceResolver.ResolveInheritance(documentation);
@@ -65,10 +56,8 @@ public class InheritanceResolverTests
         var xmlDoc = new XmlDocument();
         var node = xmlDoc.CreateElement("member");
         node.InnerXml = "<inheritdoc/>";
-        var documentation = new TestMemberDocumentation
-        {
-            Node = node
-        };
+        
+        var documentation = new TestMemberDocumentation(null!, node);
 
         // Act
         var result = InheritanceResolver.ResolveInheritance(documentation);
@@ -78,5 +67,11 @@ public class InheritanceResolverTests
         Assert.IsType<InheritanceMemberDocumentationReference>(result);
     }
 
-    private class TestMemberDocumentation : MemberDocumentation { }
+    private class TestMemberDocumentation : MemberDocumentation
+    {
+        public TestMemberDocumentation(IXDoc source, XmlNode node)
+            : base(source, node)
+        {
+        }
+    }
 }

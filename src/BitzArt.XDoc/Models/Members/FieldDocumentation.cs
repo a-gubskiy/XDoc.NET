@@ -8,8 +8,8 @@ namespace BitzArt.XDoc;
 /// </summary>
 public sealed class FieldDocumentation : TypeMemberDocumentation<FieldInfo>
 {
-    internal FieldDocumentation(IXDoc source, TypeDocumentation parentNode, FieldInfo field, XmlNode node)
-        : base(source, parentNode, field, node)
+    internal FieldDocumentation(IXDoc source, TypeDocumentation declaringTypeDocumentation, FieldInfo field, XmlNode node)
+        : base(source, declaringTypeDocumentation, field, node)
     {
     }
 }

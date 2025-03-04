@@ -13,14 +13,20 @@ public abstract class MemberDocumentation
     // - Type as a member of an Assembly;
     // - MemberInfo as a member of Type.
 
-    public XmlNode? Node { get; init; }
+    /// <summary>
+    /// XML node that contains the documentation.
+    /// </summary>
+    public XmlNode? Node { get; private init; }
 
-    internal IXDoc Source { get; init; }
+    internal IXDoc Source { get; private init; }
 
     private bool _isResolved = false;
     private InheritanceMemberDocumentationReference? _inherited;
     private IReadOnlyCollection<MemberDocumentationReference>? _references;
 
+    /// <summary>
+    /// Contains references to inherited documentation.
+    /// </summary>
     public InheritanceMemberDocumentationReference? Inherited
     {
         get
@@ -30,17 +36,29 @@ public abstract class MemberDocumentation
             return _inherited;
         }
     }
-    
+
+    /// <summary>
+    /// Contains references to other documentation.
+    /// </summary>
     public IReadOnlyCollection<MemberDocumentationReference> References
     {
         get
         {
             OnRequireResolve();
 
-            return _references;
+            return _references!;
         }
     }
+    
+    protected MemberDocumentation(IXDoc source, XmlNode? node)
+    {
+        Source = source;
+        Node = node;
+    }
 
+    /// <summary>
+    /// Resolves the documentation.
+    /// </summary>
     private void OnRequireResolve()
     {
         if (_isResolved)
