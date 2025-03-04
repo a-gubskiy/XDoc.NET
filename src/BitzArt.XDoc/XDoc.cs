@@ -45,14 +45,14 @@ public class XDoc : IXDoc
         => Get(type.Assembly).GetDocumentation(type);
 
     /// <inheritdoc />
-    public PropertyDocumentation? Get(PropertyInfo property)
-        => Get(property.DeclaringType!)?.GetDocumentation(property);
+    public PropertyDocumentation? Get(PropertyInfo? property)
+        => property is null ? null : Get(property.DeclaringType!)?.GetDocumentation(property);
 
     /// <inheritdoc />
-    public MethodDocumentation? Get(MethodInfo methodInfo)
-        => Get(methodInfo.DeclaringType!)?.GetDocumentation(methodInfo);
+    public MethodDocumentation? Get(MethodInfo? methodInfo)
+        => methodInfo is null ? null : Get(methodInfo.DeclaringType!)?.GetDocumentation(methodInfo);
 
     /// <inheritdoc />
-    public FieldDocumentation? Get(FieldInfo fieldInfo)
-        => Get(fieldInfo.DeclaringType!)?.GetDocumentation(fieldInfo);
+    public FieldDocumentation? Get(FieldInfo? fieldInfo)
+        => fieldInfo is null ? null : Get(fieldInfo.DeclaringType!)?.GetDocumentation(fieldInfo);
 }

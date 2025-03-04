@@ -29,7 +29,7 @@ public interface IXDoc
     /// <see cref="PropertyDocumentation"/> for the specified <see cref="PropertyInfo"/> if available;
     /// otherwise, <see langword="null"/>.
     /// </returns>
-    PropertyDocumentation? Get(PropertyInfo property);
+    PropertyDocumentation? Get(PropertyInfo? property);
 
     /// <summary>
     /// Fetches documentation for the specified <see cref="MethodInfo"/>.
@@ -42,7 +42,7 @@ public interface IXDoc
     /// otherwise, <see langword="null"/>.
     /// </returns>
     /// <exception cref="NotImplementedException"></exception>
-    MethodDocumentation? Get(MethodInfo methodInfo);
+    MethodDocumentation? Get(MethodInfo? methodInfo);
 
     /// <summary>
     /// Fetches documentation for the specified <see cref="FieldInfo"/>.
@@ -55,5 +55,5 @@ public interface IXDoc
     /// otherwise, <see langword="null"/>.
     /// </returns>
     /// <exception cref="NotImplementedException"></exception>
-    FieldDocumentation? Get(FieldInfo fieldInfo);
+    FieldDocumentation? Get(FieldInfo? fieldInfo);
 }
