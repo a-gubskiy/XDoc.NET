@@ -43,34 +43,51 @@ public class InheritanceResolver
             return Resolve(fieldDocumentation);
         }
 
-        throw new NotImplementedException();
+        return ResolveGeneric(documentation);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="documentation"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    private InheritanceMemberDocumentationReference? ResolveGeneric(MemberDocumentation documentation)
+    {
+        if (!IsInherited(documentation))
+        {
+            return null;
+        }
+
+        return new InheritanceMemberDocumentationReference
+        {
+            RequirementNode = documentation.Node,
+            TargetType = null
+        };
     }
 
     private InheritanceMemberDocumentationReference? Resolve(TypeDocumentation typeDocumentation)
     {
-        if (typeDocumentation.Type.BaseType is null)
+        if (typeDocumentation.Type.BaseType is null ||
+            string.IsNullOrWhiteSpace(typeDocumentation.Node?.InnerXml) ||
+            !typeDocumentation.Node.InnerXml.Contains("<inheritdoc />"))
         {
             return null;
         }
 
         var baseTypeDocumentation = _source.Get(typeDocumentation.Type.BaseType);
 
-        return new InheritanceMemberDocumentationReference
-        {
-            RequirementNode = baseTypeDocumentation.Node,
-            TargetType = typeDocumentation.Type.BaseType
-        };
+        return CreateInheritanceMemberDocumentationReference(baseTypeDocumentation, typeDocumentation.Type.BaseType);
     }
 
     private InheritanceMemberDocumentationReference? Resolve(MethodDocumentation methodDocumentation)
     {
-        if (!(methodDocumentation.Node?.InnerXml.Contains("<inheritdoc />") ?? false))
+        if (!IsInherited(methodDocumentation))
         {
             return null;
         }
 
-        var declaringType = methodDocumentation.DeclaringType;
-        var baseType = declaringType.BaseType;
+        var baseType = methodDocumentation.DeclaringType.BaseType;
 
         var baseMemberInfo = baseType?.GetMethod(methodDocumentation.Member.Name);
 
@@ -86,13 +103,12 @@ public class InheritanceResolver
 
     private InheritanceMemberDocumentationReference? Resolve(PropertyDocumentation propertyDocumentation)
     {
-        if (!(propertyDocumentation.Node?.InnerXml.Contains("<inheritdoc />") ?? false))
+        if (!IsInherited(propertyDocumentation))
         {
             return null;
         }
 
-        var declaringType = propertyDocumentation.DeclaringType;
-        var baseType = declaringType.BaseType;
+        var baseType = propertyDocumentation.DeclaringType.BaseType;
 
         var baseMemberInfo = baseType?.GetProperty(propertyDocumentation.Member.Name);
 
@@ -108,14 +124,12 @@ public class InheritanceResolver
 
     private InheritanceMemberDocumentationReference? Resolve(FieldDocumentation fieldDocumentation)
     {
-        if (!(fieldDocumentation.Node?.InnerXml.Contains("<inheritdoc />") ?? false))
+        if (!IsInherited(fieldDocumentation))
         {
             return null;
         }
 
-        var declaringType = fieldDocumentation.DeclaringType;
-        var baseType = declaringType.BaseType;
-
+        var baseType = fieldDocumentation.DeclaringType.BaseType;
         var baseMemberInfo = baseType?.GetField(fieldDocumentation.Member.Name);
 
         if (baseMemberInfo is null)
@@ -128,9 +142,14 @@ public class InheritanceResolver
         return CreateInheritanceMemberDocumentationReference(inheritedDocumentation, baseType);
     }
 
+    private static bool IsInherited(MemberDocumentation memberDocumentation)
+    {
+        return memberDocumentation.Node?.InnerXml.Contains("<inheritdoc />") ?? false;
+    }
+
     private static InheritanceMemberDocumentationReference? CreateInheritanceMemberDocumentationReference(
         MemberDocumentation? memberDocumentation,
-        Type? baseType)
+        Type? targetType)
     {
         if (memberDocumentation is null)
         {
@@ -140,7 +159,7 @@ public class InheritanceResolver
         return new InheritanceMemberDocumentationReference
         {
             RequirementNode = memberDocumentation.Node,
-            TargetType = baseType
+            TargetType = targetType
         };
     }
 }
