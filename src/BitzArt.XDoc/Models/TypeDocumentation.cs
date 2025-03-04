@@ -35,7 +35,7 @@ public sealed class TypeDocumentation : MemberDocumentation
     /// <param name="property">The <see cref="PropertyInfo"/> to retrieve documentation for.</param>
     /// <returns><see cref="PropertyDocumentation"/> for the specified <see cref="PropertyInfo"/> if available; otherwise, <see langword="null"/>.</returns>
     public PropertyDocumentation? GetDocumentation(PropertyInfo property)
-        => (PropertyDocumentation?)GetDocumentation<PropertyInfo>(property);
+        => GetDocumentation<PropertyDocumentation>(property);
 
     /// <summary>
     /// Gets the documentation for a <see cref="MethodInfo"/> declared by this <see cref="Type"/>.
@@ -43,7 +43,7 @@ public sealed class TypeDocumentation : MemberDocumentation
     /// <param name="method">The <see cref="MethodInfo"/> to retrieve documentation for.</param>
     /// <returns><see cref="MethodDocumentation"/> for the specified <see cref="MethodInfo"/> if available; otherwise, <see langword="null"/>.</returns>
     public MethodDocumentation? GetDocumentation(MethodInfo method)
-        => (MethodDocumentation?)GetDocumentation<MethodInfo>(method);
+        => GetDocumentation<MethodDocumentation>(method);
 
     /// <summary>
     /// Gets the documentation for a <see cref="FieldInfo"/> declared by this <see cref="Type"/>.
@@ -51,18 +51,18 @@ public sealed class TypeDocumentation : MemberDocumentation
     /// <param name="field">The <see cref="FieldInfo"/> to retrieve documentation for.</param>
     /// <returns><see cref="FieldDocumentation"/> for the specified <see cref="FieldInfo"/> if available; otherwise, <see langword="null"/>.</returns>
     public FieldDocumentation? GetDocumentation(FieldInfo field)
-        => (FieldDocumentation?)GetDocumentation<FieldInfo>(field);
+        => GetDocumentation<FieldDocumentation>(field);
 
-    private object? GetDocumentation<TMember>(TMember member)
-        where TMember : MemberInfo
+    private TMemberDocumentationResult? GetDocumentation<TMemberDocumentationResult>(MemberInfo member)
+        where TMemberDocumentationResult : MemberDocumentation
     {
         var memberInfo = Validate(member);
+        var memberDocumentation = _memberData.GetValueOrDefault(memberInfo);
 
-        return _memberData.GetValueOrDefault(memberInfo);
+        return (TMemberDocumentationResult?)memberDocumentation;
     }
 
-    private TMember Validate<TMember>(TMember member)
-        where TMember : MemberInfo
+    private MemberInfo Validate(MemberInfo member)
     {
         if (member.DeclaringType != Type)
         {
@@ -73,8 +73,10 @@ public sealed class TypeDocumentation : MemberDocumentation
         {
             return member switch
             {
-                PropertyInfo propertyInfo => (TMember)(MemberInfo)member.DeclaringType.GetProperty(propertyInfo.Name)!,
-                // Method ...
+                PropertyInfo propertyInfo => member.DeclaringType.GetProperty(propertyInfo.Name)!,
+                MethodInfo methodInfo => member.DeclaringType.GetMethod(methodInfo.Name)!,
+                FieldInfo fieldInfo => member.DeclaringType.GetField(fieldInfo.Name)!,
+                _ => throw new NotSupportedException("Member type not supported.")
             };
         }
 
