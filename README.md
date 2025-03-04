@@ -3,32 +3,57 @@
 A lightweight and efficient tool for parsing, and managing C# XML documentation comments.
 
 
-### Proposed usage example
+### BitzArt.XDoc
+
+BitzArt.XDoc is a lightweight .NET library for parsing and accessing XML documentation comments from your C# code. It provides an intuitive API to retrieve documentation for:
+* Types/classes
+* Properties
+* Methods
+* Fields
+
 
 ```csharp
 
 using BitzArt.XDoc;
-
 ...
-
-var type = typeof(MyType);
 
 var xdoc = new XDoc();
 
-var typeDocs = xdoc.Get(type);
-
-var typeComments = typeDocs.ToPlainText(); // Fully resolved type commens (include inherited comments and crefs)
+var typeDocs = xdoc.Get(typeof(MyType));
+var propertyDocs = xDoc.Get(typeof(MyType).GetProperty(nameof(MyType.PropertyOne)));
 ```
 
-### Notes for internal implementation
+### BitzArt.XDoc.PlainText
+
+BitzArt.XDoc.PlainText is an extension package for BitzArt.XDoc that enables rendering XML documentation comments into plain text.
+
 ```csharp
 
-var xml = typeDocs.Node; //Contains the original XML node from .NET generated xml file
-var parsedContent = typeDocs.ParsedContent; // Triggers Resolve() if not previously resolved
+using BitzArt.XDoc;
+using Xdoc.Renderer.PlaintText;
 
-var a = parsedContent.OriginalNode;
-var b = parsedContent.References; // IEnumerable<ParsedContent>
+...
+    
+var xdoc = new XDoc();
 
-typeDocs._isResolved = false; // => typeDocs.Resolve();
+var typeDescrption = xDoc.Get(typeof(MyType)).ToPlainText();
+var propertyDescrption = xDoc.Get(typeof(MyType).GetProperty(nameof(MyType.PropertyOne))).ToPlainText();
+
+```
+
+
+### BitzArt.XDoc.EntityFrameworkCore
+
+BitzArt.XDoc.EntityFrameworkCore is an extension library that bridges XML documentation comments from C# code to Entity Framework Core database objects.
+
+```csharp
+
+using BitzArt.XDoc;
+using Xdoc.Renderer.PlaintText;
+using BitzArt.XDoc.EntityFrameworkCore
+...
+    
+
+// TODO: Add example
 
 ```
