@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BitzArt.XDoc\BitzArt.XDoc.csproj" />
+      <ProjectReference Include="..\Render\BitzArt.XDoc.PlainText\BitzArt.XDoc.PlainText.csproj" />
+    </ItemGroup>
+
+</Project>
