@@ -13,7 +13,7 @@ internal static class XmlUtility
     /// A Dictionary containing all assembly types as keys and their respective <see cref="TypeDocumentation"/> as values, if any.<br/>
     /// In case no documentation is found for a type, the respective value will be <see langword="null"/>.
     /// </returns>
-    internal static Dictionary<Type, TypeDocumentation> Fetch(XDoc source, Assembly assembly)
+    internal static Dictionary<Type, TypeDocumentation> Fetch(IXDoc source, Assembly assembly)
     {
         try
         {

@@ -8,7 +8,7 @@ namespace BitzArt.XDoc;
 /// </summary>
 public sealed class MethodDocumentation : TypeMemberDocumentation<MethodInfo>
 {
-    internal MethodDocumentation(XDoc source, TypeDocumentation parentNode, MethodInfo method, XmlNode node)
+    internal MethodDocumentation(IXDoc source, TypeDocumentation parentNode, MethodInfo method, XmlNode node)
         : base(source, parentNode, method, node)
     {
     }

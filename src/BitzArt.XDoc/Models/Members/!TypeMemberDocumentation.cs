@@ -22,7 +22,7 @@ public abstract class TypeMemberDocumentation<TMember> : MemberDocumentation
     /// </summary>
     public TMember Member { get; private set; }
 
-    internal TypeMemberDocumentation(XDoc source, TypeDocumentation parentNode, TMember member, XmlNode node)
+    internal TypeMemberDocumentation(IXDoc source, TypeDocumentation parentNode, TMember member, XmlNode node)
     {
         Source = source;
         Member = member;
