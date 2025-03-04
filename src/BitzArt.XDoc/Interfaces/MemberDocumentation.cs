@@ -13,7 +13,7 @@ public abstract class MemberDocumentation
     // - Type as a member of an Assembly;
     // - MemberInfo as a member of Type.
 
-    internal XmlNode? Node { get; init; }
+    public XmlNode? Node { get; init; }
 
     internal XDoc Source { get; init; }
 
