@@ -25,7 +25,8 @@ var propertyDocs = xDoc.Get(typeof(MyType).GetProperty(nameof(MyType.PropertyOne
 
 ### BitzArt.XDoc.PlainText
 
-BitzArt.XDoc.PlainText is an extension package for BitzArt.XDoc that enables rendering XML documentation comments into plain text.
+BitzArt.XDoc.PlainText is an extension package for BitzArt.XDoc that enables rendering XML documentation 
+comments into plain text.
 
 ```csharp
 
@@ -44,16 +45,57 @@ var propertyDescrption = xDoc.Get(typeof(MyType).GetProperty(nameof(MyType.Prope
 
 ### BitzArt.XDoc.EntityFrameworkCore
 
-BitzArt.XDoc.EntityFrameworkCore is an extension library that bridges XML documentation comments from C# code to Entity Framework Core database objects.
+#### Features:
+
+BitzArt.XDoc.EntityFrameworkCore is an extension library that bridges XML documentation comments from C# 
+code to Entity Framework Core database objects.
+
+Example 1: Configure comments for all entities in your DbContext
 
 ```csharp
-
 using BitzArt.XDoc;
 using Xdoc.Renderer.PlaintText;
 using BitzArt.XDoc.EntityFrameworkCore
 ...
+
+services.AddScoped<EntitiesCommentConfigurator>();
+
+...
+
+public class MyDbContext : DbContext 
+{
+    private readonly EntitiesCommentConfigurator _commentConfigurator;
     
+    public MyDbContext(DbContextOptions options, EntitiesCommentConfigurator commentConfigurator) : base(options)
+    {
+        _commentConfigurator = commentConfigurator;
+    }
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        
+        // Configure comments for all entities
+        _commentConfigurator.ConfigureComments(modelBuilder);
+    }
+}
+```
 
-// TODO: Add example
 
+Example 2: Configure comments for specific properties using Fluent API
+
+
+```csharp
+using BitzArt.XDoc;
+using Xdoc.Renderer.PlaintText;
+using BitzArt.XDoc.EntityFrameworkCore
+
+...
+
+protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+    modelBuilder.Entity<Customer>()
+        .Property(c => c.Name)
+        .MapPropertyComment<string, Customer>(c => c.Name);
+}
 ```

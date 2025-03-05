@@ -1,9 +1,9 @@
 using System.Xml;
-using Xdoc.Renderer.PlainText;
+using BitzArt.XDoc.PlainText;
 
 namespace BitzArt.XDoc.PlaintText.Tests;
 
-public class XmlRendererTests
+public class PlainTextRendererTests
 {
     // [Fact]
     // public void Render_SimpleXmlDoc_ShouldReturnFormattedText()
@@ -21,16 +21,20 @@ public class XmlRendererTests
     //               </summary>
     //               """;
     //     var xmlNode = GetXmlNode(xml);
-    //     var xmlRenderer = new XmlRenderer();
+    //     var xmlRenderer = new SimplePlainTextRenderer();
     //
     //     // Act
-    //     var str = xmlRenderer.Render(xmlNode);
+    //     IXDoc source = new XDoc();
+    //     MemberDocumentation documentation = new TypeDocumentation(source, typeof(object), xmlNode);
+    //     
+    //     var str = xmlRenderer.Render(documentation);
     //
     //     // Assert
     //     Assert.Contains("Class B Name of specific TestAssembly.B.Dog", str);
     //     Assert.Contains("Dog: Dog.Name = \"Rex\"", str);
     // }
-    //
+    
+    
     // [Fact]
     // public void Render_ComplexXmlDoc_ShouldReturnFormattedText()
     // {

@@ -1,6 +1,6 @@
+using BitzArt.XDoc.PlainText;
 using TestAssembly.A;
 using TestAssembly.B;
-using Xdoc.Renderer.PlaintText;
 
 namespace BitzArt.XDoc.PlaintText.Tests;
 
@@ -53,8 +53,6 @@ public class XDocExtensionsTests
         // var nameInfo = type.GetProperty(nameof(Dog.Name));
         var idInfo = type.GetProperty(nameof(Dog.Id));
         
-        
-    
         // Act
         // var filed1Comment = xDoc.Get(field1Info!).ToPlainText();
         // var filed2Comment = xDoc.Get(field2Info!).ToPlainText();
