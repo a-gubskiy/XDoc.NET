@@ -41,8 +41,8 @@ public class XDoc : IXDoc
     }
 
     /// <inheritdoc />
-    public TypeDocumentation? Get(Type type)
-        => Get(type.Assembly).GetDocumentation(type);
+    public TypeDocumentation? Get(Type? type)
+        => type is null ? null : Get(type.Assembly)?.GetDocumentation(type);
 
     /// <inheritdoc />
     public PropertyDocumentation? Get(PropertyInfo? property)

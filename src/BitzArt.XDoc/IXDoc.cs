@@ -9,17 +9,18 @@ public interface IXDoc
     /// </summary>
     /// <param name="assembly">The <see cref="Assembly"/> to retrieve documentation for.</param>"/>
     /// <returns><see cref="AssemblyDocumentation"/> for the specified <see cref="Assembly"/>.</returns>
-    AssemblyDocumentation Get(Assembly assembly);
+    AssemblyDocumentation? Get(Assembly assembly);
 
     /// <summary>
     /// Fetches documentation for the specified <see cref="Type"/>.
     /// </summary>
-    /// <param name="type">The <see cref="Type"/> to retrieve documentation for.</param>"/>
+    /// <param name="type">The <see cref="Type"/> to retrieve documentation for.</param>
+    /// "/>
     /// <returns>
     /// <see cref="TypeDocumentation"/> for the specified <see cref="Type"/> if available;
     /// otherwise, <see langword="null"/>.
     /// </returns>
-    TypeDocumentation? Get(Type type);
+    TypeDocumentation? Get(Type? type);
 
     /// <summary>
     /// Fetches documentation for the specified <see cref="PropertyInfo"/>.

@@ -125,7 +125,7 @@ public class InheritanceResolver
             return null;
         }
 
-        var inheritedDocumentation = _source.Get(baseType!)?.GetDocumentation(baseMemberInfo);
+        var inheritedDocumentation = _source.Get(baseType)?.GetDocumentation(baseMemberInfo);
 
         return CreateInheritanceMemberDocumentationReference(inheritedDocumentation, baseType);
     }
