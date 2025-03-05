@@ -7,8 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BitzArt.XDoc\BitzArt.XDoc.csproj" />
-      <ProjectReference Include="..\Render\BitzArt.XDoc.PlainText\BitzArt.XDoc.PlainText.csproj" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.1"/>
+    </ItemGroup>
+    
+    <ItemGroup>
+        <ProjectReference Include="..\BitzArt.XDoc\BitzArt.XDoc.csproj"/>
+        <ProjectReference Include="..\Render\BitzArt.XDoc.PlainText\BitzArt.XDoc.PlainText.csproj"/>
     </ItemGroup>
 
 </Project>
