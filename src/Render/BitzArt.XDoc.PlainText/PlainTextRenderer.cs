@@ -8,7 +8,7 @@ namespace BitzArt.XDoc.PlainText;
 /// Renders XML documentation to plain text.
 /// <seealso href="https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/xmldoc/xml-documentation-comments">Microsoft specification</seealso>
 /// </summary>
-public class XmlToPlainTextRenderer : IXmlToPlainTextRenderer
+public class PlainTextRenderer : IXmlToPlainTextRenderer
 {
     /// <summary>
     /// Converts an XML documentation node to the plain text.

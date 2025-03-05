@@ -7,7 +7,7 @@ namespace BitzArt.XDoc.PlainText;
 /// Lightweight XML renderer that converts XML documentation to plain text.
 /// This implementation, can only render the text content of the XML nodes, but not resolve and render references.
 /// </summary>
-public class SimpleXmlToPlainTextRenderer : IXmlToPlainTextRenderer
+public class SimplePlainTextRenderer : IXmlToPlainTextRenderer
 {
     /// <summary>
     /// Normalize the input string by removing extra empty lines and trimming each line.
