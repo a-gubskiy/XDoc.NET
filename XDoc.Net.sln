@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAssembly.B", "tests\Mul
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.Extensions", "BitzArt.XDoc.Extensions\BitzArt.XDoc.Extensions.csproj", "{646126B5-A64B-4DC1-997B-34C408736478}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.Extensions.Tests", "BitzArt.XDoc.Extensions.Tests\BitzArt.XDoc.Extensions.Tests.csproj", "{B19F3431-A68B-4093-84DE-1D69B6E8E79B}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.EntityFrameworkCore", "src\BitzArt.XDoc.EntityFrameworkCore\BitzArt.XDoc.EntityFrameworkCore.csproj", "{69E03C89-EA2B-4C47-BF61-70C5F9E56550}"
 EndProject
 Global
