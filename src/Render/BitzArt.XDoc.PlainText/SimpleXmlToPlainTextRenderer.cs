@@ -1,13 +1,13 @@
 using System.Text;
 using System.Xml;
 
-namespace BitzArt.XDoc;
+namespace BitzArt.XDoc.PlainText;
 
 /// <summary>
 /// Lightweight XML renderer that converts XML documentation to plain text.
 /// This implementation, can only render the text content of the XML nodes, but not resolve and render references.
 /// </summary>
-public class SimpleXmlRenderer : IXmlRenderer
+public class SimpleXmlToPlainTextRenderer : IXmlToPlainTextRenderer
 {
     /// <summary>
     /// Normalize the input string by removing extra empty lines and trimming each line.

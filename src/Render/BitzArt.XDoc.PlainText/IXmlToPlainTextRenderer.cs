@@ -1,6 +1,6 @@
-namespace BitzArt.XDoc;
+namespace BitzArt.XDoc.PlainText;
 
-public interface IXmlRenderer
+public interface IXmlToPlainTextRenderer
 {
     /// <summary>
     /// Renders the documentation of a <see cref="MemberDocumentation"/> as plain text.
