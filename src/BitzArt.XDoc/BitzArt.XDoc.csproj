@@ -19,6 +19,9 @@
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
             <_Parameter1>BitzArt.XDoc.Tests</_Parameter1>
         </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>BitzArt.XDoc.PlaintText.Tests</_Parameter1>
+        </AssemblyAttribute>
     </ItemGroup>
 
     <Import Project="build/BitzArt.XDoc.targets" Condition="Exists('build/BitzArt.XDoc.targets')"/>
