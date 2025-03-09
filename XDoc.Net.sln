@@ -32,10 +32,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAssembly.B", "tests\Mul
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.EntityFrameworkCore", "src\BitzArt.XDoc.EntityFrameworkCore\BitzArt.XDoc.EntityFrameworkCore.csproj", "{69E03C89-EA2B-4C47-BF61-70C5F9E56550}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.Extensions", "src\BitzArt.XDoc.Extensions\BitzArt.XDoc.Extensions.csproj", "{06A67100-A8D6-4269-ACEB-B07D75B07F60}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.Extensions.Tests", "tests\BitzArt.XDoc.Extensions.Tests\BitzArt.XDoc.Extensions.Tests.csproj", "{4BC6746B-DF10-4987-944A-DAD985193C4A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,14 +66,6 @@ Global
 		{69E03C89-EA2B-4C47-BF61-70C5F9E56550}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69E03C89-EA2B-4C47-BF61-70C5F9E56550}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69E03C89-EA2B-4C47-BF61-70C5F9E56550}.Release|Any CPU.Build.0 = Release|Any CPU
-		{06A67100-A8D6-4269-ACEB-B07D75B07F60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{06A67100-A8D6-4269-ACEB-B07D75B07F60}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{06A67100-A8D6-4269-ACEB-B07D75B07F60}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{06A67100-A8D6-4269-ACEB-B07D75B07F60}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4BC6746B-DF10-4987-944A-DAD985193C4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4BC6746B-DF10-4987-944A-DAD985193C4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4BC6746B-DF10-4987-944A-DAD985193C4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4BC6746B-DF10-4987-944A-DAD985193C4A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -93,7 +81,5 @@ Global
 		{4398E200-26F9-4184-A943-47738FF5EB4E} = {401AF0D6-F0A9-43CE-9CB6-B3BFC69FFE31}
 		{152D5D7F-EDF8-489C-B2BE-F22E5F63263F} = {401AF0D6-F0A9-43CE-9CB6-B3BFC69FFE31}
 		{69E03C89-EA2B-4C47-BF61-70C5F9E56550} = {DE8DA5D7-65DB-4FE8-8CF9-52CEB9CE6648}
-		{06A67100-A8D6-4269-ACEB-B07D75B07F60} = {DE8DA5D7-65DB-4FE8-8CF9-52CEB9CE6648}
-		{4BC6746B-DF10-4987-944A-DAD985193C4A} = {616D63B3-7EF0-40FB-A404-33A221F65577}
 	EndGlobalSection
 EndGlobal

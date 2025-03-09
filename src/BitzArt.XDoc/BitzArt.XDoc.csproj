@@ -24,6 +24,9 @@
         </AssemblyAttribute>
     </ItemGroup>
 
-    <Import Project="build/BitzArt.XDoc.targets" Condition="Exists('build/BitzArt.XDoc.targets')"/>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2"/>
+    </ItemGroup>
+
 
 </Project>
