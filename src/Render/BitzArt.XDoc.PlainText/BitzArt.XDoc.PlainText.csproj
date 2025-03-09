@@ -1,11 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<RootNamespace>BitzArt.XDoc</RootNamespace>
+		<RootNamespace>BitzArt.XDoc.PlainText</RootNamespace>
+
+		<PackageId>BitzArt.XDoc.PlainText</PackageId>
+		<Authors>BitzArt</Authors>
+		<Description>Extension package for BitzArt.XDoc that enables rendering XML documentation comments into plain text.</Description>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/BitzArt/xdoc</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/BitzArt/xdoc</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageIcon>xdoc-logo.png</PackageIcon>
 	</PropertyGroup>
 
     <ItemGroup>

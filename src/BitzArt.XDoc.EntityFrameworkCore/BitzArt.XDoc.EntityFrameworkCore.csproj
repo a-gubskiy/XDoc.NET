@@ -1,10 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <RootNamespace>BitzArt.XDoc.EntityFrameworkCore</RootNamespace>
+
+        <PackageId>BitzArt.XDoc.EntityFrameworkCore</PackageId>
+        <Authors>BitzArt</Authors>
+        <Description>Extension library that bridges XML documentation comments from C# code to Entity Framework Core database objects.</Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/BitzArt/xdoc</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/BitzArt/xdoc</PackageProjectUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageIcon>xdoc-logo.png</PackageIcon>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\..\assets\xdoc-logo.png" Pack="True" Visible="true" PackagePath="\" />
+        <None Include="..\..\README.md" Pack="True" Visible="true" PackagePath="\" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1"/>
