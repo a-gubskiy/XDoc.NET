@@ -18,4 +18,8 @@
       <ProjectReference Include="..\TestAssembly.A\TestAssembly.A.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" IncludeAssets="all" />
+    </ItemGroup>
+
 </Project>

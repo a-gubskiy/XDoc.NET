@@ -1,17 +1,48 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<RootNamespace>BitzArt.XDoc</RootNamespace>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <RootNamespace>BitzArt.XDoc</RootNamespace>
+
+        <PackageId>BitzArt.XDoc</PackageId>
+        <Authors>BitzArt</Authors>
+        <Description>A lightweight and efficient tool for parsing, and managing C# XML documentation comments.</Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/BitzArt/xdoc</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/BitzArt/xdoc</PackageProjectUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageIcon>xdoc-logo.png</PackageIcon>
     </PropertyGroup>
 
-	<ItemGroup>
-		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-			<_Parameter1>BitzArt.XDoc.Tests</_Parameter1>
-		</AssemblyAttribute>
-	</ItemGroup>
+    <ItemGroup>
+        <None Include="..\..\assets\xdoc-logo.png" Pack="True" Visible="true" PackagePath="\" />
+        <None Include="..\..\README.md" Pack="True" Visible="true" PackagePath="\" />
+    </ItemGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <DocumentationFile>bin\Debug\BitzArt.XDoc.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <DocumentationFile>bin\Release\BitzArt.XDoc.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>BitzArt.XDoc.Tests</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>BitzArt.XDoc.PlaintText.Tests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2"/>
+    </ItemGroup>
+
 
 </Project>

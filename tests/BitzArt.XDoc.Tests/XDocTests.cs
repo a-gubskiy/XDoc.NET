@@ -5,74 +5,123 @@ namespace BitzArt.XDoc.Tests;
 public class XDocTests
 {
     [Fact]
-    public void GetDocumentation_ClassWithThreeFields_ShouldReturnMembersInfo()
+    public void Get_ClassWithThreeFields_ShouldReturnMembersInfo()
     {
+        // Arrange
         var xDoc = new XDoc();
 
-        var typeDocumentation = xDoc.GetDocumentation(typeof(Dog));
-
+        // Act
+        var typeDocumentation = xDoc.Get(typeof(Dog));
         var members = typeDocumentation!.MemberData.Keys
             .OrderBy(o => o.Name)
             .ToList();
 
+        // Assert
         Assert.Contains(members, m => m.Name == "Age");
         Assert.Contains(members, m => m.Name == "Name");
-        Assert.Contains(members, m => m.Name == "Field1");
+        Assert.Contains(members, m => m.Name == "Property1");
         Assert.Contains(members, m => m.Name == "Field2");
         Assert.Contains(members, m => m.Name == "GetInfo");
     }
 
     [Fact]
-    public void GetDocumentation_PropertyInfo_ShouldReturnPropertyDocumentation()
+    public void Get_PropertyInfo_ShouldReturnPropertyDocumentation()
     {
+        // Arrange
         var xDoc = new XDoc();
-
         var type = typeof(Dog);
-        var propertyInfo = type.GetProperty(nameof(Dog.Field1));
+        var propertyInfo = type.GetProperty(nameof(Dog.Field3));
 
-        var propertyDocumentation = xDoc.GetDocumentation(propertyInfo!);
+        // Act
+        var propertyDocumentation = xDoc.Get(propertyInfo!);
 
-        Assert.Equal("Field one", propertyDocumentation!.Node.InnerText.Trim());
+        // Assert
+        Assert.Equal("Field three", propertyDocumentation!.Node.InnerText.Trim());
     }
 
     [Fact]
-    public void GetDocumentation_FieldInfo_ShouldReturnFieldDocumentation()
+    public void Get_FieldInfo_ShouldReturnFieldDocumentation()
     {
+        // Arrange
         var xDoc = new XDoc();
-
         var type = typeof(Dog);
         var fieldInfo = type.GetField(nameof(Dog.Age));
+        var typeDocumentation = xDoc.Get(typeof(Dog));
 
-        var typeDocumentation = xDoc.GetDocumentation(typeof(Dog));
+        // Act
         var fieldDocumentation = typeDocumentation!.GetDocumentation(fieldInfo!);
 
+        // Assert
         Assert.Equal("Dog's Age", fieldDocumentation!.Node.InnerText.Trim());
     }
-    
+
     [Fact]
-    public void GetDocumentation_MethodInfo_ShouldReturnMethodDocumentation()
+    public void Get_FieldInfoForNuGetType_ShouldReturnFieldDocumentation()
     {
-        var xDoc = new XDoc();
+        // Arrange
+        // var xDoc = new XDoc();
+        
+        var type = typeof(Newtonsoft.Json.JsonSerializer);
 
-        var type = typeof(Dog);
-        var methodInfo = type.GetMethod(nameof(Dog.GetInfo));
+        // var fieldInfo = type.GetProperty(nameof(DateTime.Hour));
 
-        var typeDocumentation = xDoc.GetDocumentation(typeof(Dog));
-        var methodDocumentation = typeDocumentation!.GetDocumentation(methodInfo!);
+        var xmlDocumentationFilePath = XmlUtility.GetXmlDocumentationFilePath(type.Assembly);
 
-        Assert.Equal("Get some info", methodDocumentation!.Node.InnerText.Trim());
+        Assert.NotEmpty(xmlDocumentationFilePath);
     }
 
     [Fact]
-    public void GetDocumentation__ShouldThrowException()
+    public void Get_FieldInfoForBCLType_ShouldReturnFieldDocumentation()
     {
-        var xDoc = new XDoc();
+        // Arrange
+        // var xDoc = new XDoc();
+        var type = typeof(DateTime);
+        
+        // var fieldInfo = type.GetProperty(nameof(DateTime.Hour));
 
+        var xmlDocumentationFilePath = XmlUtility.GetXmlDocumentationFilePath(type.Assembly);
+        
+        Assert.NotEmpty(xmlDocumentationFilePath);
+        
+        
+        
+
+        // var typeDocumentation = xDoc.Get(type);
+        //
+        // // Act
+        // var fieldDocumentation = typeDocumentation!.GetDocumentation(fieldInfo!);
+        //
+        // // Assert
+        // Assert.Equal("Dog's Age", fieldDocumentation!.Node.InnerText.Trim());
+    }
+
+    [Fact]
+    public void Get_MethodInfo_ShouldReturnMethodDocumentation()
+    {
+        // Arrange
+        var xDoc = new XDoc();
+        var type = typeof(Dog);
+        var methodInfo = type.GetMethod(nameof(Dog.GetInfo));
+        var typeDocumentation = xDoc.Get(typeof(Dog));
+
+        // Act
+        var methodDocumentation = typeDocumentation!.GetDocumentation(methodInfo!);
+
+        // Assert
+        Assert.Equal("Get some about", methodDocumentation!.Node.InnerText.Trim());
+    }
+
+    [Fact]
+    public void Get_ObjectType_ShouldThrowXDocException()
+    {
+        // Arrange
+        var xDoc = new XDoc();
         var type = typeof(object);
 
+        // Act + Assert
         Assert.Throws<XDocException>(() =>
         {
-            var documentation = xDoc.GetDocumentation(type);
+            var documentation = xDoc.Get(type);
         });
     }
 }

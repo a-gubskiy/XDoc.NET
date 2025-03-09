@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc", "src\BitzArt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.Tests", "tests\BitzArt.XDoc.Tests\BitzArt.XDoc.Tests.csproj", "{D6F5A728-53AD-49F9-8BA0-1E72D0AF6A93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.PlaintText", "src\Render\BitzArt.XDoc.PlaintText\BitzArt.XDoc.PlaintText.csproj", "{95283F56-EFD3-4B32-AE26-4E486D186127}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.PlainText", "src\Render\BitzArt.XDoc.PlainText\BitzArt.XDoc.PlainText.csproj", "{95283F56-EFD3-4B32-AE26-4E486D186127}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.PlaintText.Tests", "tests\Render\BitzArt.XDoc.PlaintText.Tests\BitzArt.XDoc.PlaintText.Tests.csproj", "{4F4720A9-8DD2-4DFD-B217-A0FAFC6F60D0}"
 EndProject
@@ -29,6 +29,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAssembly.A", "tests\MultiAssemblyTests\TestAssembly.A\TestAssembly.A.csproj", "{4398E200-26F9-4184-A943-47738FF5EB4E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAssembly.B", "tests\MultiAssemblyTests\TestAssembly.B\TestAssembly.B.csproj", "{152D5D7F-EDF8-489C-B2BE-F22E5F63263F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.EntityFrameworkCore", "src\BitzArt.XDoc.EntityFrameworkCore\BitzArt.XDoc.EntityFrameworkCore.csproj", "{69E03C89-EA2B-4C47-BF61-70C5F9E56550}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,6 +62,10 @@ Global
 		{152D5D7F-EDF8-489C-B2BE-F22E5F63263F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{152D5D7F-EDF8-489C-B2BE-F22E5F63263F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{152D5D7F-EDF8-489C-B2BE-F22E5F63263F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69E03C89-EA2B-4C47-BF61-70C5F9E56550}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69E03C89-EA2B-4C47-BF61-70C5F9E56550}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69E03C89-EA2B-4C47-BF61-70C5F9E56550}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69E03C89-EA2B-4C47-BF61-70C5F9E56550}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,5 +80,6 @@ Global
 		{401AF0D6-F0A9-43CE-9CB6-B3BFC69FFE31} = {616D63B3-7EF0-40FB-A404-33A221F65577}
 		{4398E200-26F9-4184-A943-47738FF5EB4E} = {401AF0D6-F0A9-43CE-9CB6-B3BFC69FFE31}
 		{152D5D7F-EDF8-489C-B2BE-F22E5F63263F} = {401AF0D6-F0A9-43CE-9CB6-B3BFC69FFE31}
+		{69E03C89-EA2B-4C47-BF61-70C5F9E56550} = {DE8DA5D7-65DB-4FE8-8CF9-52CEB9CE6648}
 	EndGlobalSection
 EndGlobal

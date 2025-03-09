@@ -7,7 +7,7 @@ namespace BitzArt.XDoc;
 /// </summary>
 public sealed class AssemblyDocumentation
 {
-    internal XDoc Source { get; private init; }
+    internal IXDoc Source { get; private init; }
 
     /// <summary>
     /// The <see cref="System.Reflection.Assembly"/> this documentation is fetched for.
@@ -17,7 +17,7 @@ public sealed class AssemblyDocumentation
     // Type documentation found for this assembly.
     private readonly Dictionary<Type, TypeDocumentation> _typeData;
 
-    internal AssemblyDocumentation(XDoc source, Assembly assembly)
+    internal AssemblyDocumentation(IXDoc source, Assembly assembly)
     {
         Source = source;
         Assembly = assembly;
@@ -51,7 +51,11 @@ public sealed class AssemblyDocumentation
 
     private Type Validate(Type type)
     {
-        if (type.Assembly != Assembly) throw new InvalidOperationException("The provided type is not defined in this assembly.");
+        if (type.Assembly != Assembly)
+        {
+            throw new InvalidOperationException("The provided type is not defined in this assembly.");
+        }
+        
         return type;
     }
 

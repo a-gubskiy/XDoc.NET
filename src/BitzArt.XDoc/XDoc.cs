@@ -22,47 +22,37 @@ namespace BitzArt.XDoc;
 /// Disposing of an <see cref="XDoc"/> object will lead to a loss of all said data.
 /// </para>
 /// </summary>
-public class XDoc
+public class XDoc : IXDoc
 {
-    private readonly Dictionary<Assembly, AssemblyDocumentation> _fetchedAssemblies = [];
+    private readonly Dictionary<Assembly, AssemblyDocumentation> _collectedAssemblies = [];
 
-    /// <summary>
-    /// Fetches documentation for the specified <see cref="Assembly"/>.
-    /// </summary>
-    /// <param name="assembly">The <see cref="Assembly"/> to retrieve documentation for.</param>"/>
-    /// <returns><see cref="AssemblyDocumentation"/> for the specified <see cref="Assembly"/>.</returns>
-    public AssemblyDocumentation GetDocumentation(Assembly assembly)
-        => _fetchedAssemblies.TryGetValue(assembly, out var result)
+    /// <inheritdoc />
+    public AssemblyDocumentation Get(Assembly assembly)
+        => _collectedAssemblies.TryGetValue(assembly, out var result)
             ? result
-            : Fetch(assembly);
+            : Collect(assembly);
 
-    private AssemblyDocumentation Fetch(Assembly assembly)
+    private AssemblyDocumentation Collect(Assembly assembly)
     {
         var result = new AssemblyDocumentation(this, assembly);
-        _fetchedAssemblies.Add(assembly, result);
+        _collectedAssemblies.Add(assembly, result);
 
         return result;
     }
 
-    /// <summary>
-    /// Fetches documentation for the specified <see cref="Type"/>.
-    /// </summary>
-    /// <param name="type">The <see cref="Type"/> to retrieve documentation for.</param>"/>
-    /// <returns>
-    /// <see cref="TypeDocumentation"/> for the specified <see cref="Type"/> if available;
-    /// otherwise, <see langword="null"/>.
-    /// </returns>
-    public TypeDocumentation? GetDocumentation(Type type)
-        => GetDocumentation(type.Assembly).GetDocumentation(type);
+    /// <inheritdoc />
+    public TypeDocumentation? Get(Type? type)
+        => type is null ? null : Get(type.Assembly)?.GetDocumentation(type);
 
-    /// <summary>
-    /// Fetches documentation for the specified <see cref="PropertyInfo"/>.
-    /// </summary>
-    /// <param name="property">The <see cref="PropertyInfo"/> to retrieve documentation for.</param>
-    /// <returns>
-    /// <see cref="PropertyDocumentation"/> for the specified <see cref="PropertyInfo"/> if available;
-    /// otherwise, <see langword="null"/>.
-    /// </returns>
-    public PropertyDocumentation? GetDocumentation(PropertyInfo property)
-        => GetDocumentation(property.DeclaringType!)?.GetDocumentation(property);
+    /// <inheritdoc />
+    public PropertyDocumentation? Get(PropertyInfo? property)
+        => property is null ? null : Get(property.DeclaringType!)?.GetDocumentation(property);
+
+    /// <inheritdoc />
+    public MethodDocumentation? Get(MethodInfo? methodInfo)
+        => methodInfo is null ? null : Get(methodInfo.DeclaringType!)?.GetDocumentation(methodInfo);
+
+    /// <inheritdoc />
+    public FieldDocumentation? Get(FieldInfo? fieldInfo)
+        => fieldInfo is null ? null : Get(fieldInfo.DeclaringType!)?.GetDocumentation(fieldInfo);
 }

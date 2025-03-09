@@ -9,22 +9,33 @@
         <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <DocumentationFile>bin\Debug\BitzArt.XDoc.Tests.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <DocumentationFile>bin\Release\BitzArt.XDoc.Tests.xml</DocumentationFile>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="coverlet.collector" Version="6.0.4">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0"/>
         <PackageReference Include="xunit" Version="2.9.3"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="XDoc.IncludeXmlDocumentation" Version="0.0.3-alpha" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\BitzArt.XDoc\BitzArt.XDoc.csproj" />
-      <ProjectReference Include="..\MultiAssemblyTests\TestAssembly.B\TestAssembly.B.csproj" />
+        <ProjectReference Include="..\..\src\BitzArt.XDoc\BitzArt.XDoc.csproj"/>
+        <ProjectReference Include="..\MultiAssemblyTests\TestAssembly.B\TestAssembly.B.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
