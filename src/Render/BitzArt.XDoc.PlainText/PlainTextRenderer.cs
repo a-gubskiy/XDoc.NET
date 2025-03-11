@@ -130,13 +130,14 @@ public class PlainTextRenderer
         {
             var crefValue = crefAttribute.Value;
 
-            // Remove the T: prefix if present (for type references)
             if (crefValue.StartsWith("T:") ||
                 crefValue.StartsWith("P:") ||
                 crefValue.StartsWith("M:") ||
                 crefValue.StartsWith("F:"))
             {
-                crefValue = crefValue[2..];
+                var lastIndexOfDot = crefValue.LastIndexOf('.');
+
+                crefValue = crefValue.Substring(lastIndexOfDot + 1, crefValue.Length - lastIndexOfDot - 1);
             }
 
             builder.Append(crefValue);
