@@ -19,8 +19,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="..\..\assets\xdoc-logo.png" Pack="True" Visible="false" PackagePath="\" />
-        <None Include="..\..\README.md" Pack="True" Visible="false" PackagePath="\" />
+        <None Include="..\..\assets\xdoc-logo.png" Pack="True" Visible="false" PackagePath="\"/>
+        <None Include="..\..\README.md" Pack="True" Visible="false" PackagePath="\"/>
     </ItemGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -41,6 +41,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" PrivateAssets="true"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2"/>
     </ItemGroup>
 
