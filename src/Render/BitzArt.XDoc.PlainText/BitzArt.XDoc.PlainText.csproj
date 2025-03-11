@@ -24,11 +24,6 @@
 	</ItemGroup>
 
     <ItemGroup>
-        <None Include="..\..\..\assets\xdoc-logo.png" Pack="True" Visible="false" PackagePath="\"/>
-        <None Include="..\..\..\README.md" Pack="True" Visible="false" PackagePath="\"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\..\BitzArt.XDoc\BitzArt.XDoc.csproj"/>
     </ItemGroup>
 
