@@ -33,17 +33,10 @@ public class InheritanceMemberDocumentationReference : MemberDocumentationRefere
     /// Default constructor
     /// </summary>
     /// <param name="requirementNode"></param>
-    /// <param name="targetType"></param>
-    public InheritanceMemberDocumentationReference(XmlNode requirementNode, Type targetType)
+    public InheritanceMemberDocumentationReference(XmlNode requirementNode)
         : base(requirementNode)
     {
-        TargetType = targetType;
     }
-
-    /// <summary>
-    /// The type that this node is inheriting from
-    /// </summary>
-    public Type TargetType { get; private set; }
 }
 
 /// <summary>
@@ -56,7 +49,8 @@ public class SeeMemberDocumentationReference : MemberDocumentationReference
     /// </summary>
     /// <param name="requirementNode"></param>
     /// <param name="crefValue"></param>
-    public SeeMemberDocumentationReference(XmlNode requirementNode, string crefValue) : base(requirementNode)
+    public SeeMemberDocumentationReference(XmlNode requirementNode, string crefValue)
+        : base(requirementNode)
     {
         CrefValue = crefValue;
     }
