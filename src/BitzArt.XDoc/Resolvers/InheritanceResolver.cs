@@ -3,7 +3,7 @@ namespace BitzArt.XDoc.Resolvers;
 /// <summary>
 /// Resolves inheritance for member documentation.
 /// </summary>
-public class InheritanceResolver
+internal class InheritanceResolver
 {
     private readonly IXDoc _source;
 

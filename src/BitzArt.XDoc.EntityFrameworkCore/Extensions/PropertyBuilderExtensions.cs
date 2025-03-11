@@ -12,7 +12,7 @@ namespace BitzArt.XDoc.EntityFrameworkCore;
 [PublicAPI]
 public static class PropertyBuilderExtensions
 {
-    private static readonly XDoc XDoc = new XDoc();
+    private static readonly XDoc XDoc = new();
     
     /// <summary>
     /// Map property comment from XML documentation to the property.
