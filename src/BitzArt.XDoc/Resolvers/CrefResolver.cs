@@ -1,14 +1,13 @@
 using System.Collections.Immutable;
-using System.Xml;
 using System.Xml.Linq;
 
 namespace BitzArt.XDoc.Resolvers;
 
 internal static class CrefResolver
 {
-    public static IReadOnlyCollection<MemberDocumentationReference> Resolve(MemberDocumentation documentation)
+    public static IReadOnlyCollection<MemberDocumentationReference> Resolve(MemberDocumentation? documentation)
     {
-        if (documentation.Node == null || string.IsNullOrWhiteSpace(documentation.Node.InnerXml))
+        if (documentation?.Node == null || string.IsNullOrWhiteSpace(documentation.Node.InnerXml))
         {
             return ImmutableList<MemberDocumentationReference>.Empty;
         }
