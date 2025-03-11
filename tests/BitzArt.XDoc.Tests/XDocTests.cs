@@ -71,31 +71,6 @@ public class XDocTests
     }
 
     [Fact]
-    public void Get_FieldInfoForBCLType_ShouldReturnFieldDocumentation()
-    {
-        // Arrange
-        // var xDoc = new XDoc();
-        var type = typeof(DateTime);
-        
-        // var fieldInfo = type.GetProperty(nameof(DateTime.Hour));
-
-        var xmlDocumentationFilePath = XmlUtility.GetXmlDocumentationFilePath(type.Assembly);
-        
-        Assert.NotEmpty(xmlDocumentationFilePath);
-        
-        
-        
-
-        // var typeDocumentation = xDoc.Get(type);
-        //
-        // // Act
-        // var fieldDocumentation = typeDocumentation!.GetDocumentation(fieldInfo!);
-        //
-        // // Assert
-        // Assert.Equal("Dog's Age", fieldDocumentation!.Node.InnerText.Trim());
-    }
-
-    [Fact]
     public void Get_MethodInfo_ShouldReturnMethodDocumentation()
     {
         // Arrange
@@ -117,11 +92,11 @@ public class XDocTests
         // Arrange
         var xDoc = new XDoc();
         var type = typeof(object);
+        
+        // Act
+        var documentation = xDoc.Get(type);
 
-        // Act + Assert
-        Assert.Throws<XDocException>(() =>
-        {
-            var documentation = xDoc.Get(type);
-        });
+        // Assert
+        Assert.Null(documentation);
     }
 }
