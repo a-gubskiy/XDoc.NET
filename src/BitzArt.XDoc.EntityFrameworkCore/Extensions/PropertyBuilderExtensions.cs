@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using BitzArt.XDoc.PlainText;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,6 +9,7 @@ namespace BitzArt.XDoc.EntityFrameworkCore;
 /// <summary>
 /// Extension methods for PropertyBuilder.
 /// </summary>
+[PublicAPI]
 public static class PropertyBuilderExtensions
 {
     private static readonly XDoc XDoc = new XDoc();
