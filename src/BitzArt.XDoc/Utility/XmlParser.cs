@@ -89,7 +89,8 @@ internal class XmlParser
         var (type, memberName) = ResolveTypeAndMemberName(name);
 
         var propertyInfo = type.GetProperty(memberName)
-            ?? throw new InvalidOperationException($"Property '{memberName}' not found in type '{type.Name}'.");
+                           ?? throw new InvalidOperationException(
+                               $"Property '{memberName}' not found in type '{type.Name}'.");
 
         var typeDocumentation = ResolveOwnerType(type);
 
@@ -103,10 +104,11 @@ internal class XmlParser
     private FieldDocumentation ParseFieldNode(XmlNode node, string name)
     {
         var (type, memberName) = ResolveTypeAndMemberName(name);
-        
+
         var fieldInfo = type.GetField(memberName)
-                           ?? throw new InvalidOperationException($"Field '{memberName}' not found in type '{type.Name}'.");
-        
+                        ?? throw new InvalidOperationException(
+                            $"Field '{memberName}' not found in type '{type.Name}'.");
+
         if (fieldInfo is null)
         {
             throw new InvalidOperationException($"Field '{memberName}' not found in type '{type.Name}'.");
@@ -121,16 +123,38 @@ internal class XmlParser
         return fieldDocumentation;
     }
 
-    private MethodDocumentation ParseMethodNode(XmlNode node, string name)
+    private MethodDocumentation? ParseMethodNode(XmlNode node, string name)
     {
         var (type, memberName) = ResolveTypeAndMemberName(name);
-        
-        var methodInfo = type.GetMethod(memberName)
-                           ?? throw new InvalidOperationException($"Method '{memberName}' not found in type '{type.Name}'.");
+        var parameters = GetMethodParameters(name);
+        var typeMethods = type.GetMethods();
+
+        var methodInfo = typeMethods
+            .Where(method => method.Name == memberName)
+            .Where(method =>
+            {
+                var methodParameters = method
+                    .GetParameters()
+                    .Select(o => GetTypeFriendlyName(o.ParameterType))
+                    .ToList();
+
+                if (methodParameters.Count != parameters.Count)
+                {
+                    return false;
+                }
+
+                if (methodParameters.All(mp => parameters.Contains(mp)))
+                {
+                    return true;
+                }
+
+                return false;
+            })
+            .SingleOrDefault();
 
         if (methodInfo is null)
         {
-            throw new InvalidOperationException($"Method '{memberName}' not found in type '{type.Name}'.");
+            return null;
         }
 
         var typeDocumentation = ResolveOwnerType(type);
@@ -141,18 +165,94 @@ internal class XmlParser
 
         return methodDocumentation;
     }
-    
+
+    /// <summary>
+    /// Get the friendly name of a type
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    private static string GetTypeFriendlyName(Type type)
+    {
+        if (!type.IsGenericType)
+        {
+            return type.FullName ?? "";
+        }
+
+        // Get the name of the generic type definition (e.g. System.Nullable`1)
+        var genericTypeDefinition = type.GetGenericTypeDefinition();
+        var typeName = genericTypeDefinition.FullName;
+
+        // Remove the `1 from the generic type name
+        if (!string.IsNullOrWhiteSpace(typeName))
+        {
+            if (typeName.Contains('`'))
+            {
+                typeName = typeName[..typeName.IndexOf('`')];
+            }
+        }
+
+        // Get the generic arguments and format them recursively
+        var genericArgs = string.Join(", ", type.GetGenericArguments().Select(GetTypeFriendlyName));
+
+        var friendlyName = $"{typeName}{{{genericArgs}}}";
+
+        return friendlyName;
+    }
+
+    /// <summary>
+    /// Get the parameters of a method from the XML documentation.
+    /// </summary>
+    /// <param name="xmlMember"></param>
+    /// <returns></returns>
+    private static List<string> GetMethodParameters(string xmlMember)
+    {
+        var start = xmlMember.IndexOf('(');
+        var end = xmlMember.LastIndexOf(')');
+
+        if (start == -1 || end == -1 || end <= start)
+        {
+            return [];
+        }
+
+        // Extract the substring that contains the parameters.
+        var paramList = xmlMember.Substring(start + 1, end - start - 1);
+
+        if (string.IsNullOrWhiteSpace(paramList))
+        {
+            return [];
+        }
+
+        // Split the parameter list by commas and trim each parameter.
+        var methodParameters = paramList.Split([','], StringSplitOptions.RemoveEmptyEntries)
+            .Select(p => p.Trim())
+            .Select(p => p.Replace("`0", ""))
+            .Select(p => p.Replace("`", ""))
+            .ToList();
+
+        return methodParameters;
+    }
+
     private (Type type, string memberName) ResolveTypeAndMemberName(string name)
     {
+        if (name.Contains('`'))
+        {
+            name = name[..name.IndexOf('`')];
+        }
+
+        if (name.Contains('('))
+        {
+            name = name[..name.IndexOf('(')];
+        }
+
         var index = name.LastIndexOf('.');
 
         if (index == -1)
         {
             throw new InvalidOperationException("Encountered invalid XML node.");
         }
-        
+
         var (typeName, memberName) = (name[..index], name[(index + 1)..]);
-        
+
         var type = _assembly.GetType(typeName)
                    ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
 
@@ -167,9 +267,9 @@ internal class XmlParser
         }
 
         result = new TypeDocumentation(_source, type, node: null);
-        
+
         _results.Add(type, result);
-        
+
         return result;
     }
 }
