@@ -2,6 +2,9 @@ using System.Xml;
 
 namespace BitzArt.XDoc;
 
+/// <summary>
+/// Represents an abstract base class for member documentation references.
+/// </summary>
 public abstract class MemberDocumentationReference
 {
     /// <summary>
@@ -44,7 +47,7 @@ public class InheritanceMemberDocumentationReference : MemberDocumentationRefere
 }
 
 /// <summary>
-/// Same as InheritanceMemberDocumentationReference but in this case the node is <see> instead of <inheritdoc>
+/// Same as InheritanceMemberDocumentationReference but in this case the node is &lt;see&gt; instead of &lt;inheritdoc&gt;
 /// </summary>
 public class SeeMemberDocumentationReference : MemberDocumentationReference
 {
@@ -59,7 +62,7 @@ public class SeeMemberDocumentationReference : MemberDocumentationReference
     }
 
     /// <summary>
-    /// The cref value of the <see> node
+    /// The cref value of the &lt;see&gt; node
     /// </summary>
     public string CrefValue { get; private set; }
 }

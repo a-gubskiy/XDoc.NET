@@ -1,8 +1,8 @@
-using System.Collections.Immutable;
-using System.Reflection;
-
 namespace BitzArt.XDoc.Resolvers;
 
+/// <summary>
+/// Resolves inheritance for member documentation.
+/// </summary>
 public class InheritanceResolver
 {
     private readonly IXDoc _source;
