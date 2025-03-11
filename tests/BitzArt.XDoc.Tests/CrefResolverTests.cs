@@ -6,13 +6,6 @@ namespace BitzArt.XDoc.Tests;
 
 public class CrefResolverTests
 {
-    private readonly XDoc _xdoc;
-
-    public CrefResolverTests()
-    {
-        _xdoc = new XDoc();
-    }
-
     [Fact]
     public void Resolve_WithNullNode_ReturnsEmptyCollection()
     {
@@ -85,7 +78,7 @@ public class CrefResolverTests
 
         // Act
         var result = CrefResolver.Resolve(propertyDocumentation!);
-        
+
         //Assert
         Assert.Empty(result);
     }
