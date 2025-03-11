@@ -32,7 +32,7 @@ public class XDocExtensionTests
         var serviceProvider = services.BuildServiceProvider();
 
         // Act
-        var xdoc = serviceProvider.GetService<IXDoc>();
+        var xdoc = serviceProvider.GetRequiredService<IXDoc>();
 
         var typeDocumentation = xdoc.Get(typeof(Dog));
         var propertyDocumentation = xdoc.Get(typeof(Dog).GetProperty(nameof(Dog.Property1)));

@@ -41,5 +41,9 @@
     <ItemGroup>
         <Using Include="Xunit"/>
     </ItemGroup>
+    
+    <PropertyGroup>
+      <NoWarn>$(NoWarn);1591</NoWarn>
+    </PropertyGroup>
 
 </Project>

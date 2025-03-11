@@ -33,7 +33,7 @@ public class CrefResolverTests
         var xmlDoc = new XmlDocument();
         var node = xmlDoc.CreateElement("member");
 
-        var documentation = new TestMemberDocumentation(null, node);
+        var documentation = new TestMemberDocumentation(null!, node);
 
         // Act
         var result = CrefResolver.Resolve(documentation);
@@ -69,7 +69,7 @@ public class CrefResolverTests
         var propertyDocumentation = xDoc.Get(typeof(Dog).GetProperty(nameof(Dog.Name)));
 
         // Act
-        var result = CrefResolver.Resolve(propertyDocumentation);
+        var result = CrefResolver.Resolve(propertyDocumentation!);
 
         // Assert
         Assert.Equal(2, result.Count);
@@ -86,7 +86,7 @@ public class CrefResolverTests
         // Act + Assert
         Assert.Throws<NullReferenceException>(() =>
         {
-            var result = CrefResolver.Resolve(propertyDocumentation);
+            var result = CrefResolver.Resolve(propertyDocumentation!);
         });
     }
 
