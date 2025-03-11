@@ -34,7 +34,7 @@ public class InheritanceResolver
             FieldDocumentation fieldDocumentation => Resolve(fieldDocumentation),
             _ => ResolveGeneric(documentation)
         };
-        
+
         return result;
     }
 
@@ -51,7 +51,30 @@ public class InheritanceResolver
             return null;
         }
 
-        return new InheritanceMemberDocumentationReference(documentation.Node!, null);
+        Type targetType;
+
+        if (documentation is TypeDocumentation typeDocumentation)
+        {
+            targetType = typeDocumentation.Type;
+        }
+        else if (documentation is MethodDocumentation methodDocumentation)
+        {
+            targetType = methodDocumentation.DeclaringType;
+        }
+        else if (documentation is PropertyDocumentation propertyDocumentation)
+        {
+            targetType = propertyDocumentation.DeclaringType;
+        }
+        else if (documentation is FieldDocumentation fieldDocumentation)
+        {
+            targetType = fieldDocumentation.DeclaringType;
+        }
+        else
+        {
+            return null;
+        }
+        
+        return new InheritanceMemberDocumentationReference(documentation.Node!, targetType);
     }
 
     private InheritanceMemberDocumentationReference? Resolve(TypeDocumentation typeDocumentation)
@@ -76,7 +99,6 @@ public class InheritanceResolver
         }
 
         var baseType = methodDocumentation.DeclaringType.BaseType;
-
         var baseMemberInfo = baseType?.GetMethod(methodDocumentation.Member.Name);
 
         if (baseMemberInfo is null)
@@ -86,7 +108,7 @@ public class InheritanceResolver
 
         var inheritedDocumentation = _source.Get(baseType!)?.GetDocumentation(baseMemberInfo);
 
-        return CreateInheritanceMemberDocumentationReference(inheritedDocumentation, baseType);
+        return CreateInheritanceMemberDocumentationReference(inheritedDocumentation, baseType!);
     }
 
     private InheritanceMemberDocumentationReference? Resolve(PropertyDocumentation propertyDocumentation)
@@ -97,7 +119,6 @@ public class InheritanceResolver
         }
 
         var baseType = propertyDocumentation.DeclaringType.BaseType;
-
         var baseMemberInfo = baseType?.GetProperty(propertyDocumentation.Member.Name);
 
         if (baseMemberInfo is null)
@@ -105,9 +126,9 @@ public class InheritanceResolver
             return null;
         }
 
-        var inheritedDocumentation = _source.Get(baseType!)?.GetDocumentation(baseMemberInfo);
+        var inheritedDocumentation = _source.Get(baseType)?.GetDocumentation(baseMemberInfo);
 
-        return CreateInheritanceMemberDocumentationReference(inheritedDocumentation, baseType);
+        return CreateInheritanceMemberDocumentationReference(inheritedDocumentation, baseType!);
     }
 
     private InheritanceMemberDocumentationReference? Resolve(FieldDocumentation fieldDocumentation)
@@ -127,7 +148,7 @@ public class InheritanceResolver
 
         var inheritedDocumentation = _source.Get(baseType)?.GetDocumentation(baseMemberInfo);
 
-        return CreateInheritanceMemberDocumentationReference(inheritedDocumentation, baseType);
+        return CreateInheritanceMemberDocumentationReference(inheritedDocumentation, baseType!);
     }
 
     private static bool IsInherited(MemberDocumentation memberDocumentation)
@@ -137,7 +158,7 @@ public class InheritanceResolver
 
     private static InheritanceMemberDocumentationReference? CreateInheritanceMemberDocumentationReference(
         MemberDocumentation? memberDocumentation,
-        Type? targetType)
+        Type targetType)
     {
         if (memberDocumentation is null)
         {
