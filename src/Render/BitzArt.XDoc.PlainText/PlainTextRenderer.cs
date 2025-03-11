@@ -53,6 +53,11 @@ public class PlainTextRenderer
         return result;
     }
 
+    /// <summary>
+    /// Renders the content of an XML node to plain text.
+    /// </summary>
+    /// <param name="node"></param>
+    /// <returns></returns>
     private string Render(XmlNode? node)
     {
         if (node == null)
@@ -150,7 +155,7 @@ public class PlainTextRenderer
     /// </summary>
     /// <param name="textNode">The XML text node to render.</param>
     /// <returns>The plain text representation of the XML text node.</returns>
-    private string RenderTextNode(XmlText textNode)
+    private static string RenderTextNode(XmlText textNode)
     {
         return textNode.Value ?? "";
     }
