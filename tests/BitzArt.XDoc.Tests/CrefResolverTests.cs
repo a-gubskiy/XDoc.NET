@@ -83,11 +83,11 @@ public class CrefResolverTests
 
         var propertyDocumentation = xDoc.Get(typeof(Dog).GetProperty(nameof(Dog.PropertyWIthInalidCref)));
 
-        // Act + Assert
-        Assert.Throws<NullReferenceException>(() =>
-        {
-            var result = CrefResolver.Resolve(propertyDocumentation!);
-        });
+        // Act
+        var result = CrefResolver.Resolve(propertyDocumentation!);
+        
+        //Assert
+        Assert.Empty(result);
     }
 
     private class TestMemberDocumentation : MemberDocumentation
