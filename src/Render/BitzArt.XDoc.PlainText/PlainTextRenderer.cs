@@ -1,7 +1,7 @@
 using System.Text;
 using System.Xml;
 
-namespace BitzArt.XDoc.PlainText ;
+namespace BitzArt.XDoc.PlainText;
 
 /// <summary>
 /// Lightweight XML renderer that converts XML documentation to plain text.
@@ -74,10 +74,10 @@ public class PlainTextRenderer
     }
 
     /// <summary>
-    /// 
+    /// Renders the content of an XML element to plain text, including handling child nodes and references.
     /// </summary>
-    /// <param name="element"></param>
-    /// <returns></returns>
+    /// <param name="element">The XML element to render.</param>
+    /// <returns>The plain text representation of the XML element.</returns>
     private string RenderXmlElement(XmlElement element)
     {
         var builder = new StringBuilder();
@@ -126,8 +126,8 @@ public class PlainTextRenderer
             var crefValue = crefAttribute.Value;
 
             // Remove the T: prefix if present (for type references)
-            if (crefValue.StartsWith("T:") || 
-                crefValue.StartsWith("P:") || 
+            if (crefValue.StartsWith("T:") ||
+                crefValue.StartsWith("P:") ||
                 crefValue.StartsWith("M:") ||
                 crefValue.StartsWith("F:"))
             {
@@ -145,6 +145,11 @@ public class PlainTextRenderer
         return builder.ToString();
     }
 
+    /// <summary>
+    /// Renders the content of an XML text node to plain text.
+    /// </summary>
+    /// <param name="textNode">The XML text node to render.</param>
+    /// <returns>The plain text representation of the XML text node.</returns>
     private string RenderTextNode(XmlText textNode)
     {
         return textNode.Value ?? "";

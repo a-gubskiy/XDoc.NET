@@ -1,5 +1,3 @@
-using BitzArt.XDoc;
-
 namespace BitzArt.XDoc.PlainText;
 
 /// <summary>
