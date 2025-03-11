@@ -6,13 +6,6 @@ namespace BitzArt.XDoc.Tests;
 
 public class CrefResolverTests
 {
-    private readonly XDoc _xdoc;
-
-    public CrefResolverTests()
-    {
-        _xdoc = new XDoc();
-    }
-
     [Fact]
     public void Resolve_WithNullNode_ReturnsEmptyCollection()
     {
@@ -33,7 +26,7 @@ public class CrefResolverTests
         var xmlDoc = new XmlDocument();
         var node = xmlDoc.CreateElement("member");
 
-        var documentation = new TestMemberDocumentation(null, node);
+        var documentation = new TestMemberDocumentation(null!, node);
 
         // Act
         var result = CrefResolver.Resolve(documentation);
@@ -69,7 +62,7 @@ public class CrefResolverTests
         var propertyDocumentation = xDoc.Get(typeof(Dog).GetProperty(nameof(Dog.Name)));
 
         // Act
-        var result = CrefResolver.Resolve(propertyDocumentation);
+        var result = CrefResolver.Resolve(propertyDocumentation!);
 
         // Assert
         Assert.Equal(2, result.Count);
@@ -83,11 +76,11 @@ public class CrefResolverTests
 
         var propertyDocumentation = xDoc.Get(typeof(Dog).GetProperty(nameof(Dog.PropertyWIthInalidCref)));
 
-        // Act + Assert
-        Assert.Throws<NullReferenceException>(() =>
-        {
-            var result = CrefResolver.Resolve(propertyDocumentation);
-        });
+        // Act
+        var result = CrefResolver.Resolve(propertyDocumentation!);
+
+        //Assert
+        Assert.Empty(result);
     }
 
     private class TestMemberDocumentation : MemberDocumentation

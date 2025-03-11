@@ -2,6 +2,9 @@ using System.Reflection;
 
 namespace BitzArt.XDoc;
 
+/// <summary>
+/// Defines methods to fetch documentation for various members such as assemblies, types, properties, methods, and fields.
+/// </summary>
 public interface IXDoc
 {
     /// <summary>

@@ -14,4 +14,8 @@
         <DocumentationFile>bin\Release\net8.0\TestAssembly.A.xml</DocumentationFile>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <NoWarn>$(NoWarn);1591;CS1570;CS8618;CS1001;CS1658;CS1584;</NoWarn>
+    </PropertyGroup>
+
 </Project>

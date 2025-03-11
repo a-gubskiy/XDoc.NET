@@ -1,16 +1,21 @@
 using BitzArt.XDoc.PlainText;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace BitzArt.XDoc.EntityFrameworkCore;
 
+/// <summary>
+/// Configures XML documentation comments for Entity Framework Core entities and their properties.
+/// </summary>
+[PublicAPI]
 public class EntitiesCommentConfigurator
 {
     private readonly ILogger _logger;
     private readonly IXDoc _xDoc;
 
     /// <summary>
-    /// 
+    /// Default constructor.
     /// </summary>
     public EntitiesCommentConfigurator(IXDoc xDoc, ILogger<EntitiesCommentConfigurator> logger)
     {
@@ -19,7 +24,7 @@ public class EntitiesCommentConfigurator
     }
 
     /// <summary>
-    /// Configure comments for entities and properties
+    /// Configure comments for entities and properties.
     /// </summary>
     /// <param name="modelBuilder"></param>
     public void ConfigureComments(ModelBuilder modelBuilder)

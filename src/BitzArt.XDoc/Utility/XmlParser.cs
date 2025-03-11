@@ -8,17 +8,14 @@ internal class XmlParser
     private readonly IXDoc _source;
     private readonly Assembly _assembly;
     private readonly XmlDocument _xml;
-
     private readonly Dictionary<Type, TypeDocumentation> _results;
-
-    internal Dictionary<Type, TypeDocumentation> Results => _results;
 
     public static Dictionary<Type, TypeDocumentation> Parse(IXDoc source, Assembly assembly, XmlDocument xml)
     {
         var parser = new XmlParser(source, assembly, xml);
         parser.Parse();
 
-        return parser.Results;
+        return parser._results;
     }
 
     internal XmlParser(IXDoc source, Assembly assembly, XmlDocument xml)
@@ -58,7 +55,6 @@ internal class XmlParser
             case 'P': ParsePropertyNode(node, name[2..]); break;
             case 'F': ParseFieldNode(node, name[2..]); break;
             case 'M': ParseMethodNode(node, name[2..]); break;
-            default: break;
         }
     }
 

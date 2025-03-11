@@ -5,7 +5,7 @@ namespace BitzArt.XDoc;
 
 /// <summary>
 /// All documentation classes should inherit from this class.
-/// This class contains code applicable to any member documentation (both Type & MemberInfo).
+/// This class contains code applicable to any member documentation (both Type and MemberInfo).
 /// </summary>
 public abstract class MemberDocumentation
 {
@@ -50,6 +50,12 @@ public abstract class MemberDocumentation
         }
     }
     
+    
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MemberDocumentation"/> class.
+    /// </summary>
+    /// <param name="source">The source of the documentation.</param>
+    /// <param name="node">The XML node that contains the documentation.</param>
     protected MemberDocumentation(IXDoc source, XmlNode? node)
     {
         Source = source;

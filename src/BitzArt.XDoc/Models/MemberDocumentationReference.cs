@@ -2,6 +2,9 @@ using System.Xml;
 
 namespace BitzArt.XDoc;
 
+/// <summary>
+/// Represents an abstract base class for member documentation references.
+/// </summary>
 public abstract class MemberDocumentationReference
 {
     /// <summary>
@@ -30,21 +33,14 @@ public class InheritanceMemberDocumentationReference : MemberDocumentationRefere
     /// Default constructor
     /// </summary>
     /// <param name="requirementNode"></param>
-    /// <param name="targetType"></param>
-    public InheritanceMemberDocumentationReference(XmlNode requirementNode, Type targetType)
+    public InheritanceMemberDocumentationReference(XmlNode requirementNode)
         : base(requirementNode)
     {
-        TargetType = targetType;
     }
-
-    /// <summary>
-    /// The type that this node is inheriting from
-    /// </summary>
-    public Type TargetType { get; private set; }
 }
 
 /// <summary>
-/// Same as InheritanceMemberDocumentationReference but in this case the node is <see> instead of <inheritdoc>
+/// Same as InheritanceMemberDocumentationReference but in this case the node is &lt;see&gt; instead of &lt;inheritdoc&gt;
 /// </summary>
 public class SeeMemberDocumentationReference : MemberDocumentationReference
 {
@@ -53,13 +49,14 @@ public class SeeMemberDocumentationReference : MemberDocumentationReference
     /// </summary>
     /// <param name="requirementNode"></param>
     /// <param name="crefValue"></param>
-    public SeeMemberDocumentationReference(XmlNode requirementNode, string crefValue) : base(requirementNode)
+    public SeeMemberDocumentationReference(XmlNode requirementNode, string crefValue)
+        : base(requirementNode)
     {
         CrefValue = crefValue;
     }
 
     /// <summary>
-    /// The cref value of the <see> node
+    /// The cref value of the &lt;see&gt; node
     /// </summary>
     public string CrefValue { get; private set; }
 }

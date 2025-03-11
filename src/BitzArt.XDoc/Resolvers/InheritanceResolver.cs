@@ -1,9 +1,9 @@
-using System.Collections.Immutable;
-using System.Reflection;
-
 namespace BitzArt.XDoc.Resolvers;
 
-public class InheritanceResolver
+/// <summary>
+/// Resolves inheritance for member documentation.
+/// </summary>
+internal class InheritanceResolver
 {
     private readonly IXDoc _source;
 
@@ -34,16 +34,17 @@ public class InheritanceResolver
             FieldDocumentation fieldDocumentation => Resolve(fieldDocumentation),
             _ => ResolveGeneric(documentation)
         };
-        
+
         return result;
     }
 
     /// <summary>
-    /// 
+    /// Resolves generic member documentation if it is inherited.
     /// </summary>
-    /// <param name="documentation"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <param name="documentation">The member documentation to resolve.</param>
+    /// <returns>
+    /// An <see cref="InheritanceMemberDocumentationReference"/> if the documentation is inherited; otherwise, null.
+    /// </returns>
     private InheritanceMemberDocumentationReference? ResolveGeneric(MemberDocumentation documentation)
     {
         if (!IsInherited(documentation))
@@ -51,7 +52,7 @@ public class InheritanceResolver
             return null;
         }
 
-        return new InheritanceMemberDocumentationReference(documentation.Node!, null);
+        return new InheritanceMemberDocumentationReference(documentation.Node!);
     }
 
     private InheritanceMemberDocumentationReference? Resolve(TypeDocumentation typeDocumentation)
@@ -65,7 +66,7 @@ public class InheritanceResolver
 
         var baseTypeDocumentation = _source.Get(typeDocumentation.Type.BaseType);
 
-        return CreateInheritanceMemberDocumentationReference(baseTypeDocumentation, typeDocumentation.Type.BaseType);
+        return CreateInheritanceMemberDocumentationReference(baseTypeDocumentation);
     }
 
     private InheritanceMemberDocumentationReference? Resolve(MethodDocumentation methodDocumentation)
@@ -76,7 +77,6 @@ public class InheritanceResolver
         }
 
         var baseType = methodDocumentation.DeclaringType.BaseType;
-
         var baseMemberInfo = baseType?.GetMethod(methodDocumentation.Member.Name);
 
         if (baseMemberInfo is null)
@@ -86,7 +86,7 @@ public class InheritanceResolver
 
         var inheritedDocumentation = _source.Get(baseType!)?.GetDocumentation(baseMemberInfo);
 
-        return CreateInheritanceMemberDocumentationReference(inheritedDocumentation, baseType);
+        return CreateInheritanceMemberDocumentationReference(inheritedDocumentation);
     }
 
     private InheritanceMemberDocumentationReference? Resolve(PropertyDocumentation propertyDocumentation)
@@ -97,7 +97,6 @@ public class InheritanceResolver
         }
 
         var baseType = propertyDocumentation.DeclaringType.BaseType;
-
         var baseMemberInfo = baseType?.GetProperty(propertyDocumentation.Member.Name);
 
         if (baseMemberInfo is null)
@@ -105,9 +104,9 @@ public class InheritanceResolver
             return null;
         }
 
-        var inheritedDocumentation = _source.Get(baseType!)?.GetDocumentation(baseMemberInfo);
+        var inheritedDocumentation = _source.Get(baseType)?.GetDocumentation(baseMemberInfo);
 
-        return CreateInheritanceMemberDocumentationReference(inheritedDocumentation, baseType);
+        return CreateInheritanceMemberDocumentationReference(inheritedDocumentation);
     }
 
     private InheritanceMemberDocumentationReference? Resolve(FieldDocumentation fieldDocumentation)
@@ -127,23 +126,29 @@ public class InheritanceResolver
 
         var inheritedDocumentation = _source.Get(baseType)?.GetDocumentation(baseMemberInfo);
 
-        return CreateInheritanceMemberDocumentationReference(inheritedDocumentation, baseType);
+        return CreateInheritanceMemberDocumentationReference(inheritedDocumentation);
     }
 
+    /// <summary>
+    /// Determines if the member documentation is inherited.
+    /// </summary>
+    /// <param name="memberDocumentation">The member documentation to check.</param>
+    /// <returns>
+    /// True if the member documentation is inherited; otherwise, false.
+    /// </returns>
     private static bool IsInherited(MemberDocumentation memberDocumentation)
     {
         return memberDocumentation.Node?.InnerXml.Contains("<inheritdoc />") ?? false;
     }
 
     private static InheritanceMemberDocumentationReference? CreateInheritanceMemberDocumentationReference(
-        MemberDocumentation? memberDocumentation,
-        Type? targetType)
+        MemberDocumentation? memberDocumentation)
     {
         if (memberDocumentation is null)
         {
             return null;
         }
 
-        return new InheritanceMemberDocumentationReference(memberDocumentation.Node!, targetType);
+        return new InheritanceMemberDocumentationReference(memberDocumentation.Node!);
     }
 }

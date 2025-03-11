@@ -36,7 +36,7 @@ public class XDocTests
         var propertyDocumentation = xDoc.Get(propertyInfo!);
 
         // Assert
-        Assert.Equal("Field three", propertyDocumentation!.Node.InnerText.Trim());
+        Assert.Equal("Field three", propertyDocumentation?.Node?.InnerText.Trim());
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class XDocTests
         var fieldDocumentation = typeDocumentation!.GetDocumentation(fieldInfo!);
 
         // Assert
-        Assert.Equal("Dog's Age", fieldDocumentation!.Node.InnerText.Trim());
+        Assert.Equal("Dog's Age", fieldDocumentation?.Node?.InnerText.Trim());
     }
 
     [Fact]
@@ -83,7 +83,7 @@ public class XDocTests
         var methodDocumentation = typeDocumentation!.GetDocumentation(methodInfo!);
 
         // Assert
-        Assert.Equal("Get some about", methodDocumentation!.Node.InnerText.Trim());
+        Assert.Equal("Get some about", methodDocumentation?.Node?.InnerText.Trim());
     }
 
     [Fact]
