@@ -15,18 +15,17 @@ public abstract class TypeMemberDocumentation<TMember> : MemberDocumentation
     /// <summary>
     /// The <see cref="Type"/> that declares the member.
     /// </summary>
-    internal Type DeclaringType => _declaringTypeDocumentation.Type;
+    public Type DeclaringType => _declaringTypeDocumentation.Type;
 
     /// <summary>
     /// The <typeparamref name="TMember"/> this documentation if provided for.
     /// </summary>
-    protected readonly TMember Member;
+    public TMember Member { get; private set; }
 
     internal TypeMemberDocumentation(XDoc source, TypeDocumentation declaringTypeDocumentation, TMember member, XmlNode node)
         : base(source, node)
     {
         Member = member;
-        
         _declaringTypeDocumentation = declaringTypeDocumentation;
     }
 }

@@ -12,6 +12,4 @@ public sealed class MethodDocumentation : TypeMemberDocumentation<MethodInfo>
         : base(source, declaringTypeDocumentation, method, node)
     {
     }
-
-    internal MethodInfo GetMethodInfo() => Member;
 }

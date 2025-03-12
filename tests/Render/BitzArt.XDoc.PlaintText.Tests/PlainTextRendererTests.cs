@@ -1,5 +1,6 @@
 using System.Xml;
 using BitzArt.XDoc.PlainText;
+using TestAssembly.B;
 
 namespace BitzArt.XDoc.PlaintText.Tests;
 
@@ -25,6 +26,20 @@ public class PlainTextRendererTests
 
         // Assert
         Assert.Contains("The ratio of Progress to  Objective for this WeeklyMetric.", str);
+    }
+    
+    
+    [Fact]
+    public void RenderInheritedDocumentation_PlainTextRenderer_ShouldReturnFormattedText()
+    {
+       // Act
+        var source = new XDoc();
+        var propertyDocumentation = source.Get(typeof(Dog).GetProperty(nameof(Dog.Property1)));
+        var text = propertyDocumentation.ToPlainText();
+       
+
+        // Assert
+        Assert.Contains("This is property one.", text);
     }
 
     private static XmlNode GetXmlNode(string xml)

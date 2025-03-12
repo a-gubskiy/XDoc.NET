@@ -21,12 +21,7 @@ internal class InheritanceResolver
 
     private InheritanceMemberDocumentationReference? ResolveInheritance(MemberDocumentation documentation)
     {
-        if (string.IsNullOrWhiteSpace(documentation.Node?.InnerXml))
-        {
-            return null;
-        }
-
-        if (!IsInherited(documentation))
+        if (string.IsNullOrWhiteSpace(documentation?.Node?.InnerXml))
         {
             return null;
         }
@@ -37,10 +32,27 @@ internal class InheritanceResolver
             MethodDocumentation methodDocumentation => ResolveInheritance(methodDocumentation),
             PropertyDocumentation propertyDocumentation => ResolveInheritance(propertyDocumentation),
             FieldDocumentation fieldDocumentation => ResolveInheritance(fieldDocumentation),
-            _ => new InheritanceMemberDocumentationReference(documentation.Node)
+            _ => ResolveGeneric(documentation)
         };
 
         return result;
+    }
+
+    /// <summary>
+    /// Resolves generic member documentation if it is inherited.
+    /// </summary>
+    /// <param name="documentation">The member documentation to resolve.</param>
+    /// <returns>
+    /// An <see cref="InheritanceMemberDocumentationReference"/> if the documentation is inherited; otherwise, null.
+    /// </returns>
+    private InheritanceMemberDocumentationReference? ResolveGeneric(MemberDocumentation documentation)
+    {
+        if (!IsInherited(documentation))
+        {
+            return null;
+        }
+
+        return new InheritanceMemberDocumentationReference(documentation.Node!);
     }
 
     private InheritanceMemberDocumentationReference? ResolveInheritance(TypeDocumentation typeDocumentation)
@@ -64,14 +76,15 @@ internal class InheritanceResolver
             return null;
         }
 
-        var methodInfo = methodDocumentation.GetMethodInfo();
+        var baseType = methodDocumentation.DeclaringType.BaseType;
+        var baseMemberInfo = baseType?.GetMethod(methodDocumentation.Member.Name);
 
-        if (methodInfo is null)
+        if (baseMemberInfo is null)
         {
             return null;
         }
 
-        var inheritedDocumentation = _source.Get(methodInfo);
+        var inheritedDocumentation = _source.Get(baseType!)?.GetDocumentation(baseMemberInfo);
 
         return CreateInheritanceMemberDocumentationReference(inheritedDocumentation);
     }
@@ -83,14 +96,15 @@ internal class InheritanceResolver
             return null;
         }
 
-        var propertyInfo = propertyDocumentation.GetPropertyInfo();
+        var baseType = propertyDocumentation.DeclaringType.BaseType;
+        var baseMemberInfo = baseType?.GetProperty(propertyDocumentation.Member.Name);
 
-        if (propertyInfo is null)
+        if (baseMemberInfo is null)
         {
             return null;
         }
 
-        var inheritedDocumentation = _source.Get(propertyInfo);
+        var inheritedDocumentation = _source.Get(baseType)?.GetDocumentation(baseMemberInfo);
 
         return CreateInheritanceMemberDocumentationReference(inheritedDocumentation);
     }
@@ -102,9 +116,15 @@ internal class InheritanceResolver
             return null;
         }
 
-        var memberInfo = fieldDocumentation.GetFieldInfo();
-        
-        var inheritedDocumentation = _source.Get(memberInfo);
+        var baseType = fieldDocumentation.DeclaringType.BaseType;
+        var baseMemberInfo = baseType?.GetField(fieldDocumentation.Member.Name);
+
+        if (baseMemberInfo is null)
+        {
+            return null;
+        }
+
+        var inheritedDocumentation = _source.Get(baseType)?.GetDocumentation(baseMemberInfo);
 
         return CreateInheritanceMemberDocumentationReference(inheritedDocumentation);
     }
