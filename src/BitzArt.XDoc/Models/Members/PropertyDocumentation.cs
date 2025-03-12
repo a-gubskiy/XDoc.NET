@@ -12,4 +12,11 @@ public sealed class PropertyDocumentation : TypeMemberDocumentation<PropertyInfo
         : base(source, declaringTypeDocumentation, property, node)
     {
     }
+
+    internal PropertyInfo? GetPropertyInfo()
+    {
+        var propertyInfo = DeclaringType.BaseType?.GetProperty(Member.Name);
+        
+        return propertyInfo;
+    }
 }

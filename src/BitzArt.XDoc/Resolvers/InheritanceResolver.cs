@@ -25,7 +25,7 @@ internal class InheritanceResolver
         {
             return null;
         }
-        
+
         if (!IsInherited(documentation))
         {
             return null;
@@ -64,15 +64,14 @@ internal class InheritanceResolver
             return null;
         }
 
-        var baseType = methodDocumentation.DeclaringType.BaseType;
-        var baseMemberInfo = baseType?.GetMethod(methodDocumentation.Member.Name);
+        var methodInfo = methodDocumentation.GetMethodInfo();
 
-        if (baseMemberInfo is null)
+        if (methodInfo is null)
         {
             return null;
         }
 
-        var inheritedDocumentation = _source.Get(baseType!)?.GetDocumentation(baseMemberInfo);
+        var inheritedDocumentation = _source.Get(methodInfo);
 
         return CreateInheritanceMemberDocumentationReference(inheritedDocumentation);
     }
@@ -84,15 +83,14 @@ internal class InheritanceResolver
             return null;
         }
 
-        var baseType = propertyDocumentation.DeclaringType.BaseType;
-        var baseMemberInfo = baseType?.GetProperty(propertyDocumentation.Member.Name);
+        var propertyInfo = propertyDocumentation.GetPropertyInfo();
 
-        if (baseMemberInfo is null)
+        if (propertyInfo is null)
         {
             return null;
         }
 
-        var inheritedDocumentation = _source.Get(baseType)?.GetDocumentation(baseMemberInfo);
+        var inheritedDocumentation = _source.Get(propertyInfo);
 
         return CreateInheritanceMemberDocumentationReference(inheritedDocumentation);
     }
@@ -104,15 +102,14 @@ internal class InheritanceResolver
             return null;
         }
 
-        var baseType = fieldDocumentation.DeclaringType.BaseType;
-        var baseMemberInfo = baseType?.GetField(fieldDocumentation.Member.Name);
+        var memberInfo = fieldDocumentation.GetFieldInfo();
 
-        if (baseMemberInfo is null)
+        if (memberInfo is null)
         {
             return null;
         }
 
-        var inheritedDocumentation = _source.Get(baseType)?.GetDocumentation(baseMemberInfo);
+        var inheritedDocumentation = _source.Get(memberInfo);
 
         return CreateInheritanceMemberDocumentationReference(inheritedDocumentation);
     }

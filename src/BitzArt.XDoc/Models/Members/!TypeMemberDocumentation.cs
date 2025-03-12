@@ -20,7 +20,7 @@ public abstract class TypeMemberDocumentation<TMember> : MemberDocumentation
     /// <summary>
     /// The <typeparamref name="TMember"/> this documentation if provided for.
     /// </summary>
-    internal TMember Member { get; private set; }
+    protected readonly TMember Member;
 
     internal TypeMemberDocumentation(XDoc source, TypeDocumentation declaringTypeDocumentation, TMember member, XmlNode node)
         : base(source, node)

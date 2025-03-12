@@ -12,4 +12,11 @@ public sealed class MethodDocumentation : TypeMemberDocumentation<MethodInfo>
         : base(source, declaringTypeDocumentation, method, node)
     {
     }
+
+    internal MethodInfo? GetMethodInfo()
+    {
+        var methodInfo = DeclaringType.BaseType?.GetMethod(Member.Name);
+        
+        return methodInfo;
+    }
 }
