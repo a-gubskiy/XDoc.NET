@@ -11,21 +11,26 @@ public abstract class TypeMemberDocumentation<TMember> : MemberDocumentation
     where TMember : MemberInfo
 {
     private readonly TypeDocumentation _declaringTypeDocumentation;
+    
+    /// <summary>
+    /// The <typeparamref name="TMember"/> this documentation if provided for.
+    /// </summary>
+    private readonly TMember _member;
 
     /// <summary>
     /// The <see cref="Type"/> that declares the member.
     /// </summary>
-    public Type DeclaringType => _declaringTypeDocumentation.Type;
+    internal Type DeclaringType => _declaringTypeDocumentation.Type;
 
     /// <summary>
-    /// The <typeparamref name="TMember"/> this documentation if provided for.
+    /// Name of the member.
     /// </summary>
-    public TMember Member { get; private set; }
+    internal string MemberName => _member.Name;
 
     internal TypeMemberDocumentation(XDoc source, TypeDocumentation declaringTypeDocumentation, TMember member, XmlNode node)
         : base(source, node)
     {
-        Member = member;
+        _member = member;
         _declaringTypeDocumentation = declaringTypeDocumentation;
     }
 }

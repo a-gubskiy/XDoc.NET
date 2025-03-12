@@ -53,7 +53,7 @@ internal class InheritanceResolver
     private InheritanceMemberDocumentationReference? ResolveInheritance(MethodDocumentation methodDocumentation)
     {
         var baseType = methodDocumentation.DeclaringType.BaseType;
-        var baseMemberInfo = baseType?.GetMethod(methodDocumentation.Member.Name);
+        var baseMemberInfo = baseType?.GetMethod(methodDocumentation.MemberName);
 
         if (baseMemberInfo is null)
         {
@@ -68,7 +68,7 @@ internal class InheritanceResolver
     private InheritanceMemberDocumentationReference? ResolveInheritance(PropertyDocumentation propertyDocumentation)
     {
         var baseType = propertyDocumentation.DeclaringType.BaseType;
-        var baseMemberInfo = baseType?.GetProperty(propertyDocumentation.Member.Name);
+        var baseMemberInfo = baseType?.GetProperty(propertyDocumentation.MemberName);
 
         if (baseMemberInfo is null)
         {
@@ -83,7 +83,7 @@ internal class InheritanceResolver
     private InheritanceMemberDocumentationReference? ResolveInheritance(FieldDocumentation fieldDocumentation)
     {
         var baseType = fieldDocumentation.DeclaringType.BaseType;
-        var baseMemberInfo = baseType?.GetField(fieldDocumentation.Member.Name);
+        var baseMemberInfo = baseType?.GetField(fieldDocumentation.MemberName);
 
         if (baseMemberInfo is null)
         {
