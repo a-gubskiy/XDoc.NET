@@ -39,7 +39,7 @@ public class PlainTextRendererTests
        
 
         // Assert
-        Assert.Contains("This is property one.", text);
+        Assert.Contains("Description of Property1", text);
     }
 
     private static XmlNode GetXmlNode(string xml)

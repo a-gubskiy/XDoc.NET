@@ -21,7 +21,7 @@ internal class InheritanceResolver
 
     private InheritanceMemberDocumentationReference? ResolveInheritance(MemberDocumentation documentation)
     {
-        if (string.IsNullOrWhiteSpace(documentation?.Node?.InnerXml))
+        if (!IsInherited(documentation))
         {
             return null;
         }
@@ -32,34 +32,15 @@ internal class InheritanceResolver
             MethodDocumentation methodDocumentation => ResolveInheritance(methodDocumentation),
             PropertyDocumentation propertyDocumentation => ResolveInheritance(propertyDocumentation),
             FieldDocumentation fieldDocumentation => ResolveInheritance(fieldDocumentation),
-            _ => ResolveGeneric(documentation)
+            _ => new InheritanceMemberDocumentationReference(documentation.Node!)
         };
 
         return result;
     }
 
-    /// <summary>
-    /// Resolves generic member documentation if it is inherited.
-    /// </summary>
-    /// <param name="documentation">The member documentation to resolve.</param>
-    /// <returns>
-    /// An <see cref="InheritanceMemberDocumentationReference"/> if the documentation is inherited; otherwise, null.
-    /// </returns>
-    private InheritanceMemberDocumentationReference? ResolveGeneric(MemberDocumentation documentation)
-    {
-        if (!IsInherited(documentation))
-        {
-            return null;
-        }
-
-        return new InheritanceMemberDocumentationReference(documentation.Node!);
-    }
-
     private InheritanceMemberDocumentationReference? ResolveInheritance(TypeDocumentation typeDocumentation)
     {
-        if (typeDocumentation.Type.BaseType is null ||
-            string.IsNullOrWhiteSpace(typeDocumentation.Node?.InnerXml) ||
-            !typeDocumentation.Node.InnerXml.Contains("<inheritdoc />"))
+        if (typeDocumentation.Type.BaseType is null)
         {
             return null;
         }
@@ -71,11 +52,6 @@ internal class InheritanceResolver
 
     private InheritanceMemberDocumentationReference? ResolveInheritance(MethodDocumentation methodDocumentation)
     {
-        if (!IsInherited(methodDocumentation))
-        {
-            return null;
-        }
-
         var baseType = methodDocumentation.DeclaringType.BaseType;
         var baseMemberInfo = baseType?.GetMethod(methodDocumentation.Member.Name);
 
@@ -91,11 +67,6 @@ internal class InheritanceResolver
 
     private InheritanceMemberDocumentationReference? ResolveInheritance(PropertyDocumentation propertyDocumentation)
     {
-        if (!IsInherited(propertyDocumentation))
-        {
-            return null;
-        }
-
         var baseType = propertyDocumentation.DeclaringType.BaseType;
         var baseMemberInfo = baseType?.GetProperty(propertyDocumentation.Member.Name);
 
@@ -111,11 +82,6 @@ internal class InheritanceResolver
 
     private InheritanceMemberDocumentationReference? ResolveInheritance(FieldDocumentation fieldDocumentation)
     {
-        if (!IsInherited(fieldDocumentation))
-        {
-            return null;
-        }
-
         var baseType = fieldDocumentation.DeclaringType.BaseType;
         var baseMemberInfo = baseType?.GetField(fieldDocumentation.Member.Name);
 
