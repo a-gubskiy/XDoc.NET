@@ -72,7 +72,7 @@ public abstract class MemberDocumentation
             return;
         }
 
-        _inherited = InheritanceResolver.ResolveInheritance(this);
+        _inherited = InheritanceResolver.Resolve(this);
         _references = CrefResolver.Resolve(this);
 
         _isResolved = true;

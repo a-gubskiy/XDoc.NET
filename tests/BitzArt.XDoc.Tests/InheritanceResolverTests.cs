@@ -12,7 +12,7 @@ public class InheritanceResolverTests
         var documentation = new TestMemberDocumentation(null!, null!);
 
         // Act
-        var result = InheritanceResolver.ResolveInheritance(documentation);
+        var result = InheritanceResolver.Resolve(documentation);
 
         // Assert
         Assert.Null(result);
@@ -27,7 +27,7 @@ public class InheritanceResolverTests
         var documentation = new TestMemberDocumentation(null!, node);
 
         // Act
-        var result = InheritanceResolver.ResolveInheritance(documentation);
+        var result = InheritanceResolver.Resolve(documentation);
 
         // Assert
         Assert.Null(result);
@@ -43,7 +43,7 @@ public class InheritanceResolverTests
         var documentation = new TestMemberDocumentation(null!, node);
 
         // Act
-        var result = InheritanceResolver.ResolveInheritance(documentation);
+        var result = InheritanceResolver.Resolve(documentation);
 
         // Assert
         Assert.Null(result);
@@ -60,7 +60,7 @@ public class InheritanceResolverTests
         var documentation = new TestMemberDocumentation(null!, node);
 
         // Act
-        var result = InheritanceResolver.ResolveInheritance(documentation);
+        var result = InheritanceResolver.Resolve(documentation);
 
         // Assert
         Assert.NotNull(result);

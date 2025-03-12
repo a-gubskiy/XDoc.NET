@@ -12,15 +12,17 @@ public sealed class AssemblyDocumentation
     /// <summary>
     /// The <see cref="System.Reflection.Assembly"/> this documentation is fetched for.
     /// </summary>
-    public Assembly Assembly { get; private init; }
+    private readonly Assembly _assembly;
 
-    // Type documentation found for this assembly.
+    /// <summary>
+    /// Type documentation found for this assembly.
+    /// </summary>
     private readonly Dictionary<Type, TypeDocumentation> _typeData;
 
     internal AssemblyDocumentation(XDoc source, Assembly assembly)
     {
         Source = source;
-        Assembly = assembly;
+        _assembly = assembly;
 
         _typeData = XmlUtility.Fetch(source, assembly);
     }
@@ -51,7 +53,7 @@ public sealed class AssemblyDocumentation
 
     private Type Validate(Type type)
     {
-        if (type.Assembly != Assembly)
+        if (type.Assembly != _assembly)
         {
             throw new InvalidOperationException("The provided type is not defined in this assembly.");
         }
@@ -60,5 +62,5 @@ public sealed class AssemblyDocumentation
     }
 
     /// <inheritdoc/>
-    public override string ToString() => $"{nameof(AssemblyDocumentation)} (Assembly:'{Assembly.GetName().Name!}')";
+    public override string ToString() => $"{nameof(AssemblyDocumentation)} (Assembly:'{_assembly.GetName().Name!}')";
 }

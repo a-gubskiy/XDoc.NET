@@ -12,50 +12,38 @@ internal class InheritanceResolver
         _source = documentationSource;
     }
 
-    internal static InheritanceMemberDocumentationReference? ResolveInheritance(MemberDocumentation documentation)
+    internal static InheritanceMemberDocumentationReference? Resolve(MemberDocumentation documentation)
     {
         var inheritanceResolver = new InheritanceResolver(documentation.Source);
 
-        return inheritanceResolver.Resolve(documentation);
+        return inheritanceResolver.ResolveInheritance(documentation);
     }
 
-    private InheritanceMemberDocumentationReference? Resolve(MemberDocumentation documentation)
+    private InheritanceMemberDocumentationReference? ResolveInheritance(MemberDocumentation documentation)
     {
-        if (string.IsNullOrWhiteSpace(documentation?.Node?.InnerXml))
+        if (string.IsNullOrWhiteSpace(documentation.Node?.InnerXml))
+        {
+            return null;
+        }
+        
+        if (!IsInherited(documentation))
         {
             return null;
         }
 
         var result = documentation switch
         {
-            TypeDocumentation typeDocumentation => Resolve(typeDocumentation),
-            MethodDocumentation methodDocumentation => Resolve(methodDocumentation),
-            PropertyDocumentation propertyDocumentation => Resolve(propertyDocumentation),
-            FieldDocumentation fieldDocumentation => Resolve(fieldDocumentation),
-            _ => ResolveGeneric(documentation)
+            TypeDocumentation typeDocumentation => ResolveInheritance(typeDocumentation),
+            MethodDocumentation methodDocumentation => ResolveInheritance(methodDocumentation),
+            PropertyDocumentation propertyDocumentation => ResolveInheritance(propertyDocumentation),
+            FieldDocumentation fieldDocumentation => ResolveInheritance(fieldDocumentation),
+            _ => new InheritanceMemberDocumentationReference(documentation.Node)
         };
 
         return result;
     }
 
-    /// <summary>
-    /// Resolves generic member documentation if it is inherited.
-    /// </summary>
-    /// <param name="documentation">The member documentation to resolve.</param>
-    /// <returns>
-    /// An <see cref="InheritanceMemberDocumentationReference"/> if the documentation is inherited; otherwise, null.
-    /// </returns>
-    private InheritanceMemberDocumentationReference? ResolveGeneric(MemberDocumentation documentation)
-    {
-        if (!IsInherited(documentation))
-        {
-            return null;
-        }
-
-        return new InheritanceMemberDocumentationReference(documentation.Node!);
-    }
-
-    private InheritanceMemberDocumentationReference? Resolve(TypeDocumentation typeDocumentation)
+    private InheritanceMemberDocumentationReference? ResolveInheritance(TypeDocumentation typeDocumentation)
     {
         if (typeDocumentation.Type.BaseType is null ||
             string.IsNullOrWhiteSpace(typeDocumentation.Node?.InnerXml) ||
@@ -69,7 +57,7 @@ internal class InheritanceResolver
         return CreateInheritanceMemberDocumentationReference(baseTypeDocumentation);
     }
 
-    private InheritanceMemberDocumentationReference? Resolve(MethodDocumentation methodDocumentation)
+    private InheritanceMemberDocumentationReference? ResolveInheritance(MethodDocumentation methodDocumentation)
     {
         if (!IsInherited(methodDocumentation))
         {
@@ -89,7 +77,7 @@ internal class InheritanceResolver
         return CreateInheritanceMemberDocumentationReference(inheritedDocumentation);
     }
 
-    private InheritanceMemberDocumentationReference? Resolve(PropertyDocumentation propertyDocumentation)
+    private InheritanceMemberDocumentationReference? ResolveInheritance(PropertyDocumentation propertyDocumentation)
     {
         if (!IsInherited(propertyDocumentation))
         {
@@ -109,7 +97,7 @@ internal class InheritanceResolver
         return CreateInheritanceMemberDocumentationReference(inheritedDocumentation);
     }
 
-    private InheritanceMemberDocumentationReference? Resolve(FieldDocumentation fieldDocumentation)
+    private InheritanceMemberDocumentationReference? ResolveInheritance(FieldDocumentation fieldDocumentation)
     {
         if (!IsInherited(fieldDocumentation))
         {
