@@ -65,7 +65,7 @@ public class XDoc
     /// otherwise, <see langword="null"/>.
     /// </returns>
     public PropertyDocumentation? Get(PropertyInfo? property)
-        => property is null ? null : Get(property.DeclaringType!)?.GetDocumentation(property);
+        => property is null ? null : Get(property.DeclaringType)?.GetDocumentation(property);
 
     /// <summary>
     /// Fetches documentation for the specified <see cref="MethodInfo"/>.
@@ -79,7 +79,7 @@ public class XDoc
     /// </returns>
     /// <exception cref="NotImplementedException"></exception>
     public MethodDocumentation? Get(MethodInfo? methodInfo)
-        => methodInfo is null ? null : Get(methodInfo.DeclaringType!)?.GetDocumentation(methodInfo);
+        => methodInfo is null ? null : Get(methodInfo.DeclaringType)?.GetDocumentation(methodInfo);
 
     /// <summary>
     /// Fetches documentation for the specified <see cref="FieldInfo"/>.
@@ -93,5 +93,5 @@ public class XDoc
     /// </returns>
     /// <exception cref="NotImplementedException"></exception>
     public FieldDocumentation? Get(FieldInfo? fieldInfo)
-        => fieldInfo is null ? null : Get(fieldInfo.DeclaringType!)?.GetDocumentation(fieldInfo);
+        => fieldInfo is null ? null : Get(fieldInfo.DeclaringType)?.GetDocumentation(fieldInfo);
 }

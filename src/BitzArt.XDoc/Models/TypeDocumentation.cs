@@ -14,7 +14,7 @@ public sealed class TypeDocumentation : MemberDocumentation
     /// <summary>
     /// The <see cref="Type"/> this documentation if provided for.
     /// </summary>
-    public Type Type { get; private init; }
+    internal Type Type { get; private init; }
 
     /// <summary>
     /// List of members declared by this <see cref="Type"/>.
