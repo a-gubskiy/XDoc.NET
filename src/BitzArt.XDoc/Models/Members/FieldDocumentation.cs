@@ -14,10 +14,5 @@ public sealed class FieldDocumentation : TypeMemberDocumentation<FieldInfo>
     {
     }
 
-    internal FieldInfo? GetFieldInfo()
-    {
-        var fieldInfo = DeclaringType.BaseType?.GetField(Member.Name);
-
-        return fieldInfo;
-    }
+    internal FieldInfo GetFieldInfo() => Member;
 }

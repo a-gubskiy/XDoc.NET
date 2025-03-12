@@ -103,12 +103,7 @@ internal class InheritanceResolver
         }
 
         var memberInfo = fieldDocumentation.GetFieldInfo();
-
-        if (memberInfo is null)
-        {
-            return null;
-        }
-
+        
         var inheritedDocumentation = _source.Get(memberInfo);
 
         return CreateInheritanceMemberDocumentationReference(inheritedDocumentation);

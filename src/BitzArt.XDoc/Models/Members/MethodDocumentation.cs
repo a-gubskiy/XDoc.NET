@@ -13,10 +13,5 @@ public sealed class MethodDocumentation : TypeMemberDocumentation<MethodInfo>
     {
     }
 
-    internal MethodInfo? GetMethodInfo()
-    {
-        var methodInfo = DeclaringType.BaseType?.GetMethod(Member.Name);
-        
-        return methodInfo;
-    }
+    internal MethodInfo GetMethodInfo() => Member;
 }
