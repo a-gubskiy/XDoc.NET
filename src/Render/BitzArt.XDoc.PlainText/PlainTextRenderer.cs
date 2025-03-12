@@ -10,6 +10,29 @@ namespace BitzArt.XDoc.PlainText;
 public class PlainTextRenderer
 {
     /// <summary>
+    /// Converts an XML documentation node to the plain text.
+    /// </summary>
+    /// <param name="documentation"></param>
+    /// <returns></returns>
+    public static string Render(MemberDocumentation? documentation)
+    {
+        if (documentation == null)
+        {
+            return string.Empty;
+        }
+
+        var xmlNode = documentation.Inherited != null
+            ? documentation.Inherited.RequirementNode
+            : documentation.Node;
+
+        var text = Render(xmlNode);
+
+        var result = Normalize(text);
+
+        return result;
+    }
+
+    /// <summary>
     /// Normalize the input string by removing extra empty lines and trimming each line.
     /// </summary>
     private static string Normalize(string input)
@@ -31,34 +54,11 @@ public class PlainTextRenderer
     }
 
     /// <summary>
-    /// Converts an XML documentation node to the plain text.
-    /// </summary>
-    /// <param name="documentation"></param>
-    /// <returns></returns>
-    public string Render(MemberDocumentation? documentation)
-    {
-        if (documentation == null)
-        {
-            return string.Empty;
-        }
-
-        var xmlNode = documentation.Inherited != null
-            ? documentation.Inherited.RequirementNode
-            : documentation.Node;
-
-        var text = Render(xmlNode);
-
-        var result = Normalize(text);
-
-        return result;
-    }
-
-    /// <summary>
     /// Renders the content of an XML node to plain text.
     /// </summary>
     /// <param name="node"></param>
     /// <returns></returns>
-    private string Render(XmlNode? node)
+    private static string Render(XmlNode? node)
     {
         if (node == null)
         {
@@ -83,7 +83,7 @@ public class PlainTextRenderer
     /// </summary>
     /// <param name="element">The XML element to render.</param>
     /// <returns>The plain text representation of the XML element.</returns>
-    private string RenderXmlElement(XmlElement element)
+    private static string RenderXmlElement(XmlElement element)
     {
         var builder = new StringBuilder();
 

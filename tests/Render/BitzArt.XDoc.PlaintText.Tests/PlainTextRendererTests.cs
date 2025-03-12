@@ -16,13 +16,12 @@ public class PlainTextRendererTests
                     </member>";
 
         var xmlNode = GetXmlNode(xml);
-        var xmlRenderer = new PlainTextRenderer();
-
+        
         // Act
         var source = new XDoc();
         MemberDocumentation documentation = new TypeDocumentation(source, typeof(object), xmlNode);
 
-        var str = xmlRenderer.Render(documentation);
+        var str = PlainTextRenderer.Render(documentation);
 
         // Assert
         Assert.Contains("The ratio of Progress to  Objective for this WeeklyMetric.", str);
