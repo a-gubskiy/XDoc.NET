@@ -14,8 +14,5 @@ public static class XDocExtension
     /// <param name="services"></param>
     /// <returns></returns>
     [PublicAPI]
-    public static IServiceCollection AddXDoc(this IServiceCollection services)
-    {
-        return services.AddSingleton<XDoc>();
-    }
+    public static IServiceCollection AddXDoc(this IServiceCollection services) => services.AddSingleton<XDoc>();
 }
