@@ -16,7 +16,7 @@ public class XDocExtensionTests
         services.AddXDoc();
 
         // Assert
-        var serviceDescriptor = services.FirstOrDefault(s => s.ServiceType == typeof(IXDoc));
+        var serviceDescriptor = services.FirstOrDefault(s => s.ServiceType == typeof(XDoc));
 
         Assert.NotNull(serviceDescriptor);
         Assert.Equal(ServiceLifetime.Singleton, serviceDescriptor.Lifetime);
@@ -32,7 +32,7 @@ public class XDocExtensionTests
         var serviceProvider = services.BuildServiceProvider();
 
         // Act
-        var xdoc = serviceProvider.GetRequiredService<IXDoc>();
+        var xdoc = serviceProvider.GetRequiredService<XDoc>();
 
         var typeDocumentation = xdoc.Get(typeof(Dog));
         var propertyDocumentation = xdoc.Get(typeof(Dog).GetProperty(nameof(Dog.Property1)));

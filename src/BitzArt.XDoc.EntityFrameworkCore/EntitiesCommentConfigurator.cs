@@ -12,12 +12,12 @@ namespace BitzArt.XDoc.EntityFrameworkCore;
 public class EntitiesCommentConfigurator
 {
     private readonly ILogger _logger;
-    private readonly IXDoc _xDoc;
+    private readonly XDoc _xDoc;
 
     /// <summary>
     /// Default constructor.
     /// </summary>
-    public EntitiesCommentConfigurator(IXDoc xDoc, ILogger<EntitiesCommentConfigurator> logger)
+    public EntitiesCommentConfigurator(XDoc xDoc, ILogger<EntitiesCommentConfigurator> logger)
     {
         _logger = logger;
         _xDoc = xDoc;

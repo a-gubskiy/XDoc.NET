@@ -21,7 +21,7 @@ public sealed class TypeDocumentation : MemberDocumentation
     /// </summary>
     internal IReadOnlyDictionary<MemberInfo, MemberDocumentation> MemberData => _memberData.ToFrozenDictionary();
 
-    internal TypeDocumentation(IXDoc source, Type type, XmlNode? node)
+    internal TypeDocumentation(XDoc source, Type type, XmlNode? node)
         : base(source, node)
     {
         Type = type;

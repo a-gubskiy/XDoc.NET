@@ -85,7 +85,7 @@ public class CrefResolverTests
 
     private class TestMemberDocumentation : MemberDocumentation
     {
-        public TestMemberDocumentation(IXDoc source, XmlNode node)
+        public TestMemberDocumentation(XDoc source, XmlNode node)
             : base(source, node)
         {
         }

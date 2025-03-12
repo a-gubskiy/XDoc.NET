@@ -46,7 +46,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" PrivateAssets="true"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" PrivateAssets="All"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2"/>
     </ItemGroup>
 

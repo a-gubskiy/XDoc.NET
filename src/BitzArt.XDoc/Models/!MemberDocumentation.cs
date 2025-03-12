@@ -18,7 +18,7 @@ public abstract class MemberDocumentation
     /// </summary>
     public XmlNode? Node { get; private init; }
 
-    internal IXDoc Source { get; private init; }
+    internal XDoc Source { get; private init; }
 
     private bool _isResolved = false;
     private InheritanceMemberDocumentationReference? _inherited;
@@ -56,7 +56,7 @@ public abstract class MemberDocumentation
     /// </summary>
     /// <param name="source">The source of the documentation.</param>
     /// <param name="node">The XML node that contains the documentation.</param>
-    protected MemberDocumentation(IXDoc source, XmlNode? node)
+    protected MemberDocumentation(XDoc source, XmlNode? node)
     {
         Source = source;
         Node = node;

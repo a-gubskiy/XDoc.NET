@@ -5,12 +5,12 @@ namespace BitzArt.XDoc;
 
 internal class XmlParser
 {
-    private readonly IXDoc _source;
+    private readonly XDoc _source;
     private readonly Assembly _assembly;
     private readonly XmlDocument _xml;
     private readonly Dictionary<Type, TypeDocumentation> _results;
 
-    public static Dictionary<Type, TypeDocumentation> Parse(IXDoc source, Assembly assembly, XmlDocument xml)
+    public static Dictionary<Type, TypeDocumentation> Parse(XDoc source, Assembly assembly, XmlDocument xml)
     {
         var parser = new XmlParser(source, assembly, xml);
         parser.Parse();
@@ -18,7 +18,7 @@ internal class XmlParser
         return parser._results;
     }
 
-    internal XmlParser(IXDoc source, Assembly assembly, XmlDocument xml)
+    internal XmlParser(XDoc source, Assembly assembly, XmlDocument xml)
     {
         _source = source;
         _assembly = assembly;

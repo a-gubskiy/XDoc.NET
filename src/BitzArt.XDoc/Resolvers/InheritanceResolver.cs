@@ -5,9 +5,9 @@ namespace BitzArt.XDoc.Resolvers;
 /// </summary>
 internal class InheritanceResolver
 {
-    private readonly IXDoc _source;
+    private readonly XDoc _source;
 
-    private InheritanceResolver(IXDoc documentationSource)
+    private InheritanceResolver(XDoc documentationSource)
     {
         _source = documentationSource;
     }

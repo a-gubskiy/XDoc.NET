@@ -19,7 +19,7 @@ public class PlainTextRendererTests
         var xmlRenderer = new PlainTextRenderer();
 
         // Act
-        IXDoc source = new XDoc();
+        var source = new XDoc();
         MemberDocumentation documentation = new TypeDocumentation(source, typeof(object), xmlNode);
 
         var str = xmlRenderer.Render(documentation);
