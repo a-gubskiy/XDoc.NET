@@ -1,0 +1,85 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DE8DA5D7-65DB-4FE8-8CF9-52CEB9CE6648}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{616D63B3-7EF0-40FB-A404-33A221F65577}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc", "src\BitzArt.XDoc\BitzArt.XDoc.csproj", "{051F3A64-78F8-4055-9785-5D5A3C489832}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.Tests", "tests\BitzArt.XDoc.Tests\BitzArt.XDoc.Tests.csproj", "{D6F5A728-53AD-49F9-8BA0-1E72D0AF6A93}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.PlainText", "src\Render\BitzArt.XDoc.PlainText\BitzArt.XDoc.PlainText.csproj", "{95283F56-EFD3-4B32-AE26-4E486D186127}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.PlaintText.Tests", "tests\Render\BitzArt.XDoc.PlaintText.Tests\BitzArt.XDoc.PlaintText.Tests.csproj", "{4F4720A9-8DD2-4DFD-B217-A0FAFC6F60D0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sln", "sln", "{4DF4BD72-775C-4D08-8192-DAD007669051}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Render", "Render", "{7678586D-A35F-4155-9651-19E9F5770607}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Render", "Render", "{E34A2AB7-3E63-488C-85FC-72BB747ACD6F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MultiAssemblyTests", "MultiAssemblyTests", "{401AF0D6-F0A9-43CE-9CB6-B3BFC69FFE31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAssembly.A", "tests\MultiAssemblyTests\TestAssembly.A\TestAssembly.A.csproj", "{4398E200-26F9-4184-A943-47738FF5EB4E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAssembly.B", "tests\MultiAssemblyTests\TestAssembly.B\TestAssembly.B.csproj", "{152D5D7F-EDF8-489C-B2BE-F22E5F63263F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.EntityFrameworkCore", "src\BitzArt.XDoc.EntityFrameworkCore\BitzArt.XDoc.EntityFrameworkCore.csproj", "{69E03C89-EA2B-4C47-BF61-70C5F9E56550}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{051F3A64-78F8-4055-9785-5D5A3C489832}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{051F3A64-78F8-4055-9785-5D5A3C489832}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{051F3A64-78F8-4055-9785-5D5A3C489832}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{051F3A64-78F8-4055-9785-5D5A3C489832}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6F5A728-53AD-49F9-8BA0-1E72D0AF6A93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6F5A728-53AD-49F9-8BA0-1E72D0AF6A93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6F5A728-53AD-49F9-8BA0-1E72D0AF6A93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6F5A728-53AD-49F9-8BA0-1E72D0AF6A93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95283F56-EFD3-4B32-AE26-4E486D186127}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95283F56-EFD3-4B32-AE26-4E486D186127}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95283F56-EFD3-4B32-AE26-4E486D186127}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95283F56-EFD3-4B32-AE26-4E486D186127}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F4720A9-8DD2-4DFD-B217-A0FAFC6F60D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F4720A9-8DD2-4DFD-B217-A0FAFC6F60D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F4720A9-8DD2-4DFD-B217-A0FAFC6F60D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F4720A9-8DD2-4DFD-B217-A0FAFC6F60D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4398E200-26F9-4184-A943-47738FF5EB4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4398E200-26F9-4184-A943-47738FF5EB4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4398E200-26F9-4184-A943-47738FF5EB4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4398E200-26F9-4184-A943-47738FF5EB4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{152D5D7F-EDF8-489C-B2BE-F22E5F63263F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{152D5D7F-EDF8-489C-B2BE-F22E5F63263F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{152D5D7F-EDF8-489C-B2BE-F22E5F63263F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{152D5D7F-EDF8-489C-B2BE-F22E5F63263F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69E03C89-EA2B-4C47-BF61-70C5F9E56550}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69E03C89-EA2B-4C47-BF61-70C5F9E56550}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69E03C89-EA2B-4C47-BF61-70C5F9E56550}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69E03C89-EA2B-4C47-BF61-70C5F9E56550}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{051F3A64-78F8-4055-9785-5D5A3C489832} = {DE8DA5D7-65DB-4FE8-8CF9-52CEB9CE6648}
+		{D6F5A728-53AD-49F9-8BA0-1E72D0AF6A93} = {616D63B3-7EF0-40FB-A404-33A221F65577}
+		{95283F56-EFD3-4B32-AE26-4E486D186127} = {7678586D-A35F-4155-9651-19E9F5770607}
+		{4F4720A9-8DD2-4DFD-B217-A0FAFC6F60D0} = {E34A2AB7-3E63-488C-85FC-72BB747ACD6F}
+		{7678586D-A35F-4155-9651-19E9F5770607} = {DE8DA5D7-65DB-4FE8-8CF9-52CEB9CE6648}
+		{E34A2AB7-3E63-488C-85FC-72BB747ACD6F} = {616D63B3-7EF0-40FB-A404-33A221F65577}
+		{401AF0D6-F0A9-43CE-9CB6-B3BFC69FFE31} = {616D63B3-7EF0-40FB-A404-33A221F65577}
+		{4398E200-26F9-4184-A943-47738FF5EB4E} = {401AF0D6-F0A9-43CE-9CB6-B3BFC69FFE31}
+		{152D5D7F-EDF8-489C-B2BE-F22E5F63263F} = {401AF0D6-F0A9-43CE-9CB6-B3BFC69FFE31}
+		{69E03C89-EA2B-4C47-BF61-70C5F9E56550} = {DE8DA5D7-65DB-4FE8-8CF9-52CEB9CE6648}
+	EndGlobalSection
+EndGlobal
