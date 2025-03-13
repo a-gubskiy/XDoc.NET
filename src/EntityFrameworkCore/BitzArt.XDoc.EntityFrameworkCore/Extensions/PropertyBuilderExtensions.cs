@@ -51,9 +51,7 @@ public static class PropertyBuilderExtensions
         where TEntity : class
         where TCommentTargetEntity : class
     {
-        var comment = GetComment<TEntity, TProperty, TCommentTargetEntity, TCommentTargetProperty>(
-            xdoc,
-            commentTargetPropertyExpression);
+        var comment = GetComment(xdoc, commentTargetPropertyExpression);
 
         return entityTypeBuilder.HasPropertyComment(propertyExpression, comment);
     }
@@ -146,13 +144,23 @@ public static class PropertyBuilderExtensions
         where TEntity : class
         where TCommentTargetEntity : class
     {
-        var comment = GetComment<TEntity, TProperty, TCommentTargetEntity, TCommentTargetProperty>(
-            xdoc,
-            commentTargetPropertyExpression);
+        var comment = GetComment(xdoc, commentTargetPropertyExpression);
 
         return propertyBuilder.HasComment(comment);
     }
 
+    /// <summary>
+    /// Adds a comment to a property being configured, using documentation from XDoc.
+    /// The comment is extracted from a property with the specified name in the target entity type.
+    /// </summary>
+    /// <typeparam name="TProperty">The type of the property being configured</typeparam>
+    /// <typeparam name="TCommentTargetEntity">The entity type containing the property whose documentation will be used</typeparam>
+    /// <typeparam name="TCommentTargetProperty">The type of the property in the expression parameter (not directly used)</typeparam>
+    /// <param name="propertyBuilder">The builder for the property</param>
+    /// <param name="xdoc">The XDoc instance used to extract documentation</param>
+    /// <param name="propertyName">The name of the property whose documentation will be extracted</param>
+    /// <param name="commentTargetPropertyExpression">An expression that identifies a property (note: this parameter is not used in the method body)</param>
+    /// <returns>The same property builder instance so that multiple calls can be chained</returns>
     public static PropertyBuilder<TProperty> HasPropertyComment<TProperty, TCommentTargetEntity, TCommentTargetProperty>
     (
         this PropertyBuilder<TProperty> propertyBuilder,
@@ -160,32 +168,26 @@ public static class PropertyBuilderExtensions
         string propertyName,
         Expression<Func<TCommentTargetEntity, TCommentTargetProperty>> commentTargetPropertyExpression)
     {
-        var commentTargetType = typeof(TCommentTargetEntity);
-        var targetPropertyInfo = commentTargetType.GetProperty(propertyName);
-
-        var comment = xdoc.Get(targetPropertyInfo).ToPlainText();
+        var comment = GetComment<TCommentTargetEntity>(xdoc, propertyName);
 
         propertyBuilder.HasComment(comment);
 
         return propertyBuilder;
     }
 
-
     /// <summary>
     /// Extracts documentation comment from a property specified in an expression.
     /// </summary>
     /// <typeparam name="TEntity">The entity type being configured</typeparam>
-    /// <typeparam name="TProperty">The type of the property being configured</typeparam>
     /// <typeparam name="TCommentTargetEntity">The entity type containing the property whose documentation will be used</typeparam>
     /// <typeparam name="TCommentTargetProperty">The type of the property whose documentation will be used</typeparam>
     /// <param name="xdoc">The XDoc instance used to extract documentation</param>
     /// <param name="commentTargetPropertyExpression">An expression that identifies the property whose documentation will be used</param>
     /// <returns>The extracted documentation comment as plain text</returns>
     /// <exception cref="InvalidOperationException">Thrown when the property name cannot be determined or is empty</exception>
-    private static string GetComment<TEntity, TProperty, TCommentTargetEntity, TCommentTargetProperty>(
+    private static string GetComment<TCommentTargetEntity, TCommentTargetProperty>(
         XDoc xdoc,
         Expression<Func<TCommentTargetEntity, TCommentTargetProperty>> commentTargetPropertyExpression)
-        where TEntity : class
         where TCommentTargetEntity : class
     {
         var operand = commentTargetPropertyExpression.Body as MemberExpression;
@@ -196,6 +198,20 @@ public static class PropertyBuilderExtensions
             throw new InvalidOperationException($"Property with name '{propertyName}' was not found.");
         }
 
+        var comment = GetComment<TCommentTargetEntity>(xdoc, propertyName);
+
+        return comment;
+    }
+
+    /// <summary>
+    /// Extracts documentation comment from a property with the specified name in the given entity type.
+    /// </summary>
+    /// <typeparam name="TCommentTargetEntity">The entity type containing the property whose documentation will be used</typeparam>
+    /// <param name="xdoc">The XDoc instance used to extract documentation</param>
+    /// <param name="propertyName">The name of the property whose documentation will be extracted</param>
+    /// <returns>The extracted documentation comment as plain text</returns>
+    private static string GetComment<TCommentTargetEntity>(XDoc xdoc, string propertyName)
+    {
         var commentTargetType = typeof(TCommentTargetEntity);
         var targetPropertyInfo = commentTargetType.GetProperty(propertyName);
 
