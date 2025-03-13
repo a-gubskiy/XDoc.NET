@@ -179,4 +179,35 @@ public class EntityTypeBuilderExtensionsTests
             .FindProperty(propertyName)!
             .GetComment());
     }
+    
+    [Fact]
+    public void HasPropertyComment_WithPropertyExpressoin_ShouldSetComment()
+    {
+        // Arrange
+        var propertyName = "MyCustomProperty";
+
+        var testContext = new TestDbContext7((context, modelBuilder) =>
+        {
+            var xdoc = new XDoc();
+
+            modelBuilder
+                .Entity<MyFirstClass>()
+                .Property<string>(propertyName)
+                .HasColumnName(propertyName)
+                .HasPropertyComment(xdoc, (MySecondClass o) => o.NullableName)
+                .IsRequired()
+                .HasColumnType("string");
+        });
+
+        // Act
+        _ = testContext.Model;
+
+        // Assert
+        Assert.Equal(MySecondClass.NullableNameComment, testContext
+            .GetService<IDesignTimeModel>()
+            .Model
+            .FindEntityType(typeof(MyFirstClass))!
+            .FindProperty(propertyName)!
+            .GetComment());
+    }
 }
