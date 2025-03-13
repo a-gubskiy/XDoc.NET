@@ -158,21 +158,20 @@ public static class PropertyBuilderExtensions
     /// <typeparam name="TCommentTargetProperty">The type of the property in the expression parameter (not directly used)</typeparam>
     /// <param name="propertyBuilder">The builder for the property</param>
     /// <param name="xdoc">The XDoc instance used to extract documentation</param>
-    /// <param name="propertyName">The name of the property whose documentation will be extracted</param>
     /// <param name="commentTargetPropertyExpression">An expression that identifies a property (note: this parameter is not used in the method body)</param>
     /// <returns>The same property builder instance so that multiple calls can be chained</returns>
     public static PropertyBuilder<TProperty> HasPropertyComment<TProperty, TCommentTargetEntity, TCommentTargetProperty>
     (
         this PropertyBuilder<TProperty> propertyBuilder,
         XDoc xdoc,
-        string propertyName,
         Expression<Func<TCommentTargetEntity, TCommentTargetProperty>> commentTargetPropertyExpression)
     {
-        var comment = GetComment<TCommentTargetEntity>(xdoc, propertyName);
+        var operand = commentTargetPropertyExpression.Body as MemberExpression;
+        var targetPropertyName = operand!.Member.Name;
+        
+        var comment = GetComment<TCommentTargetEntity>(xdoc, targetPropertyName);
 
-        propertyBuilder.HasComment(comment);
-
-        return propertyBuilder;
+        return propertyBuilder.HasComment(comment);
     }
 
     /// <summary>
@@ -191,14 +190,14 @@ public static class PropertyBuilderExtensions
         where TCommentTargetEntity : class
     {
         var operand = commentTargetPropertyExpression.Body as MemberExpression;
-        var propertyName = operand!.Member.Name;
+        var targetPropertyName = operand!.Member.Name;
 
-        if (string.IsNullOrWhiteSpace(propertyName))
+        if (string.IsNullOrWhiteSpace(targetPropertyName))
         {
-            throw new InvalidOperationException($"Property with name '{propertyName}' was not found.");
+            throw new InvalidOperationException($"Property with name '{targetPropertyName}' was not found.");
         }
 
-        var comment = GetComment<TCommentTargetEntity>(xdoc, propertyName);
+        var comment = GetComment<TCommentTargetEntity>(xdoc, targetPropertyName);
 
         return comment;
     }
@@ -212,10 +211,9 @@ public static class PropertyBuilderExtensions
     /// <returns>The extracted documentation comment as plain text</returns>
     private static string GetComment<TCommentTargetEntity>(XDoc xdoc, string propertyName)
     {
-        var commentTargetType = typeof(TCommentTargetEntity);
-        var targetPropertyInfo = commentTargetType.GetProperty(propertyName);
+        var propertyInfo = typeof(TCommentTargetEntity).GetProperty(propertyName);
 
-        var comment = xdoc.Get(targetPropertyInfo).ToPlainText();
+        var comment = xdoc.Get(propertyInfo).ToPlainText();
 
         return comment;
     }
