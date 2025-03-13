@@ -7,21 +7,13 @@ namespace BitzArt.XDoc.Tests;
 public class EntityTypeBuilderExtensionsTests
 {
     private class TestDbContext1(Action<TestDbContext, ModelBuilder> onModelCreating) : TestDbContext(onModelCreating);
-
     private class TestDbContext2(Action<TestDbContext, ModelBuilder> onModelCreating) : TestDbContext(onModelCreating);
-
     private class TestDbContext3(Action<TestDbContext, ModelBuilder> onModelCreating) : TestDbContext(onModelCreating);
-
     private class TestDbContext4(Action<TestDbContext, ModelBuilder> onModelCreating) : TestDbContext(onModelCreating);
-
     private class TestDbContext5(Action<TestDbContext, ModelBuilder> onModelCreating) : TestDbContext(onModelCreating);
-
     private class TestDbContext6(Action<TestDbContext, ModelBuilder> onModelCreating) : TestDbContext(onModelCreating);
-
     private class TestDbContext7(Action<TestDbContext, ModelBuilder> onModelCreating) : TestDbContext(onModelCreating);
-
     private class TestDbContext8(Action<TestDbContext, ModelBuilder> onModelCreating) : TestDbContext(onModelCreating);
-
     private class TestDbContext9(Action<TestDbContext, ModelBuilder> onModelCreating) : TestDbContext(onModelCreating);
 
     [Fact]
