@@ -107,12 +107,10 @@ public static class PropertyBuilderExtensions
     /// <param name="propertyExpression">An expression that identifies the property to configure</param>
     /// <param name="comment">The comment text to be added to the property</param>
     /// <returns>The same entity type builder instance so that multiple calls can be chained</returns>
-    public static EntityTypeBuilder<TEntity> HasPropertyComment<TEntity, TProperty>
-    (
+    public static EntityTypeBuilder<TEntity> HasPropertyComment<TEntity, TProperty>(
         this EntityTypeBuilder<TEntity> entityTypeBuilder,
         Expression<Func<TEntity, TProperty>> propertyExpression,
-        string? comment
-    )
+        string? comment)
         where TEntity : class
     {
         entityTypeBuilder.Property(propertyExpression).HasComment(comment);
@@ -134,13 +132,11 @@ public static class PropertyBuilderExtensions
     /// <param name="commentTargetPropertyExpression">An expression that identifies the property whose documentation will be used</param>
     /// <returns>The same property builder instance so that multiple calls can be chained</returns>
     public static PropertyBuilder<TProperty> HasPropertyComment<TEntity, TProperty, TCommentTargetEntity,
-        TCommentTargetProperty>
-    (
+        TCommentTargetProperty>(
         this PropertyBuilder<TProperty> propertyBuilder,
         XDoc xdoc,
         string propertyName,
-        Expression<Func<TCommentTargetEntity, TCommentTargetProperty>> commentTargetPropertyExpression
-    )
+        Expression<Func<TCommentTargetEntity, TCommentTargetProperty>> commentTargetPropertyExpression)
         where TEntity : class
         where TCommentTargetEntity : class
     {
@@ -160,15 +156,15 @@ public static class PropertyBuilderExtensions
     /// <param name="xdoc">The XDoc instance used to extract documentation</param>
     /// <param name="commentTargetPropertyExpression">An expression that identifies a property (note: this parameter is not used in the method body)</param>
     /// <returns>The same property builder instance so that multiple calls can be chained</returns>
-    public static PropertyBuilder<TProperty> HasPropertyComment<TProperty, TCommentTargetEntity, TCommentTargetProperty>
-    (
+    public static PropertyBuilder<TProperty> HasPropertyComment<TProperty, TCommentTargetEntity,
+        TCommentTargetProperty>(
         this PropertyBuilder<TProperty> propertyBuilder,
         XDoc xdoc,
         Expression<Func<TCommentTargetEntity, TCommentTargetProperty>> commentTargetPropertyExpression)
     {
         var operand = commentTargetPropertyExpression.Body as MemberExpression;
         var targetPropertyName = operand!.Member.Name;
-        
+
         var comment = GetComment<TCommentTargetEntity>(xdoc, targetPropertyName);
 
         return propertyBuilder.HasComment(comment);
