@@ -125,6 +125,7 @@ public static class PropertyBuilderExtensions
         where TEntity : class
     {
         entityTypeBuilder.Property(propertyExpression).HasComment(comment);
+        
         return entityTypeBuilder;
     }
 }
