@@ -12,54 +12,15 @@ namespace BitzArt.XDoc;
 public static class PropertyBuilderExtensions
 {
     /// <summary>
-    /// Map property comment from XML documentation to the property.
+    /// Adds a comment to a property of the entity type being configured, using documentation from XDoc.
+    /// The comment is extracted from the same property that is being configured.
     /// </summary>
-    /// <param name="builder">
-    /// Property builder.
-    /// </param>
-    /// <param name="xdoc">
-    /// XDoc instance to use.
-    /// </param>
-    /// <param name="propertyExpression">
-    /// Expression to get the property name.
-    /// </param>
-    /// <typeparam name="TTargetEntity">
-    /// Entity type where the property is defined.
-    /// </typeparam>
-    /// <typeparam name="TTargetProperty">
-    /// Target property type.
-    /// </typeparam>
-    /// <returns></returns>
-    /*public static PropertyBuilder HasXmlComment<TTargetEntity, TTargetProperty>(
-        this PropertyBuilder builder,
-        XDoc xdoc,
-        Expression<Func<TTargetEntity, TTargetProperty>> propertyExpression)
-    {
-        var type = typeof(TTargetEntity);
-
-        //var expression = propertyExpression.Body as UnaryExpression;
-        //var operand = expression?.Operand as MemberExpression;
-
-        var operand = propertyExpression.Body as MemberExpression;
-        var propertyName = operand?.Member.Name;
-
-        if (string.IsNullOrWhiteSpace(propertyName))
-        {
-            return builder;
-        }
-
-        var propertyInfo = type.GetProperty(propertyName);
-
-        var comment = xdoc.Get(propertyInfo).ToPlainText();
-
-        if (!string.IsNullOrWhiteSpace(comment))
-        {
-            builder.HasComment(comment);
-        }
-
-        return builder;
-    }*/
-
+    /// <typeparam name="TEntity">The entity type being configured</typeparam>
+    /// <typeparam name="TProperty">The type of the property being configured</typeparam>
+    /// <param name="entityTypeBuilder">The builder for the entity type</param>
+    /// <param name="xdoc">The XDoc instance used to extract documentation</param>
+    /// <param name="propertyExpression">An expression that identifies the property to configure</param>
+    /// <returns>The same entity type builder instance so that multiple calls can be chained</returns>
     public static EntityTypeBuilder<TEntity> HasPropertyComment<TEntity, TProperty>(
         this EntityTypeBuilder<TEntity> entityTypeBuilder,
         XDoc xdoc,
@@ -67,7 +28,22 @@ public static class PropertyBuilderExtensions
         where TEntity : class
         => entityTypeBuilder.HasPropertyComment(xdoc, propertyExpression, propertyExpression);
 
-    public static EntityTypeBuilder<TEntity> HasPropertyComment<TEntity, TProperty, TCommentTargetEntity, TCommentTargetProperty>(
+    /// <summary>
+    /// Adds a comment to a property of the entity type being configured, using documentation from XDoc.
+    /// The comment is extracted from a potentially different property or entity than the one being configured.
+    /// </summary>
+    /// <typeparam name="TEntity">The entity type being configured</typeparam>
+    /// <typeparam name="TProperty">The type of the property being configured</typeparam>
+    /// <typeparam name="TCommentTargetEntity">The entity type containing the property whose documentation will be used</typeparam>
+    /// <typeparam name="TCommentTargetProperty">The type of the property whose documentation will be used</typeparam>
+    /// <param name="entityTypeBuilder">The builder for the entity type</param>
+    /// <param name="xdoc">The XDoc instance used to extract documentation</param>
+    /// <param name="propertyExpression">An expression that identifies the property to configure</param>
+    /// <param name="commentTargetPropertyExpression">An expression that identifies the property whose documentation will be used</param>
+    /// <returns>The same entity type builder instance so that multiple calls can be chained</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the property name is null or empty</exception>
+    public static EntityTypeBuilder<TEntity> HasPropertyComment<TEntity, TProperty, TCommentTargetEntity,
+        TCommentTargetProperty>(
         this EntityTypeBuilder<TEntity> entityTypeBuilder,
         XDoc xdoc,
         Expression<Func<TEntity, TProperty>> propertyExpression,
@@ -91,6 +67,15 @@ public static class PropertyBuilderExtensions
         return entityTypeBuilder.HasPropertyComment(propertyExpression, comment);
     }
 
+    /// <summary>
+    /// Adds a comment to a property of the entity type being configured, using documentation from XDoc.
+    /// The comment is extracted from a property with the specified name in the entity type being configured.
+    /// </summary>
+    /// <typeparam name="TEntity">The entity type being configured</typeparam>
+    /// <param name="entityTypeBuilder">The builder for the entity type</param>
+    /// <param name="xdoc">The XDoc instance used to extract documentation</param>
+    /// <param name="propertyName">The name of the property to configure</param>
+    /// <returns>The same entity type builder instance so that multiple calls can be chained</returns>
     public static EntityTypeBuilder<TEntity> HasPropertyComment<TEntity>(
         this EntityTypeBuilder<TEntity> entityTypeBuilder,
         XDoc xdoc,
@@ -98,6 +83,16 @@ public static class PropertyBuilderExtensions
         where TEntity : class
         => entityTypeBuilder.HasPropertyComment(xdoc, typeof(TEntity), propertyName);
 
+    /// <summary>
+    /// Adds a comment to a property of the entity type being configured, using documentation from XDoc.
+    /// The comment is extracted from a property with the specified name in the specified entity type.
+    /// </summary>
+    /// <typeparam name="TEntity">The entity type being configured</typeparam>
+    /// <param name="entityTypeBuilder">The builder for the entity type</param>
+    /// <param name="xdoc">The XDoc instance used to extract documentation</param>
+    /// <param name="targetEntityType">The entity type containing the property whose documentation will be used</param>
+    /// <param name="propertyName">The name of the property to configure</param>
+    /// <returns>The same entity type builder instance so that multiple calls can be chained</returns>
     public static EntityTypeBuilder<TEntity> HasPropertyComment<TEntity>(
         this EntityTypeBuilder<TEntity> entityTypeBuilder,
         XDoc xdoc,
@@ -114,6 +109,15 @@ public static class PropertyBuilderExtensions
         return entityTypeBuilder;
     }
 
+    /// <summary>
+    /// Adds a comment to a property of the entity type being configured.
+    /// </summary>
+    /// <typeparam name="TEntity">The entity type being configured</typeparam>
+    /// <typeparam name="TProperty">The type of the property being configured</typeparam>
+    /// <param name="entityTypeBuilder">The builder for the entity type</param>
+    /// <param name="propertyExpression">An expression that identifies the property to configure</param>
+    /// <param name="comment">The comment text to be added to the property</param>
+    /// <returns>The same entity type builder instance so that multiple calls can be chained</returns>
     public static EntityTypeBuilder<TEntity> HasPropertyComment<TEntity, TProperty>(
         this EntityTypeBuilder<TEntity> entityTypeBuilder,
         Expression<Func<TEntity, TProperty>> propertyExpression,
