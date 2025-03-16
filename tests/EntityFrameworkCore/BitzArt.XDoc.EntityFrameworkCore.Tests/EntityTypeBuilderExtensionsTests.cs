@@ -202,4 +202,38 @@ public class EntityTypeBuilderExtensionsTests
             .FindProperty(propertyName)!
             .GetComment());
     }
+    
+    [Fact]
+    public void ConfigureShadowPropertyWithPropertyBuilder_WithColumnNameAndType_ShouldConfigureProperly()
+    {
+        // Arrange
+        const string shadowPropertyName = "BonusOfferAmount";
+    
+        var testContext = new TestDbContext8((context, modelBuilder) =>
+        {
+            var xdoc = new XDoc();
+            
+            modelBuilder.Entity<MyFirstClass>(builder =>
+            {
+                builder.Property<int>(shadowPropertyName)
+                    .HasColumnName(shadowPropertyName)
+                    .HasPropertyComment<MyFirstClass, int, MySecondClass, int?>(xdoc, shadowPropertyName, o => o.NullableValue)
+                    .IsRequired()
+                    .HasColumnType("int");
+            });
+        });
+    
+        // Act
+        _ = testContext.Model;
+   
+        // Assert
+        var actualPropertyComment = testContext
+            .GetService<IDesignTimeModel>()
+            .Model
+            .FindEntityType(typeof(MyFirstClass))!
+            .FindProperty(shadowPropertyName)!
+            .GetComment();
+        
+        Assert.Equal(MySecondClass.NullableValueComment, actualPropertyComment);
+    }
 }
