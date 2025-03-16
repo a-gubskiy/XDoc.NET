@@ -5,7 +5,7 @@ namespace BitzArt.XDoc;
 internal static class XDocExtensions
 {
     /// <summary>
-    /// Extracts documentation comment from a property specified in an expression.
+    /// Fetches documentation for a property specified in an <see cref="Expression"/>.
     /// </summary>
     /// <typeparam name="TCommentTargetEntity">The entity type containing the property whose documentation will be used</typeparam>
     /// <typeparam name="TCommentTargetProperty">The type of the property whose documentation will be used</typeparam>
