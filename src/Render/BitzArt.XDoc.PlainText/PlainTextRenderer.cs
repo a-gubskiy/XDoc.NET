@@ -21,11 +21,7 @@ public class PlainTextRenderer
             return string.Empty;
         }
 
-        var xmlNode = documentation.Inherited != null
-            ? documentation.Inherited.RequirementNode
-            : documentation.Node;
-
-        var result = Render(xmlNode);
+        var result = Render(documentation, documentation.Node);
 
         return result;
     }
@@ -33,16 +29,19 @@ public class PlainTextRenderer
     /// <summary>
     /// Renders the content of an XML node to plain text.
     /// </summary>
+    /// <param name="documentation"></param>
     /// <param name="node"></param>
     /// <returns></returns>
-    internal static string Render(XmlNode? node)
-        => Normalize(node switch
+    private static string Render(MemberDocumentation documentation, XmlNode? node)
     {
-        null => string.Empty,
-        XmlText textNode => RenderTextNode(textNode),
-        XmlElement element => RenderXmlElement(element),
-        _ => node.InnerText
-    });
+        return Normalize(node switch
+        {
+            null => string.Empty,
+            XmlText textNode => RenderTextNode(textNode),
+            XmlElement element => RenderXmlElement(documentation, element),
+            _ => node.InnerText
+        });
+    }
 
     /// <summary>
     /// Normalize the input string by removing extra empty lines and trimming each line.
@@ -68,74 +67,44 @@ public class PlainTextRenderer
     /// <summary>
     /// Renders the content of an XML element to plain text, including handling child nodes and references.
     /// </summary>
+    /// <param name="documentation"></param>
     /// <param name="element">The XML element to render.</param>
     /// <returns>The plain text representation of the XML element.</returns>
-    private static string RenderXmlElement(XmlElement element)
+    private static string RenderXmlElement(MemberDocumentation documentation, XmlElement element)
     {
         var builder = new StringBuilder();
+
+        if (element.Attributes["cref"] != null || element.Name == "inheritdoc")
+        {
+            return RenderReference(documentation, element);
+        }
 
         var childNodes = element.ChildNodes.Cast<XmlNode>().ToList();
 
         foreach (var child in childNodes)
         {
-            if (child is XmlText textNode)
-            {
-                builder.Append(RenderTextNode(textNode));
-            }
-            else if (child is XmlElement childElement)
-            {
-                if (childElement.Name == "see" || childElement.Name == "seealso")
-                {
-                    builder.Append(RenderReference(childElement));
-                }
-                else
-                {
-                    // For other elements, recursively render their content
-                    builder.Append(Render(childElement));
-                }
-            }
+            builder.Append(Render(documentation, child));
         }
 
-        var result = builder.ToString();
-
-        return result;
+        return builder.ToString();
     }
 
     /// <summary>
     /// Render a see/seealso reference.
     /// </summary>
-    /// <param name="childElement"></param>
+    /// <param name="documentation"></param>
+    /// <param name="element"></param>
     /// <returns></returns>
-    private static string RenderReference(XmlElement childElement)
+    private static string RenderReference(MemberDocumentation documentation, XmlElement element)
     {
-        var builder = new StringBuilder();
+        var documentationReference = documentation.GetReference(element);
 
-        // Handle see/seealso references
-        var crefAttribute = childElement.Attributes["cref"];
-
-        if (crefAttribute != null)
+        if (documentationReference == null)
         {
-            var crefValue = crefAttribute.Value;
-
-            if (crefValue.StartsWith("T:") ||
-                crefValue.StartsWith("P:") ||
-                crefValue.StartsWith("M:") ||
-                crefValue.StartsWith("F:"))
-            {
-                var lastIndexOfDot = crefValue.LastIndexOf('.');
-
-                crefValue = crefValue.Substring(lastIndexOfDot + 1, crefValue.Length - lastIndexOfDot - 1);
-            }
-
-            builder.Append(crefValue);
-        }
-        else
-        {
-            // If no cref attribute, just use the inner text
-            builder.Append(childElement.InnerText);
+            return string.Empty;
         }
 
-        return builder.ToString();
+        return Render(documentationReference.Target, documentationReference.Target.Node);
     }
 
     /// <summary>
@@ -145,6 +114,6 @@ public class PlainTextRenderer
     /// <returns>The plain text representation of the XML text node.</returns>
     private static string RenderTextNode(XmlText textNode)
     {
-        return textNode.Value ?? "";
+        return textNode.Value ?? string.Empty;
     }
 }

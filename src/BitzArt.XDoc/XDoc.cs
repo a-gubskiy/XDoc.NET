@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Reflection;
 
 namespace BitzArt.XDoc;
@@ -24,7 +25,9 @@ namespace BitzArt.XDoc;
 /// </summary>
 public class XDoc
 {
-    private readonly Dictionary<Assembly, AssemblyDocumentation> _collectedAssemblies = [];
+    private readonly ConcurrentDictionary<Assembly, AssemblyDocumentation> _collectedAssemblies = [];
+    
+    public IDocumentationReferenceResolver ReferenceResolver { get; set; } = new DocumentationReferenceResolver();
 
     /// <summary>
     /// Fetches documentation for the specified <see cref="Assembly"/>.
@@ -39,7 +42,11 @@ public class XDoc
     private AssemblyDocumentation Collect(Assembly assembly)
     {
         var result = new AssemblyDocumentation(this, assembly);
-        _collectedAssemblies.Add(assembly, result);
+        
+        if (!_collectedAssemblies.TryAdd(assembly, result))
+        {
+            return _collectedAssemblies[assembly];
+        }
 
         return result;
     }
@@ -65,7 +72,7 @@ public class XDoc
     /// otherwise, <see langword="null"/>.
     /// </returns>
     public PropertyDocumentation? Get(PropertyInfo property)
-        => Get(property.DeclaringType).GetDocumentation(property);
+        => Get(property.DeclaringType!)?.GetDocumentation(property);
 
     /// <summary>
     /// Fetches documentation for the specified <see cref="MethodInfo"/>.
@@ -79,7 +86,7 @@ public class XDoc
     /// </returns>
     /// <exception cref="NotImplementedException"></exception>
     public MethodDocumentation? Get(MethodInfo methodInfo)
-        => Get(methodInfo.DeclaringType).GetDocumentation(methodInfo);
+        => Get(methodInfo.DeclaringType!)?.GetDocumentation(methodInfo);
 
     /// <summary>
     /// Fetches documentation for the specified <see cref="FieldInfo"/>.
@@ -93,7 +100,7 @@ public class XDoc
     /// </returns>
     /// <exception cref="NotImplementedException"></exception>
     public FieldDocumentation? Get(FieldInfo fieldInfo)
-        => Get(fieldInfo.DeclaringType).GetDocumentation(fieldInfo);
+        => Get(fieldInfo.DeclaringType!)?.GetDocumentation(fieldInfo);
     
     /// <summary>
     /// 
@@ -101,5 +108,5 @@ public class XDoc
     /// <param name="memberInfo"></param>
     /// <returns></returns>
     public  MemberDocumentation? Get(MemberInfo memberInfo)
-        => Get(memberInfo.DeclaringType).GetDocumentation(memberInfo);
+        => Get(memberInfo.DeclaringType!)?.GetDocumentation(memberInfo);
 }
