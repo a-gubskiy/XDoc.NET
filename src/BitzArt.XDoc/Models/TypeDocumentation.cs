@@ -56,10 +56,15 @@ public sealed class TypeDocumentation : MemberDocumentation
     private TMemberDocumentationResult? GetDocumentation<TMemberDocumentationResult>(MemberInfo member)
         where TMemberDocumentationResult : MemberDocumentation
     {
+        return (TMemberDocumentationResult?)GetDocumentation(member);
+    }
+    
+    internal MemberDocumentation? GetDocumentation(MemberInfo member)
+    {
         var memberInfo = Validate(member);
         var memberDocumentation = _memberData.GetValueOrDefault(memberInfo);
 
-        return (TMemberDocumentationResult?)memberDocumentation;
+        return memberDocumentation;
     }
 
     private MemberInfo Validate(MemberInfo member)

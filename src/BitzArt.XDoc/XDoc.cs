@@ -53,8 +53,8 @@ public class XDoc
     /// <see cref="TypeDocumentation"/> for the specified <see cref="Type"/> if available;
     /// otherwise, <see langword="null"/>.
     /// </returns>
-    public TypeDocumentation? Get(Type? type)
-        => type is null ? null : Get(type.Assembly)?.GetDocumentation(type);
+    public TypeDocumentation? Get(Type type)
+        => Get(type.Assembly).GetDocumentation(type);
 
     /// <summary>
     /// Fetches documentation for the specified <see cref="PropertyInfo"/>.
@@ -64,8 +64,8 @@ public class XDoc
     /// <see cref="PropertyDocumentation"/> for the specified <see cref="PropertyInfo"/> if available;
     /// otherwise, <see langword="null"/>.
     /// </returns>
-    public PropertyDocumentation? Get(PropertyInfo? property)
-        => property is null ? null : Get(property.DeclaringType)?.GetDocumentation(property);
+    public PropertyDocumentation? Get(PropertyInfo property)
+        => Get(property.DeclaringType).GetDocumentation(property);
 
     /// <summary>
     /// Fetches documentation for the specified <see cref="MethodInfo"/>.
@@ -78,8 +78,8 @@ public class XDoc
     /// otherwise, <see langword="null"/>.
     /// </returns>
     /// <exception cref="NotImplementedException"></exception>
-    public MethodDocumentation? Get(MethodInfo? methodInfo)
-        => methodInfo is null ? null : Get(methodInfo.DeclaringType)?.GetDocumentation(methodInfo);
+    public MethodDocumentation? Get(MethodInfo methodInfo)
+        => Get(methodInfo.DeclaringType).GetDocumentation(methodInfo);
 
     /// <summary>
     /// Fetches documentation for the specified <see cref="FieldInfo"/>.
@@ -92,6 +92,14 @@ public class XDoc
     /// otherwise, <see langword="null"/>.
     /// </returns>
     /// <exception cref="NotImplementedException"></exception>
-    public FieldDocumentation? Get(FieldInfo? fieldInfo)
-        => fieldInfo is null ? null : Get(fieldInfo.DeclaringType)?.GetDocumentation(fieldInfo);
+    public FieldDocumentation? Get(FieldInfo fieldInfo)
+        => Get(fieldInfo.DeclaringType).GetDocumentation(fieldInfo);
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="memberInfo"></param>
+    /// <returns></returns>
+    public  MemberDocumentation? Get(MemberInfo memberInfo)
+        => Get(memberInfo.DeclaringType).GetDocumentation(memberInfo);
 }

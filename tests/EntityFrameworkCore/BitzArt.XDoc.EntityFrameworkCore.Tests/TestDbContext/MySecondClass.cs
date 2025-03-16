@@ -2,16 +2,18 @@
 
 public class MySecondClass
 {
+    public const string NullableNameComment = "Nullable Name Comment";
+    
+    public const string NullableValueComment = "Nullable Value Comment";
+    
+    public const string NullableDoubleComment = "Nullable Double Comment";
+    
     public const string NameComment = "Name Comment";
 
     /// <summary>
     /// Name Comment
     /// </summary>
     public string Name { get; set; } = null!;
-
-    public const string NullableNameComment = "Nullable Name Comment";
-    
-    public const string NullableValueComment = "Nullable Value Comment";
 
     /// <summary>
     /// Nullable Name Comment
@@ -22,4 +24,9 @@ public class MySecondClass
     /// Nullable Value Comment
     /// </summary>
     public int? NullableValue { get; set; }
+    
+    /// <summary>
+    /// Nullable Double Comment
+    /// </summary>
+    public double? NullableDouble;
 }
