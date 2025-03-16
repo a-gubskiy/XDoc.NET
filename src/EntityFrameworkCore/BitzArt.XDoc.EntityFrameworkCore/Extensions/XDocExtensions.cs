@@ -13,7 +13,7 @@ internal static class XDocExtensions
     /// <param name="commentTargetPropertyExpression">An expression that identifies the property whose documentation will be used</param>
     /// <returns>The extracted documentation comment as plain text</returns>
     /// <exception cref="InvalidOperationException">Thrown when the property name cannot be determined or is empty</exception>
-    internal static string Get<TCommentTargetEntity, TCommentTargetProperty>(
+    internal static PropertyDocumentation? Get<TCommentTargetEntity, TCommentTargetProperty>(
         this XDoc xdoc,
         Expression<Func<TCommentTargetEntity, TCommentTargetProperty>> commentTargetPropertyExpression)
         where TCommentTargetEntity : class
@@ -28,8 +28,6 @@ internal static class XDocExtensions
         
         var propertyInfo = typeof(TCommentTargetEntity).GetProperty(targetPropertyName);
 
-        var comment = xdoc.Get(propertyInfo).ToPlainText();
-
-        return comment;
+        return xdoc.Get(propertyInfo);
     }
 }
