@@ -1,6 +1,5 @@
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace BitzArt.XDoc;
 
@@ -10,15 +9,13 @@ namespace BitzArt.XDoc;
 [PublicAPI]
 public class EntitiesCommentConfigurator
 {
-    private readonly ILogger _logger;
     private readonly XDoc _xDoc;
 
     /// <summary>
     /// Default constructor.
     /// </summary>
-    public EntitiesCommentConfigurator(XDoc xDoc, ILogger<EntitiesCommentConfigurator> logger)
+    public EntitiesCommentConfigurator(XDoc xDoc)
     {
-        _logger = logger;
         _xDoc = xDoc;
     }
 
@@ -53,8 +50,6 @@ public class EntitiesCommentConfigurator
 
                 if (isShadowProperty)
                 {
-                    _logger.LogDebug($"Skipping shadow property [Name: {property.Name}]");
-
                     continue;
                 }
 
@@ -64,7 +59,7 @@ public class EntitiesCommentConfigurator
                 {
                     return;
                 }
-                
+
                 var propertyComment = _xDoc.Get(propertyInfo).ToPlainText();
 
                 property.SetComment(propertyComment);
