@@ -24,13 +24,11 @@ public static class PropertyBuilderExtensions
     /// <param name="propertyName">The name of the property to configure</param>
     /// <param name="commentTargetPropertyExpression">An expression that identifies the property whose documentation will be used</param>
     /// <returns>The same property builder instance so that multiple calls can be chained</returns>
-    public static PropertyBuilder<TProperty> HasPropertyComment<TEntity, TProperty, TCommentTargetEntity,
-        TCommentTargetProperty>(
-        this PropertyBuilder<TProperty> propertyBuilder,
+    public static PropertyBuilder HasComment<TCommentTargetEntity, TCommentTargetProperty>(
+        this PropertyBuilder propertyBuilder,
         XDoc xdoc,
         string propertyName,
         Expression<Func<TCommentTargetEntity, TCommentTargetProperty>> commentTargetPropertyExpression)
-        where TEntity : class
         where TCommentTargetEntity : class
     {
         var comment = xdoc.Get(commentTargetPropertyExpression).ToPlainText();;
@@ -49,14 +47,13 @@ public static class PropertyBuilderExtensions
     /// <param name="xdoc">The XDoc instance used to extract documentation</param>
     /// <param name="commentTargetPropertyExpression">An expression that identifies a property (note: this parameter is not used in the method body)</param>
     /// <returns>The same property builder instance so that multiple calls can be chained</returns>
-    public static PropertyBuilder<TProperty> HasPropertyComment<TProperty, TCommentTargetEntity,
-        TCommentTargetProperty>(
+    public static PropertyBuilder<TProperty> HasComment<TProperty, TCommentTargetEntity, TCommentTargetProperty>(
         this PropertyBuilder<TProperty> propertyBuilder,
         XDoc xdoc,
         Expression<Func<TCommentTargetEntity, TCommentTargetProperty>> commentTargetPropertyExpression)
         where TCommentTargetEntity : class
     {
-        var comment = xdoc.Get(commentTargetPropertyExpression).ToPlainText();;
+        var comment = xdoc.Get(commentTargetPropertyExpression).ToPlainText();
 
         return propertyBuilder.HasComment(comment);
     }
