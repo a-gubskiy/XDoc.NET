@@ -26,8 +26,13 @@ namespace BitzArt.XDoc;
 public class XDoc
 {
     private readonly ConcurrentDictionary<Assembly, AssemblyDocumentation> _collectedAssemblies = [];
-    
-    public IDocumentationReferenceResolver ReferenceResolver { get; set; } = new DocumentationReferenceResolver();
+
+    public IDocumentationReferenceResolver ReferenceResolver { get; private set; }
+
+    public XDoc()
+    {
+        ReferenceResolver = new DocumentationReferenceResolver(this);
+    }
 
     /// <summary>
     /// Fetches documentation for the specified <see cref="Assembly"/>.
@@ -42,7 +47,7 @@ public class XDoc
     private AssemblyDocumentation Collect(Assembly assembly)
     {
         var result = new AssemblyDocumentation(this, assembly);
-        
+
         if (!_collectedAssemblies.TryAdd(assembly, result))
         {
             return _collectedAssemblies[assembly];
@@ -101,12 +106,12 @@ public class XDoc
     /// <exception cref="NotImplementedException"></exception>
     public FieldDocumentation? Get(FieldInfo fieldInfo)
         => Get(fieldInfo.DeclaringType!)?.GetDocumentation(fieldInfo);
-    
+
     /// <summary>
     /// 
     /// </summary>
     /// <param name="memberInfo"></param>
     /// <returns></returns>
-    public  MemberDocumentation? Get(MemberInfo memberInfo)
+    public MemberDocumentation? Get(MemberInfo memberInfo)
         => Get(memberInfo.DeclaringType!)?.GetDocumentation(memberInfo);
 }

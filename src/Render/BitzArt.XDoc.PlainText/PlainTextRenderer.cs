@@ -21,7 +21,21 @@ public class PlainTextRenderer
             return string.Empty;
         }
 
-        var result = Render(documentation, documentation.Node);
+        var renderer = new PlainTextRenderer(documentation);
+
+        return renderer.Render();
+    }
+
+    private readonly MemberDocumentation _documentation;
+
+    private PlainTextRenderer(MemberDocumentation documentation)
+    {
+        _documentation = documentation;
+    }
+
+    private string Render()
+    {
+        var result = Render(_documentation.Node);
 
         return result;
     }
@@ -29,16 +43,15 @@ public class PlainTextRenderer
     /// <summary>
     /// Renders the content of an XML node to plain text.
     /// </summary>
-    /// <param name="documentation"></param>
     /// <param name="node"></param>
     /// <returns></returns>
-    private static string Render(MemberDocumentation documentation, XmlNode? node)
+    private string Render(XmlNode? node)
     {
         return Normalize(node switch
         {
             null => string.Empty,
             XmlText textNode => RenderTextNode(textNode),
-            XmlElement element => RenderXmlElement(documentation, element),
+            XmlElement element => RenderXmlElement(element),
             _ => node.InnerText
         });
     }
@@ -46,7 +59,7 @@ public class PlainTextRenderer
     /// <summary>
     /// Normalize the input string by removing extra empty lines and trimming each line.
     /// </summary>
-    private static string Normalize(string input)
+    private string Normalize(string input)
     {
         if (string.IsNullOrWhiteSpace(input))
         {
@@ -67,23 +80,22 @@ public class PlainTextRenderer
     /// <summary>
     /// Renders the content of an XML element to plain text, including handling child nodes and references.
     /// </summary>
-    /// <param name="documentation"></param>
     /// <param name="element">The XML element to render.</param>
     /// <returns>The plain text representation of the XML element.</returns>
-    private static string RenderXmlElement(MemberDocumentation documentation, XmlElement element)
+    private string RenderXmlElement(XmlElement element)
     {
         var builder = new StringBuilder();
 
         if (element.Attributes["cref"] != null || element.Name == "inheritdoc")
         {
-            return RenderReference(documentation, element);
+            return RenderReference(element);
         }
 
         var childNodes = element.ChildNodes.Cast<XmlNode>().ToList();
 
         foreach (var child in childNodes)
         {
-            builder.Append(Render(documentation, child));
+            builder.Append(Render(child));
         }
 
         return builder.ToString();
@@ -92,19 +104,20 @@ public class PlainTextRenderer
     /// <summary>
     /// Render a see/seealso reference.
     /// </summary>
-    /// <param name="documentation"></param>
     /// <param name="element"></param>
     /// <returns></returns>
-    private static string RenderReference(MemberDocumentation documentation, XmlElement element)
+    private string RenderReference(XmlElement element)
     {
-        var documentationReference = documentation.GetReference(element);
+        var documentationReference = _documentation.GetReference(element);
 
         if (documentationReference == null)
         {
             return string.Empty;
         }
 
-        return Render(documentationReference.Target, documentationReference.Target.Node);
+        var renderer = new PlainTextRenderer(documentationReference.Target);
+
+        return renderer.Render();
     }
 
     /// <summary>
@@ -112,7 +125,7 @@ public class PlainTextRenderer
     /// </summary>
     /// <param name="textNode">The XML text node to render.</param>
     /// <returns>The plain text representation of the XML text node.</returns>
-    private static string RenderTextNode(XmlText textNode)
+    private string RenderTextNode(XmlText textNode)
     {
         return textNode.Value ?? string.Empty;
     }

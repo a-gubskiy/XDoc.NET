@@ -6,6 +6,20 @@ namespace BitzArt.XDoc.Tests;
 public class PlainTextRendererTests
 {
     [Fact]
+    public void DocumentationReferenceResolver_GetReference_ShouldReturnReference()
+    {
+        // Arrange
+        var xDoc = new XDoc();
+        var propertyDocumentation = xDoc.Get(typeof(Dog).GetProperty("Property1"));
+        
+        // Act
+        var comment = propertyDocumentation.ToPlainText();
+       
+        // Assert
+        Assert.NotNull(comment);
+    }
+    
+    [Fact]
     public void Render_PlainTextRenderer_ShouldReturnFormattedText()
     {
         // Arrange

@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Xml;
 
 namespace BitzArt.XDoc;
@@ -27,6 +28,13 @@ public interface IDocumentationReferenceResolver
 /// </summary>
 public class DocumentationReferenceResolver : IDocumentationReferenceResolver
 {
+    private readonly XDoc _source;
+
+    public DocumentationReferenceResolver(XDoc source)
+    {
+        _source = source;
+    }
+
     /// <summary>
     /// Extracts a documentation reference from the provided XML node.
     /// </summary>
@@ -45,12 +53,13 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
             return GetReference(node, cref);
         }
 
+        // if (node.ChildNodes.Cast<XmlNode>().Any( o => o.Name == "inheritdoc"))
         if (node.Name == "inheritdoc")
         {
             return GetInheritReference(node);
         }
 
-        throw new NotImplementedException();
+        return null;
     }
 
     /// <summary>
@@ -61,7 +70,10 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
     /// <exception cref="NotImplementedException">This method is not implemented yet.</exception>
     private DocumentationReference? GetInheritReference(XmlNode node)
     {
-        throw new NotImplementedException();
+        var nodeParentNode = node.ParentNode;
+        var attribute = nodeParentNode.Attributes["name"];
+
+        return GetReference(node, attribute);
     }
 
     /// <summary>
@@ -73,6 +85,128 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
     /// <exception cref="NotImplementedException">This method is not implemented yet.</exception>
     private DocumentationReference? GetReference(XmlNode node, XmlAttribute? attribute)
     {
+        if (attribute == null || attribute.Value.Length < 2)
+        {
+            return null;
+        }
+
+        var prefix = attribute?.Value[..2] ?? "";
+        var name = attribute?.Value.Substring(2, attribute.Value.Length - 2) ?? string.Empty;
+
+        return prefix switch
+        {
+            "T:" => GetTypeReference(node, name),
+            "P:" => GetPropertyReference(node, name),
+            "M:" => GetMethodReference(node, name),
+            "F:" => GetFieldReference(node, name),
+            _ => throw new NotSupportedException()
+        };
+
+        // <see cref="P:MyCompany.Library.WeeklyMetrics.Progress" />
         throw new NotImplementedException();
+    }
+
+    private DocumentationReference? GetFieldReference(XmlNode node, string name)
+    {
+        var (typeName, memberName) = GetTypeAndMember(name);
+
+        var type = GetType(typeName);
+        var fieldInfo = type.GetField(memberName);
+        var targetDocumentation = _source.Get(fieldInfo!);
+
+        if (targetDocumentation == null)
+        {
+            return null;
+        }
+
+        return new DocumentationReference(node, targetDocumentation);
+    }
+
+    private DocumentationReference? GetMethodReference(XmlNode node, string name)
+    {
+        var (typeName, memberName) = GetTypeAndMember(name);
+
+        var type = GetType(typeName);
+        var methodInfo = type.GetMethod(memberName);
+        var targetDocumentation = _source.Get(methodInfo!);
+
+        if (targetDocumentation == null)
+        {
+            return null;
+        }
+
+        return new DocumentationReference(node, targetDocumentation);
+    }
+
+    private DocumentationReference? GetPropertyReference(XmlNode node, string name)
+    {
+        var (typeName, memberName) = GetTypeAndMember(name);
+
+        var type = GetType(typeName);
+        var propertyInfo = type.GetProperty(memberName);
+        var targetDocumentation = _source.Get(propertyInfo!);
+
+        if (targetDocumentation == null)
+        {
+            return null;
+        }
+
+        return new DocumentationReference(node, targetDocumentation);
+    }
+
+    private DocumentationReference? GetTypeReference(XmlNode node, string name)
+    {
+        var type = GetType(name);
+        var targetDocumentation = _source.Get(type);
+
+        if (targetDocumentation == null)
+        {
+            return null;
+        }
+
+        return new DocumentationReference(node, targetDocumentation);
+    }
+
+    private (string typeName, string memberName) GetTypeAndMember(string name)
+    {
+        var lastIndexOf = name.LastIndexOf('.');
+
+        var typeName = name[..lastIndexOf];
+        var memberName = name[(lastIndexOf + 1)..];
+
+        return (typeName, memberName);
+    }
+
+
+    /// <summary>
+    /// Resolves a Type object from its string name representation.
+    /// </summary>
+    /// <param name="name">The fully qualified name of the type to resolve.</param>
+    /// <returns>The resolved Type object.</returns>
+    /// <exception cref="TypeLoadException">Thrown when the specified type cannot be found.</exception>
+    private Type GetType(string name)
+    {
+        // First try direct type resolution
+        var type = Type.GetType(name);
+
+        if (type != null)
+        {
+            return type;
+        }
+
+        // If direct lookup fails, search through all loaded assemblies
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+        foreach (var assembly in assemblies)
+        {
+            type = assembly.GetType(name);
+
+            if (type != null)
+            {
+                return type;
+            }
+        }
+
+        throw new TypeLoadException($"Could not find type '{name}'.");
     }
 }
