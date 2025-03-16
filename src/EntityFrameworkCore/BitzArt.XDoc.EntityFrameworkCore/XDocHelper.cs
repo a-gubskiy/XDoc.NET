@@ -26,22 +26,8 @@ public static class XDocHelper
         {
             throw new InvalidOperationException($"Property with name '{targetPropertyName}' was not found.");
         }
-
-        var comment = GetComment<TCommentTargetEntity>(xdoc, targetPropertyName);
-
-        return comment;
-    }
-
-    /// <summary>
-    /// Extracts documentation comment from a property with the specified name in the given entity type.
-    /// </summary>
-    /// <typeparam name="TCommentTargetEntity">The entity type containing the property whose documentation will be used</typeparam>
-    /// <param name="xdoc">The XDoc instance used to extract documentation</param>
-    /// <param name="propertyName">The name of the property whose documentation will be extracted</param>
-    /// <returns>The extracted documentation comment as plain text</returns>
-    internal static string GetComment<TCommentTargetEntity>(XDoc xdoc, string propertyName)
-    {
-        var propertyInfo = typeof(TCommentTargetEntity).GetProperty(propertyName);
+        
+        var propertyInfo = typeof(TCommentTargetEntity).GetProperty(targetPropertyName);
 
         var comment = xdoc.Get(propertyInfo).ToPlainText();
 
