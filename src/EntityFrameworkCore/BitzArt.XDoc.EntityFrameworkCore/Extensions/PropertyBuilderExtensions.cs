@@ -54,11 +54,9 @@ public static class PropertyBuilderExtensions
         this PropertyBuilder<TProperty> propertyBuilder,
         XDoc xdoc,
         Expression<Func<TCommentTargetEntity, TCommentTargetProperty>> commentTargetPropertyExpression)
+        where TCommentTargetEntity : class
     {
-        var operand = commentTargetPropertyExpression.Body as MemberExpression;
-        var targetPropertyName = operand!.Member.Name;
-
-        var comment = XDocHelper.GetComment<TCommentTargetEntity>(xdoc, targetPropertyName);
+        var comment = XDocHelper.GetComment(xdoc, commentTargetPropertyExpression);
 
         return propertyBuilder.HasComment(comment);
     }
