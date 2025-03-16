@@ -33,7 +33,7 @@ public static class PropertyBuilderExtensions
         where TEntity : class
         where TCommentTargetEntity : class
     {
-        var comment = XDocHelper.GetComment(xdoc, commentTargetPropertyExpression);
+        var comment = xdoc.Get(commentTargetPropertyExpression);
 
         return propertyBuilder.HasComment(comment);
     }
@@ -56,7 +56,7 @@ public static class PropertyBuilderExtensions
         Expression<Func<TCommentTargetEntity, TCommentTargetProperty>> commentTargetPropertyExpression)
         where TCommentTargetEntity : class
     {
-        var comment = XDocHelper.GetComment(xdoc, commentTargetPropertyExpression);
+        var comment = xdoc.Get(commentTargetPropertyExpression);
 
         return propertyBuilder.HasComment(comment);
     }

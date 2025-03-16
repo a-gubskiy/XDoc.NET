@@ -51,7 +51,7 @@ public static class EntityTypeBuilderExtensions
         where TEntity : class
         where TCommentTargetEntity : class
     {
-        var comment = XDocHelper.GetComment(xdoc, commentTargetPropertyExpression);
+        var comment = xdoc.Get(commentTargetPropertyExpression);
 
         return entityTypeBuilder.HasPropertyComment(propertyExpression, comment);
     }
