@@ -1,9 +1,7 @@
-using BitzArt.XDoc.PlainText;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
-namespace BitzArt.XDoc.EntityFrameworkCore;
+namespace BitzArt.XDoc;
 
 /// <summary>
 /// Configures XML documentation comments for Entity Framework Core entities and their properties.
@@ -11,15 +9,13 @@ namespace BitzArt.XDoc.EntityFrameworkCore;
 [PublicAPI]
 public class EntitiesCommentConfigurator
 {
-    private readonly ILogger _logger;
     private readonly XDoc _xDoc;
 
     /// <summary>
     /// Default constructor.
     /// </summary>
-    public EntitiesCommentConfigurator(XDoc xDoc, ILogger<EntitiesCommentConfigurator> logger)
+    public EntitiesCommentConfigurator(XDoc xDoc)
     {
-        _logger = logger;
         _xDoc = xDoc;
     }
 
@@ -54,8 +50,6 @@ public class EntitiesCommentConfigurator
 
                 if (isShadowProperty)
                 {
-                    _logger.LogInformation($"Skipping shadow property [Name: {property.Name}]");
-
                     continue;
                 }
 
@@ -65,7 +59,7 @@ public class EntitiesCommentConfigurator
                 {
                     return;
                 }
-                
+
                 var propertyComment = _xDoc.Get(propertyInfo).ToPlainText();
 
                 property.SetComment(propertyComment);
