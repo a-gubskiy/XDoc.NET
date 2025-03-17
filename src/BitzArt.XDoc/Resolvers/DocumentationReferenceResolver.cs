@@ -117,7 +117,27 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
     /// <exception cref="NotImplementedException">This method is not implemented yet.</exception>
     private DocumentationReference? GetReference(XmlNode node, XmlAttribute? attribute)
     {
-        var targetDocumentation = GetTargetDocumentation(node, attribute);
+        if (attribute == null || attribute.Value.Length < 2)
+        {
+            return null;
+        }
+
+        var prefix = attribute.Value[..2];
+        var name = attribute.Value.Substring(2, attribute.Value.Length - 2) ?? string.Empty;
+
+        var (typeName, memberName) = GetTypeAndMember(name);
+        var type = GetType(typeName);
+
+        MemberDocumentation? targetDocumentation = null;
+        
+        if (prefix is "T:")
+        {
+            targetDocumentation = _source.Get(type);
+        }
+        else if (prefix is "P:" or "M:" or "F:")
+        {
+            targetDocumentation = GetMemberDocumentation(type, memberName);
+        }
 
         if (targetDocumentation == null)
         {
@@ -127,31 +147,6 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
         // <see cref="P:MyCompany.Library.WeeklyMetrics.Progress" />
 
         return new DocumentationReference(node, targetDocumentation);
-    }
-
-    private MemberDocumentation? GetTargetDocumentation(XmlNode node, XmlAttribute? attribute)
-    {
-        if (attribute == null || attribute.Value.Length < 2)
-        {
-            return null;
-        }
-
-        var prefix = attribute.Value[..2] ?? "";
-        var name = attribute?.Value.Substring(2, attribute.Value.Length - 2) ?? string.Empty;
-
-        var (typeName, memberName) = GetTypeAndMember(name);
-        var type = GetType(typeName);
-
-        var targetDocumentation = prefix switch
-        {
-            "T:" => GetTypeDocumentation(type),
-            "P:" => GetMemberDocumentation(type, memberName),
-            "M:" => GetMemberDocumentation(type, memberName),
-            "F:" => GetMemberDocumentation(type, memberName),
-            _ => throw new NotSupportedException()
-        };
-
-        return targetDocumentation;
     }
 
     private MemberDocumentation? GetMemberDocumentation(Type type, string memberName)
@@ -167,13 +162,6 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
         var memberDocumentation = _source.Get(memberInfo);
 
         return memberDocumentation;
-    }
-
-    private MemberDocumentation? GetTypeDocumentation(Type type)
-    {
-        var targetDocumentation = _source.Get(type);
-
-        return targetDocumentation;
     }
 
     /// <summary>
