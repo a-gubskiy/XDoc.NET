@@ -1,11 +1,9 @@
-using System.Xml;
-
 namespace BitzArt.XDoc;
 
-public class SimpleDocumentationReferenceResolver : IDocumentationReferenceResolver
+public class SimpleDocumentationReferenceResolver : DocumentationReferenceResolver
 {
-    public DocumentationReference? GetReference(XmlNode node)
+    public SimpleDocumentationReferenceResolver(XDoc source)
+        : base()
     {
-        throw new NotImplementedException();
     }
 }

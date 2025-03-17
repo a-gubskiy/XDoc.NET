@@ -52,7 +52,7 @@ public abstract class MemberDocumentation
             throw new InvalidOperationException("The provided node is not defined in this documentation.");
         }
 
-        var documentationReference = Source.ReferenceResolver.GetReference(node);
+        var documentationReference = Source.ReferenceResolver.GetReference(Source, node);
         
         _references[node] = documentationReference;
         

@@ -31,7 +31,7 @@ public class XDoc
 
     public XDoc()
     {
-        ReferenceResolver = new DocumentationReferenceResolver(this);
+        ReferenceResolver = new DocumentationReferenceResolver();
     }
 
     /// <summary>

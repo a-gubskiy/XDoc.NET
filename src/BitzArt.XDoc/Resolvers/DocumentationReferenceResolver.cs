@@ -14,12 +14,13 @@ public interface IDocumentationReferenceResolver
     /// <summary>
     /// Extracts a documentation reference from the provided XML node.
     /// </summary>
+    /// <param name="source"></param>
     /// <param name="node">The XML node to extract the reference from.</param>
     /// <returns>
     /// A <see cref="DocumentationReference"/> object if a reference can be extracted;
     /// otherwise, <see langword="null"/>.
     /// </returns>
-    DocumentationReference? GetReference(XmlNode node);
+    DocumentationReference? GetReference(XDoc source, XmlNode node);
 }
 
 /// <summary>
@@ -27,34 +28,28 @@ public interface IDocumentationReferenceResolver
 /// </summary>
 public class DocumentationReferenceResolver : IDocumentationReferenceResolver
 {
-    private readonly XDoc _source;
-
-    public DocumentationReferenceResolver(XDoc source)
-    {
-        _source = source;
-    }
-
     /// <summary>
     /// Extracts a documentation reference from the provided XML node.
     /// </summary>
+    /// <param name="source"></param>
     /// <param name="node">The XML node to extract the reference from.</param>
     /// <returns>
     /// A <see cref="DocumentationReference"/> object if a reference can be extracted;
     /// otherwise, <see langword="null"/>.
     /// </returns>
     /// <exception cref="NotImplementedException">Thrown when the node type is not supported.</exception>
-    public DocumentationReference? GetReference(XmlNode node)
+    public DocumentationReference? GetReference(XDoc source, XmlNode node)
     {
         var cref = node.Attributes?["cref"];
 
         if (cref != null)
         {
-            return GetCrefReference(node, cref);
+            return GetCrefReference(source, node, cref);
         }
 
         if (node.Name == "inheritdoc")
         {
-            return GetInheritReference(node);
+            return GetInheritReference(source, node);
         }
 
         return null;
@@ -63,10 +58,11 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
     /// <summary>
     /// Processes an inheritdoc XML node to extract documentation reference.
     /// </summary>
+    /// <param name="source"></param>
     /// <param name="node">The inheritdoc XML node.</param>
     /// <returns>A documentation reference or null if reference cannot be extracted.</returns>
     /// <exception cref="NotImplementedException">This method is not implemented yet.</exception>
-    private DocumentationReference? GetInheritReference(XmlNode node)
+    private DocumentationReference? GetInheritReference(XDoc source, XmlNode node)
     {
         var attribute = node.ParentNode?.Attributes?["name"];
 
@@ -86,11 +82,11 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
 
         if (prefix is "T:")
         {
-            targetDocumentation = _source.Get(baseType);
+            targetDocumentation = source.Get(baseType);
         }
         else if (prefix is "P:" or "M:" or "F:")
         {
-            targetDocumentation = GetMemberDocumentation(baseType, memberName);
+            targetDocumentation = GetMemberDocumentation(source, baseType, memberName);
         }
 
         if (targetDocumentation == null)
@@ -104,11 +100,12 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
     /// <summary>
     /// Processes an XML node with a cref attribute to extract documentation reference.
     /// </summary>
+    /// <param name="source"></param>
     /// <param name="node">The XML node containing the reference.</param>
     /// <param name="attribute">The cref attribute containing the reference value.</param>
     /// <returns>A documentation reference or null if reference cannot be extracted.</returns>
     /// <exception cref="NotImplementedException">This method is not implemented yet.</exception>
-    private DocumentationReference? GetCrefReference(XmlNode node, XmlAttribute? attribute)
+    private DocumentationReference? GetCrefReference(XDoc source, XmlNode node, XmlAttribute? attribute)
     {
         // P:TestAssembly.B.Dog.Name
         var referenceName = attribute?.Value ?? string.Empty;
@@ -120,11 +117,11 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
 
         if (prefix is "T:")
         {
-            targetDocumentation = _source.Get(type);
+            targetDocumentation = source.Get(type);
         }
         else if (prefix is "P:" or "M:" or "F:")
         {
-            targetDocumentation = GetMemberDocumentation(type, memberName);
+            targetDocumentation = GetMemberDocumentation(source, type, memberName);
         }
 
         if (targetDocumentation == null)
@@ -132,12 +129,10 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
             return null;
         }
 
-        // <see cref="P:MyCompany.Library.WeeklyMetrics.Progress" />
-
         return new DocumentationReference(node, targetDocumentation);
     }
 
-    private MemberDocumentation? GetMemberDocumentation(Type type, string memberName)
+    private MemberDocumentation? GetMemberDocumentation(XDoc source, Type type, string memberName)
     {
         var memberInfos = type.GetMember(memberName);
 
@@ -147,12 +142,11 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
         }
 
         var memberInfo = memberInfos.First();
-        var memberDocumentation = _source.Get(memberInfo);
+        var memberDocumentation = source.Get(memberInfo);
 
         return memberDocumentation;
     }
-
-
+    
     /// <summary>
     /// Parses a fully qualified XML documentation reference string into its constituent parts.
     /// </summary>
