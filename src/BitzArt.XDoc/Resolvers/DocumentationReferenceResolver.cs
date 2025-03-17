@@ -62,7 +62,7 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
     /// <param name="node">The inheritdoc XML node.</param>
     /// <returns>A documentation reference or null if reference cannot be extracted.</returns>
     /// <exception cref="NotImplementedException">This method is not implemented yet.</exception>
-    private DocumentationReference? GetInheritReference(XDoc source, XmlNode node)
+    protected virtual DocumentationReference? GetInheritReference(XDoc source, XmlNode node)
     {
         var attribute = node.ParentNode?.Attributes?["name"];
 
@@ -105,7 +105,7 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
     /// <param name="attribute">The cref attribute containing the reference value.</param>
     /// <returns>A documentation reference or null if reference cannot be extracted.</returns>
     /// <exception cref="NotImplementedException">This method is not implemented yet.</exception>
-    private DocumentationReference? GetCrefReference(XDoc source, XmlNode node, XmlAttribute? attribute)
+    protected virtual DocumentationReference? GetCrefReference(XDoc source, XmlNode node, XmlAttribute? attribute)
     {
         // P:TestAssembly.B.Dog.Name
         var referenceName = attribute?.Value ?? string.Empty;
@@ -146,7 +146,7 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
 
         return memberDocumentation;
     }
-    
+
     /// <summary>
     /// Parses a fully qualified XML documentation reference string into its constituent parts.
     /// </summary>
@@ -165,7 +165,7 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
     /// - "M:Namespace.TypeName.MethodName" for methods
     /// - "F:Namespace.TypeName.FieldName" for fields
     /// </remarks>
-    private static (string prefix, string typeName, string memberName) GetTypeAndMember(string value)
+    protected static (string prefix, string typeName, string memberName) GetTypeAndMember(string value)
     {
         if (string.IsNullOrWhiteSpace(value) || value.Length < 2)
         {
