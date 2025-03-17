@@ -73,7 +73,52 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
         var nodeParentNode = node.ParentNode;
         var attribute = nodeParentNode.Attributes["name"];
 
-        return GetReference(node, attribute);
+        var prefix = attribute.Value[..2] ?? "";
+        var name = attribute?.Value.Substring(2, attribute.Value.Length - 2) ?? string.Empty;
+        var (typeName, memberName) = GetTypeAndMember(name);
+
+        var type = GetType(typeName);
+        var baseType = type.BaseType;
+
+        if (baseType == null)
+        {
+            return null;
+        }
+
+        if (prefix == "T:")
+        {
+            var targetDocumentation = _source.Get(baseType);
+
+            if (targetDocumentation == null)
+            {
+                return null;
+            }
+
+            return new DocumentationReference(node, targetDocumentation);
+        }
+
+        if (prefix == "P:" || prefix == "M:" || prefix == "F:")
+        {
+            var baseMemberInfos = baseType.GetMember(memberName);
+
+            if (baseMemberInfos.Length != 1)
+            {
+                throw new Exception("Can't select a single member.");
+            }
+
+            var baseMemberInfo = baseMemberInfos[0];
+            
+            var memberDocumentation = _source.Get(baseMemberInfo);
+
+            if (memberDocumentation == null)
+            {
+                return null;
+            }
+
+            return new DocumentationReference(node, memberDocumentation);
+        }
+
+        return null;
     }
 
     /// <summary>
@@ -85,28 +130,41 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
     /// <exception cref="NotImplementedException">This method is not implemented yet.</exception>
     private DocumentationReference? GetReference(XmlNode node, XmlAttribute? attribute)
     {
+        var targetDocumentation = GetTargetDocumentation(node, attribute);
+
+        if (targetDocumentation != null)
+        {
+            return null;
+        }
+
+        // <see cref="P:MyCompany.Library.WeeklyMetrics.Progress" />
+
+        return new DocumentationReference(node, targetDocumentation);
+    }
+
+    private MemberDocumentation? GetTargetDocumentation(XmlNode node, XmlAttribute? attribute)
+    {
         if (attribute == null || attribute.Value.Length < 2)
         {
             return null;
         }
 
-        var prefix = attribute?.Value[..2] ?? "";
+        var prefix = attribute.Value[..2] ?? "";
         var name = attribute?.Value.Substring(2, attribute.Value.Length - 2) ?? string.Empty;
 
-        return prefix switch
+        var targetDocumentation = prefix switch
         {
-            "T:" => GetTypeReference(node, name),
-            "P:" => GetPropertyReference(node, name),
-            "M:" => GetMethodReference(node, name),
-            "F:" => GetFieldReference(node, name),
+            "T:" => GetTypeReference(name),
+            "P:" => GetPropertyReference(name),
+            "M:" => GetMethodReference(name),
+            "F:" => GetFieldReference(name),
             _ => throw new NotSupportedException()
         };
 
-        // <see cref="P:MyCompany.Library.WeeklyMetrics.Progress" />
-        throw new NotImplementedException();
+        return targetDocumentation;
     }
 
-    private DocumentationReference? GetFieldReference(XmlNode node, string name)
+    private MemberDocumentation? GetFieldReference(string name)
     {
         var (typeName, memberName) = GetTypeAndMember(name);
 
@@ -114,15 +172,10 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
         var fieldInfo = type.GetField(memberName);
         var targetDocumentation = _source.Get(fieldInfo!);
 
-        if (targetDocumentation == null)
-        {
-            return null;
-        }
-
-        return new DocumentationReference(node, targetDocumentation);
+        return targetDocumentation;
     }
 
-    private DocumentationReference? GetMethodReference(XmlNode node, string name)
+    private MemberDocumentation? GetMethodReference(string name)
     {
         var (typeName, memberName) = GetTypeAndMember(name);
 
@@ -130,15 +183,10 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
         var methodInfo = type.GetMethod(memberName);
         var targetDocumentation = _source.Get(methodInfo!);
 
-        if (targetDocumentation == null)
-        {
-            return null;
-        }
-
-        return new DocumentationReference(node, targetDocumentation);
+        return targetDocumentation;
     }
 
-    private DocumentationReference? GetPropertyReference(XmlNode node, string name)
+    private MemberDocumentation? GetPropertyReference(string name)
     {
         var (typeName, memberName) = GetTypeAndMember(name);
 
@@ -146,25 +194,15 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
         var propertyInfo = type.GetProperty(memberName);
         var targetDocumentation = _source.Get(propertyInfo!);
 
-        if (targetDocumentation == null)
-        {
-            return null;
-        }
-
-        return new DocumentationReference(node, targetDocumentation);
+        return targetDocumentation;
     }
 
-    private DocumentationReference? GetTypeReference(XmlNode node, string name)
+    private MemberDocumentation? GetTypeReference(string name)
     {
         var type = GetType(name);
         var targetDocumentation = _source.Get(type);
 
-        if (targetDocumentation == null)
-        {
-            return null;
-        }
-
-        return new DocumentationReference(node, targetDocumentation);
+        return targetDocumentation;
     }
 
     private (string typeName, string memberName) GetTypeAndMember(string name)
@@ -176,7 +214,6 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
 
         return (typeName, memberName);
     }
-
 
     /// <summary>
     /// Resolves a Type object from its string name representation.
