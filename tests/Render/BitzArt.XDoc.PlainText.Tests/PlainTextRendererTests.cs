@@ -1,4 +1,5 @@
 using System.Xml;
+using TestAssembly.A;
 using TestAssembly.B;
 
 namespace BitzArt.XDoc.Tests;
@@ -10,7 +11,7 @@ public class PlainTextRendererTests
     {
         // Arrange
         var xDoc = new XDoc();
-        var propertyDocumentation = xDoc.Get(typeof(Dog).GetProperty("Color"));
+        var propertyDocumentation = xDoc.Get(typeof(Dog).GetProperty(nameof(Dog.Color)));
         
         // Act
         var comment = propertyDocumentation.ToPlainText();
@@ -24,7 +25,35 @@ public class PlainTextRendererTests
     {
         // Arrange
         var xDoc = new XDoc();
-        var propertyDocumentation = xDoc.Get(typeof(Dog).GetProperty("Field2"));
+        var propertyDocumentation = xDoc.Get(typeof(Dog).GetProperty(nameof(Dog.Field2)));
+        
+        // Act
+        var comment = propertyDocumentation.ToPlainText();
+       
+        // Assert
+        Assert.NotNull(comment);
+    }
+    
+    [Fact]
+    public void Render_PlainTextRenderer_ShouldReturnTypeComment()
+    {
+        // Arrange
+        var xDoc = new XDoc();
+        var propertyDocumentation = xDoc.Get(typeof(Dog));
+        
+        // Act
+        var comment = propertyDocumentation.ToPlainText();
+       
+        // Assert
+        Assert.NotNull(comment);
+    }
+    
+    [Fact]
+    public void Render_PlainTextRenderer_ShouldReturnBaseTypeComment()
+    {
+        // Arrange
+        var xDoc = new XDoc();
+        var propertyDocumentation = xDoc.Get(typeof(Cat));
         
         // Act
         var comment = propertyDocumentation.ToPlainText();
