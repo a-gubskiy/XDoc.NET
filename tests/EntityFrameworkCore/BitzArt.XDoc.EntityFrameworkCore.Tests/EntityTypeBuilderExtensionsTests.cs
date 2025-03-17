@@ -24,8 +24,6 @@ public class EntityTypeBuilderExtensionsTests
 
         var testContext = new TestDbContext1((context, modelBuilder) =>
         {
-            var xdoc = new XDoc();
-
             modelBuilder
                 .Entity<MyFirstClass>()
                 .HasPropertyComment(x => x.Id, testComment);
@@ -141,5 +139,135 @@ public class EntityTypeBuilderExtensionsTests
             .FindEntityType(typeof(MyFirstClass))!
             .FindProperty(nameof(MyFirstClass.Id))!
             .GetComment());
+    }
+
+    [Fact]
+    public void HasPropertyComment_WithPropertyNameStringForProperty_ShouldSetComment()
+    {
+        // Arrange
+        var propertyName = "MyCustomProperty";
+
+        var testContext = new TestDbContext6((context, modelBuilder) =>
+        {
+            var xdoc = new XDoc();
+
+            modelBuilder
+                .Entity<MyFirstClass>()
+                .Property<string>(propertyName)
+                .HasColumnName(propertyName)
+                .HasComment<MySecondClass, string?>(xdoc, propertyName, o => o.NullableName)
+                .IsRequired()
+                .HasColumnType("string");
+        });
+
+        // Act
+        _ = testContext.Model;
+
+        // Assert
+        Assert.Equal(MySecondClass.NullableNameComment, testContext
+            .GetService<IDesignTimeModel>()
+            .Model
+            .FindEntityType(typeof(MyFirstClass))!
+            .FindProperty(propertyName)!
+            .GetComment());
+    }
+    
+    [Fact]
+    public void HasPropertyComment_WithPropertyExpressoin_ShouldSetComment()
+    {
+        // Arrange
+        var propertyName = "MyCustomProperty";
+
+        var testContext = new TestDbContext7((context, modelBuilder) =>
+        {
+            var xdoc = new XDoc();
+
+            modelBuilder
+                .Entity<MyFirstClass>()
+                .Property<string>(propertyName)
+                .HasColumnName(propertyName)
+                .HasComment(xdoc, (MySecondClass o) => o.NullableName)
+                .IsRequired()
+                .HasColumnType("string");
+        });
+
+        // Act
+        _ = testContext.Model;
+
+        // Assert
+        Assert.Equal(MySecondClass.NullableNameComment, testContext
+            .GetService<IDesignTimeModel>()
+            .Model
+            .FindEntityType(typeof(MyFirstClass))!
+            .FindProperty(propertyName)!
+            .GetComment());
+    }
+    
+    [Fact]
+    public void ConfigureShadowPropertyWithPropertyBuilder_WithColumnNameAndType_ShouldConfigureProperly()
+    {
+        // Arrange
+        const string shadowPropertyName = "BonusOfferAmount";
+    
+        var testContext = new TestDbContext8((context, modelBuilder) =>
+        {
+            var xdoc = new XDoc();
+            
+            modelBuilder.Entity<MyFirstClass>(builder =>
+            {
+                builder
+                    .Property<int>(shadowPropertyName)
+                    .HasColumnName(shadowPropertyName)
+                    .HasComment<MySecondClass, int?>(xdoc, shadowPropertyName, o => o.NullableValue)
+                    .IsRequired()
+                    .HasColumnType("int");
+            });
+        });
+    
+        // Act
+        _ = testContext.Model;
+   
+        // Assert
+        var actualPropertyComment = testContext
+            .GetService<IDesignTimeModel>()
+            .Model
+            .FindEntityType(typeof(MyFirstClass))!
+            .FindProperty(shadowPropertyName)!
+            .GetComment();
+        
+        Assert.Equal(MySecondClass.NullableValueComment, actualPropertyComment);
+    }
+    
+    [Fact]
+    public void HasPropertyComment_WithFieldNullableDouble_ShouldSetComment()
+    {
+        // Arrange
+        var propertyName = "MyCustomProperty";
+
+        var testContext = new TestDbContext9((context, modelBuilder) =>
+        {
+            var xdoc = new XDoc();
+
+            modelBuilder
+                .Entity<MyFirstClass>()
+                .Property<double>(propertyName)
+                .HasColumnName(propertyName)
+                .HasComment<MySecondClass, double?>(xdoc, propertyName, o => o.NullableDouble)
+                .IsRequired()
+                .HasColumnType("double");
+        });
+
+        // Act
+        _ = testContext.Model;
+
+        // Assert
+        var actualComment = testContext
+            .GetService<IDesignTimeModel>()
+            .Model
+            .FindEntityType(typeof(MyFirstClass))!
+            .FindProperty(propertyName)!
+            .GetComment();
+        
+        Assert.Equal(MySecondClass.NullableDoubleComment, actualComment);
     }
 }
