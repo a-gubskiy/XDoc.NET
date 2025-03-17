@@ -10,7 +10,7 @@ public class PlainTextRendererTests
     {
         // Arrange
         var xDoc = new XDoc();
-        var propertyDocumentation = xDoc.Get(typeof(Dog).GetProperty("Property1"));
+        var propertyDocumentation = xDoc.Get(typeof(Dog).GetProperty("Color"));
         
         // Act
         var comment = propertyDocumentation.ToPlainText();

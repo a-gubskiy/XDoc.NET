@@ -40,7 +40,7 @@ public class XDocExtensionsTests
         var type = typeof(Dog);
         // var type = typeof(Animal);
 
-        var methodInfo = typeof(IAnimal).GetMethod(nameof(IAnimal.GetProperty1));
+        // var methodInfo = typeof(IAnimal).GetMethod(nameof(IAnimal.GetProperty1));
         // var methodInfo = typeof(Dog).GetMethod(nameof(IAnimal.GetProperty1));
         // new Dog().GetInfo()
 

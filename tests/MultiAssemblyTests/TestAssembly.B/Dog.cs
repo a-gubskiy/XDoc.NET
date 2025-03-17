@@ -14,7 +14,7 @@ public class Dog : Animal, IDog
     /// See <see cref=""""/> and
     /// <see cref=""T:System.String""/> for details.
     /// </summary>
-    public string PropertyWIthInalidCref { get; set; }
+    public string PropertyWIthInvalidCref { get; set; }
 
     /// <summary>
     /// Dog's Age
@@ -42,6 +42,9 @@ public class Dog : Animal, IDog
     /// Field three
     /// </summary>
     public double Field3 { get; set; }
+
+    /// <inheritdoc/>
+    public override string Color { get; set; }
 
 
     /// <summary>
