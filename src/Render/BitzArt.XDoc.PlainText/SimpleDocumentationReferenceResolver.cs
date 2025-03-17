@@ -2,7 +2,7 @@ using System.Xml;
 
 namespace BitzArt.XDoc;
 
-public class SimpleDocumentationReferenceResolver : DocumentationReferenceResolver
+public class SimpleDocumentationReferenceResolver : DocumentationReferenceResolver, IDocumentationReferenceResolver
 {
     /// <inheritdoc/>
     protected override DocumentationReference? GetInheritReference(XDoc source, XmlNode node)
@@ -21,11 +21,13 @@ public class SimpleDocumentationReferenceResolver : DocumentationReferenceResolv
 
         if (prefix is "T:")
         {
-            targetDocumentation = GetSimpleMemberDocumentation(source, null);
+            // We do not know how to get the base type documentation
+            targetDocumentation = new SimpleMemberDocumentation(source, null);
         }
         else if (prefix is "P:" or "M:" or "F:")
         {
-            targetDocumentation = GetSimpleMemberDocumentation(source, null);
+            // We do not know how to get the member inheritance documentation
+            targetDocumentation = new SimpleMemberDocumentation(source, null);
         }
 
         if (targetDocumentation == null)
@@ -47,13 +49,13 @@ public class SimpleDocumentationReferenceResolver : DocumentationReferenceResolv
 
         if (prefix is "T:")
         {
-            XmlNode baseNode = GetBaseTypeNode(source, typeName);
-            targetDocumentation = GetSimpleMemberDocumentation(source, baseNode);
+            // We don't know how to get the type documentation
+            targetDocumentation = new SimpleMemberDocumentation(source, null);
         }
         else if (prefix is "P:" or "M:" or "F:")
         {
-            XmlNode baseNode = GetBaseMemberNode(source, typeName, memberName);
-            targetDocumentation = GetSimpleMemberDocumentation(source, baseNode);
+            // We don't know how to get the member documentation
+            targetDocumentation = new SimpleMemberDocumentation(source, null);
         }
 
         if (targetDocumentation == null)
@@ -62,20 +64,5 @@ public class SimpleDocumentationReferenceResolver : DocumentationReferenceResolv
         }
 
         return new DocumentationReference(node, targetDocumentation);
-    }
-
-    private XmlNode GetBaseMemberNode(XDoc source, string typeName, string memberName)
-    {
-        throw new NotImplementedException();
-    }
-
-    private XmlNode GetBaseTypeNode(XDoc source, string typeName)
-    {
-        throw new NotImplementedException();
-    }
-
-    private MemberDocumentation? GetSimpleMemberDocumentation(XDoc source, XmlNode? node)
-    {
-        return new SimpleMemberDocumentation(source, node);
     }
 }
