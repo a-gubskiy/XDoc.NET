@@ -49,7 +49,7 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
 
         if (cref != null)
         {
-            return GetReference(node, cref);
+            return GetCrefReference(node, cref);
         }
 
         if (node.Name == "inheritdoc")
@@ -69,17 +69,10 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
     private DocumentationReference? GetInheritReference(XmlNode node)
     {
         var attribute = node.ParentNode?.Attributes?["name"];
+
+        //P:TestAssembly.B.Dog.Color
         var referenceName = attribute?.Value ?? string.Empty;
-
-        if (string.IsNullOrWhiteSpace(referenceName) || referenceName.Length < 2)
-        {
-            return null;
-        }
-
-        var prefix = referenceName[..2];
-        var name = referenceName.Substring(2, referenceName.Length - 2);
-
-        var (typeName, memberName) = GetTypeAndMember(name);
+        var (prefix, typeName, memberName) = GetTypeAndMember(referenceName);
 
         var type = GetType(typeName);
         var baseType = type.BaseType;
@@ -115,21 +108,16 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
     /// <param name="attribute">The cref attribute containing the reference value.</param>
     /// <returns>A documentation reference or null if reference cannot be extracted.</returns>
     /// <exception cref="NotImplementedException">This method is not implemented yet.</exception>
-    private DocumentationReference? GetReference(XmlNode node, XmlAttribute? attribute)
+    private DocumentationReference? GetCrefReference(XmlNode node, XmlAttribute? attribute)
     {
-        if (attribute == null || attribute.Value.Length < 2)
-        {
-            return null;
-        }
+        // P:TestAssembly.B.Dog.Name
+        var referenceName = attribute?.Value ?? string.Empty;
+        var (prefix, typeName, memberName) = GetTypeAndMember(referenceName);
 
-        var prefix = attribute.Value[..2];
-        var name = attribute.Value.Substring(2, attribute.Value.Length - 2) ?? string.Empty;
-
-        var (typeName, memberName) = GetTypeAndMember(name);
         var type = GetType(typeName);
 
         MemberDocumentation? targetDocumentation = null;
-        
+
         if (prefix is "T:")
         {
             targetDocumentation = _source.Get(type);
@@ -164,25 +152,51 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
         return memberDocumentation;
     }
 
+
     /// <summary>
-    /// Splits a fully qualified member name into its type name and member name components.
+    /// Parses a fully qualified XML documentation reference string into its constituent parts.
     /// </summary>
-    /// <param name="name">The fully qualified name to split (e.g. "Namespace.Class.Method").</param>
+    /// <param name="value">The XML documentation reference string to parse (e.g., "T:Namespace.TypeName" or "P:Namespace.TypeName.PropertyName").</param>
     /// <returns>
-    /// A tuple containing the type name (everything before the last period) and 
-    /// the member name (everything after the last period).
+    /// A tuple containing:
+    /// - prefix: The reference type prefix (e.g., "T:", "P:", "M:", "F:")
+    /// - typeName: The fully qualified type name
+    /// - memberName: The member name (empty for type references)
     /// </returns>
-    /// <example>
-    /// For input "System.String.Length", returns ("System.String", "Length").
-    /// </example>
-    private static (string typeName, string memberName) GetTypeAndMember(string name)
+    /// <exception cref="Exception">Thrown when the reference format is not recognized.</exception>
+    /// <remarks>
+    /// Handles these reference formats:
+    /// - "T:Namespace.TypeName" for types
+    /// - "P:Namespace.TypeName.PropertyName" for properties 
+    /// - "M:Namespace.TypeName.MethodName" for methods
+    /// - "F:Namespace.TypeName.FieldName" for fields
+    /// </remarks>
+    private static (string prefix, string typeName, string memberName) GetTypeAndMember(string value)
     {
-        var lastIndexOf = name.LastIndexOf('.');
+        if (string.IsNullOrWhiteSpace(value) || value.Length < 2)
+        {
+            return (string.Empty, string.Empty, string.Empty);
+        }
 
-        var typeName = name[..lastIndexOf];
-        var memberName = name[(lastIndexOf + 1)..];
+        var prefix = value[..2];
 
-        return (typeName, memberName);
+        if (prefix is "T:")
+        {
+            var typeName = value.Substring(2, value.Length - 2);
+
+            return (prefix, typeName, string.Empty);
+        }
+        else if (prefix is "P:" or "M:" or "F:")
+        {
+            var lastIndexOf = value.LastIndexOf('.');
+
+            var typeName = value.Substring(2, lastIndexOf - 2);
+            var memberName = value[(lastIndexOf + 1)..];
+
+            return (prefix, typeName, memberName);
+        }
+
+        throw new Exception("Can't select a member info.");
     }
 
     /// <summary>
