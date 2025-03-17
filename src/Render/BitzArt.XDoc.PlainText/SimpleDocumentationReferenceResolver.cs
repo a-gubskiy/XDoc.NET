@@ -12,18 +12,20 @@ public class SimpleDocumentationReferenceResolver : DocumentationReferenceResolv
         //P:TestAssembly.B.Dog.Color
         var referenceName = attribute?.Value ?? string.Empty;
         var (prefix, typeName, memberName) = GetTypeAndMember(referenceName);
-        
-        var baseType = "";
-        
+
+        // var type = GetType(typeName);
+        // var baseType = type.BaseType;
+        // var baseTypeName = GetBaseTypeName(typeName);
+
         MemberDocumentation? targetDocumentation = null;
 
         if (prefix is "T:")
         {
-            targetDocumentation = GetSimpleMemberDocumentation(source, node, baseType);
+            targetDocumentation = GetSimpleMemberDocumentation(source, null);
         }
         else if (prefix is "P:" or "M:" or "F:")
         {
-            targetDocumentation = GetSimpleMemberDocumentation(source, node, baseType, memberName);
+            targetDocumentation = GetSimpleMemberDocumentation(source, null);
         }
 
         if (targetDocumentation == null)
@@ -41,17 +43,17 @@ public class SimpleDocumentationReferenceResolver : DocumentationReferenceResolv
         var referenceName = attribute?.Value ?? string.Empty;
         var (prefix, typeName, memberName) = GetTypeAndMember(referenceName);
 
-        // var type = GetType(typeName);
-
         MemberDocumentation? targetDocumentation = null;
 
         if (prefix is "T:")
         {
-            targetDocumentation = GetSimpleMemberDocumentation(source, node, typeName);
+            XmlNode baseNode = GetBaseTypeNode(source, typeName);
+            targetDocumentation = GetSimpleMemberDocumentation(source, baseNode);
         }
         else if (prefix is "P:" or "M:" or "F:")
         {
-            targetDocumentation = GetSimpleMemberDocumentation(source, node, typeName, memberName);
+            XmlNode baseNode = GetBaseMemberNode(source, typeName, memberName);
+            targetDocumentation = GetSimpleMemberDocumentation(source, baseNode);
         }
 
         if (targetDocumentation == null)
@@ -61,22 +63,19 @@ public class SimpleDocumentationReferenceResolver : DocumentationReferenceResolv
 
         return new DocumentationReference(node, targetDocumentation);
     }
-    
-    private MemberDocumentation? GetSimpleMemberDocumentation(XDoc source, XmlNode node, string baseType, string memberName)
+
+    private XmlNode GetBaseMemberNode(XDoc source, string typeName, string memberName)
     {
-        return new SimpleMemberDocumentation(source, node);
+        throw new NotImplementedException();
     }
 
-    private MemberDocumentation? GetSimpleMemberDocumentation(XDoc source, XmlNode node, string baseType)
+    private XmlNode GetBaseTypeNode(XDoc source, string typeName)
+    {
+        throw new NotImplementedException();
+    }
+
+    private MemberDocumentation? GetSimpleMemberDocumentation(XDoc source, XmlNode? node)
     {
         return new SimpleMemberDocumentation(source, node);
-    }
-    
-    public class SimpleMemberDocumentation : MemberDocumentation
-    {
-        public SimpleMemberDocumentation(XDoc source, XmlNode? node)
-            : base(source, node)
-        {
-        }
     }
 }
