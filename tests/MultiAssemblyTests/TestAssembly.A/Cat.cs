@@ -1,8 +1,6 @@
 namespace TestAssembly.A;
 
-/// <summary>
-/// Test class A.
-/// </summary>
+/// <inheritdoc/>
 public class Cat : Animal
 {
     /// <summary>

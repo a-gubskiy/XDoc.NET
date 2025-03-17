@@ -13,6 +13,9 @@ public abstract class BaseAnimal
     public abstract string Color { get; set; }
 }
 
+/// <summary>
+/// Animal class
+/// </summary>
 public abstract class Animal : BaseAnimal, IAnimal
 {
     /// <summary>

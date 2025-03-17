@@ -22,11 +22,7 @@ public class Dog : Animal, IDog
     public int Age;
 
     /// <summary>
-    /// Class B Name of specific <see cref="Dog"/>.
-    /// Not all <see cref="Animal"/>s can have a name.
-    /// <example>
-    ///     Dog: Dog.Name = "Rex"
-    /// </example>
+    /// Name of specific <see cref="Dog"/>.
     /// <remarks></remarks>
     /// Be carefully with this property.
     /// </summary>
