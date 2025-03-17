@@ -53,7 +53,6 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
             return GetReference(node, cref);
         }
 
-        // if (node.ChildNodes.Cast<XmlNode>().Any( o => o.Name == "inheritdoc"))
         if (node.Name == "inheritdoc")
         {
             return GetInheritReference(node);
