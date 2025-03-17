@@ -29,7 +29,7 @@ public class XDocExtensionsTests
 
         // Assert
         Assert.NotEmpty(str);
-        Assert.Contains("Dog: Dog.Name = \"Rex\"", str);
+        Assert.Contains("Name of specific Dog.", str);
     }
 
     [Fact]

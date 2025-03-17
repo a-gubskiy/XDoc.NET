@@ -89,12 +89,12 @@ public class PlainTextRenderer
             {
                 return RenderReference(element);
             }
-            
+
             if (element.Name == "see")
             {
                 return RenderSeeReference(element);
             }
-            
+
             return RenderReference(element);
         }
 
@@ -112,9 +112,11 @@ public class PlainTextRenderer
     {
         var value = element.Attributes["cref"]?.Value ?? string.Empty;
 
-        var target = value.Substring(2, value.Length - 2);
-        
-        return target;
+        var lastIndexOf = value.LastIndexOf('.');
+        var result = value.Substring(lastIndexOf + 1, value.Length - lastIndexOf - 1);
+        // var result = value.Substring(2, value.Length - 2);
+
+        return result;
     }
 
     /// <summary>
