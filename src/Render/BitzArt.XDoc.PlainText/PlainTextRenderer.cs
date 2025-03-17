@@ -85,7 +85,6 @@ public class PlainTextRenderer
 
         if (element.Attributes["cref"] != null || element.Name == "inheritdoc")
         {
-
             if (element.Name == "inheritdoc")
             {
                 return RenderReference(element);
