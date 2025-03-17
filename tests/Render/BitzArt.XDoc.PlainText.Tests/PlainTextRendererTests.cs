@@ -10,7 +10,7 @@ public class PlainTextRendererTests
     public void Render_PlainTextRenderer_ShouldReturnInheritedProperty()
     {
         // Arrange
-        var xDoc = new XDoc();
+        var xDoc = new XDoc(new SimpleDocumentationReferenceResolver());
         var propertyDocumentation = xDoc.Get(typeof(Dog).GetProperty(nameof(Dog.Color)));
         
         // Act
@@ -24,7 +24,7 @@ public class PlainTextRendererTests
     public void Render_PlainTextRenderer_ShouldReturnCrefProperty()
     {
         // Arrange
-        var xDoc = new XDoc();
+        var xDoc = new XDoc(new SimpleDocumentationReferenceResolver());
         var propertyDocumentation = xDoc.Get(typeof(Dog).GetProperty(nameof(Dog.Field2)));
         
         // Act
@@ -38,7 +38,7 @@ public class PlainTextRendererTests
     public void Render_PlainTextRenderer_ShouldReturnTypeComment()
     {
         // Arrange
-        var xDoc = new XDoc();
+        var xDoc = new XDoc(new SimpleDocumentationReferenceResolver());
         var propertyDocumentation = xDoc.Get(typeof(Dog));
         
         // Act
@@ -52,7 +52,7 @@ public class PlainTextRendererTests
     public void Render_PlainTextRenderer_ShouldReturnBaseTypeComment()
     {
         // Arrange
-        var xDoc = new XDoc();
+        var xDoc = new XDoc(new SimpleDocumentationReferenceResolver());
         var propertyDocumentation = xDoc.Get(typeof(Cat));
         
         // Act

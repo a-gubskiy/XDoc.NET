@@ -22,7 +22,7 @@ public class DocumentationReference
     /// </summary>
     /// <param name="requirementNode"></param>
     /// <param name="target"></param>
-    internal DocumentationReference(XmlNode requirementNode, MemberDocumentation target)
+    public DocumentationReference(XmlNode requirementNode, MemberDocumentation target)
     {
         RequirementNode = requirementNode;
         Target = target;

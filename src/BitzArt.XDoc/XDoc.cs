@@ -34,6 +34,11 @@ public class XDoc
         ReferenceResolver = new DocumentationReferenceResolver();
     }
 
+    public XDoc(IDocumentationReferenceResolver documentationReferenceResolver)
+    {
+        ReferenceResolver = documentationReferenceResolver;
+    }
+
     /// <summary>
     /// Fetches documentation for the specified <see cref="Assembly"/>.
     /// </summary>
