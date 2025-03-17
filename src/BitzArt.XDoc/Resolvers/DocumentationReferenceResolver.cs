@@ -132,7 +132,7 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
     {
         var targetDocumentation = GetTargetDocumentation(node, attribute);
 
-        if (targetDocumentation != null)
+        if (targetDocumentation == null)
         {
             return null;
         }
