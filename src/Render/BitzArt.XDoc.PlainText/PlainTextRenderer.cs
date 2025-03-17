@@ -35,7 +35,7 @@ public class PlainTextRenderer
 
     private string Render()
     {
-        var result = Render(_documentation.Node);
+        var result = Normalize(Render(_documentation.Node));
 
         return result;
     }
@@ -45,16 +45,13 @@ public class PlainTextRenderer
     /// </summary>
     /// <param name="node"></param>
     /// <returns></returns>
-    private string Render(XmlNode? node)
+    private string Render(XmlNode? node) => node switch
     {
-        return Normalize(node switch
-        {
-            null => string.Empty,
-            XmlText textNode => RenderTextNode(textNode),
-            XmlElement element => RenderXmlElement(element),
-            _ => node.InnerText
-        });
-    }
+        null => string.Empty,
+        XmlText textNode => RenderTextNode(textNode),
+        XmlElement element => RenderXmlElement(element),
+        _ => node.InnerText
+    };
 
     /// <summary>
     /// Normalize the input string by removing extra empty lines and trimming each line.
@@ -88,6 +85,17 @@ public class PlainTextRenderer
 
         if (element.Attributes["cref"] != null || element.Name == "inheritdoc")
         {
+
+            if (element.Name == "inheritdoc")
+            {
+                return RenderReference(element);
+            }
+            
+            if (element.Name == "see")
+            {
+                return RenderSeeReference(element);
+            }
+            
             return RenderReference(element);
         }
 
@@ -99,6 +107,15 @@ public class PlainTextRenderer
         }
 
         return builder.ToString();
+    }
+
+    private string RenderSeeReference(XmlElement element)
+    {
+        var value = element.Attributes["cref"]?.Value ?? string.Empty;
+
+        var target = value.Substring(2, value.Length - 2);
+        
+        return target;
     }
 
     /// <summary>
