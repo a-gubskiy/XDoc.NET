@@ -68,11 +68,17 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
     /// <exception cref="NotImplementedException">This method is not implemented yet.</exception>
     private DocumentationReference? GetInheritReference(XmlNode node)
     {
-        var nodeParentNode = node.ParentNode;
-        var attribute = nodeParentNode.Attributes["name"];
+        var attribute = node.ParentNode?.Attributes?["name"];
+        var referenceName = attribute?.Value ?? string.Empty;
 
-        var prefix = attribute.Value[..2] ?? "";
-        var name = attribute?.Value.Substring(2, attribute.Value.Length - 2) ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(referenceName) || referenceName.Length < 2)
+        {
+            return null;
+        }
+
+        var prefix = referenceName[..2];
+        var name = referenceName.Substring(2, referenceName.Length - 2);
+
         var (typeName, memberName) = GetTypeAndMember(name);
 
         var type = GetType(typeName);
@@ -83,40 +89,23 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
             return null;
         }
 
-        if (prefix == "T:")
+        MemberDocumentation? targetDocumentation = null;
+
+        if (prefix is "T:")
         {
-            var targetDocumentation = _source.Get(baseType);
-
-            if (targetDocumentation == null)
-            {
-                return null;
-            }
-
-            return new DocumentationReference(node, targetDocumentation);
+            targetDocumentation = _source.Get(baseType);
+        }
+        else if (prefix is "P:" or "M:" or "F:")
+        {
+            targetDocumentation = GetMemberDocumentation(baseType, memberName);
         }
 
-        if (prefix == "P:" || prefix == "M:" || prefix == "F:")
+        if (targetDocumentation == null)
         {
-            var baseMemberInfos = baseType.GetMember(memberName);
-
-            if (baseMemberInfos.Length != 1)
-            {
-                throw new Exception("Can't select a single member.");
-            }
-
-            var baseMemberInfo = baseMemberInfos[0];
-            
-            var memberDocumentation = _source.Get(baseMemberInfo);
-
-            if (memberDocumentation == null)
-            {
-                return null;
-            }
-
-            return new DocumentationReference(node, memberDocumentation);
+            return null;
         }
 
-        return null;
+        return new DocumentationReference(node, targetDocumentation);
     }
 
     /// <summary>
@@ -150,60 +139,55 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
         var prefix = attribute.Value[..2] ?? "";
         var name = attribute?.Value.Substring(2, attribute.Value.Length - 2) ?? string.Empty;
 
+        var (typeName, memberName) = GetTypeAndMember(name);
+        var type = GetType(typeName);
+
         var targetDocumentation = prefix switch
         {
-            "T:" => GetTypeReference(name),
-            "P:" => GetPropertyReference(name),
-            "M:" => GetMethodReference(name),
-            "F:" => GetFieldReference(name),
+            "T:" => GetTypeDocumentation(type),
+            "P:" => GetMemberDocumentation(type, memberName),
+            "M:" => GetMemberDocumentation(type, memberName),
+            "F:" => GetMemberDocumentation(type, memberName),
             _ => throw new NotSupportedException()
         };
 
         return targetDocumentation;
     }
 
-    private MemberDocumentation? GetFieldReference(string name)
+    private MemberDocumentation? GetMemberDocumentation(Type type, string memberName)
     {
-        var (typeName, memberName) = GetTypeAndMember(name);
+        var memberInfos = type.GetMember(memberName);
 
-        var type = GetType(typeName);
-        var fieldInfo = type.GetField(memberName);
-        var targetDocumentation = _source.Get(fieldInfo!);
+        if (memberInfos.Length != 1)
+        {
+            throw new Exception("Can't select a member info.");
+        }
 
-        return targetDocumentation;
+        var memberInfo = memberInfos.First();
+        var memberDocumentation = _source.Get(memberInfo);
+
+        return memberDocumentation;
     }
 
-    private MemberDocumentation? GetMethodReference(string name)
+    private MemberDocumentation? GetTypeDocumentation(Type type)
     {
-        var (typeName, memberName) = GetTypeAndMember(name);
-
-        var type = GetType(typeName);
-        var methodInfo = type.GetMethod(memberName);
-        var targetDocumentation = _source.Get(methodInfo!);
-
-        return targetDocumentation;
-    }
-
-    private MemberDocumentation? GetPropertyReference(string name)
-    {
-        var (typeName, memberName) = GetTypeAndMember(name);
-
-        var type = GetType(typeName);
-        var propertyInfo = type.GetProperty(memberName);
-        var targetDocumentation = _source.Get(propertyInfo!);
-
-        return targetDocumentation;
-    }
-
-    private MemberDocumentation? GetTypeReference(string name)
-    {
-        var type = GetType(name);
         var targetDocumentation = _source.Get(type);
 
         return targetDocumentation;
     }
 
-    private (string typeName, string memberName) GetTypeAndMember(string name)
+    /// <summary>
+    /// Splits a fully qualified member name into its type name and member name components.
+    /// </summary>
+    /// <param name="name">The fully qualified name to split (e.g. "Namespace.Class.Method").</param>
+    /// <returns>
+    /// A tuple containing the type name (everything before the last period) and 
+    /// the member name (everything after the last period).
+    /// </returns>
+    /// <example>
+    /// For input "System.String.Length", returns ("System.String", "Length").
+    /// </example>
+    private static (string typeName, string memberName) GetTypeAndMember(string name)
     {
         var lastIndexOf = name.LastIndexOf('.');
 
@@ -219,7 +203,7 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
     /// <param name="name">The fully qualified name of the type to resolve.</param>
     /// <returns>The resolved Type object.</returns>
     /// <exception cref="TypeLoadException">Thrown when the specified type cannot be found.</exception>
-    private Type GetType(string name)
+    private static Type GetType(string name)
     {
         // First try direct type resolution
         var type = Type.GetType(name);
