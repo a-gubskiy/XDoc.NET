@@ -85,35 +85,15 @@ public class PlainTextRenderer
 
         if (element.Attributes["cref"] != null || element.Name == "inheritdoc")
         {
-            if (element.Name == "inheritdoc")
-            {
-                return RenderReference(element);
-            }
-
-            if (element.Name == "see")
-            {
-                return RenderSeeReference(element);
-            }
-
             return RenderReference(element);
         }
 
-        var childNodes = element.ChildNodes.Cast<XmlNode>().ToList();
-
-        foreach (var child in childNodes)
+        foreach (XmlNode child in element.ChildNodes)
         {
             builder.Append(Render(child));
         }
 
         return builder.ToString();
-    }
-
-    private string RenderSeeReference(XmlElement element)
-    {
-        var value = element.Attributes["cref"]?.Value ?? string.Empty;
-
-        var lastIndexOf = value.LastIndexOf('.');
-        return value.Substring(lastIndexOf + 1, value.Length - lastIndexOf - 1);
     }
 
     /// <summary>
@@ -125,11 +105,6 @@ public class PlainTextRenderer
     {
         var documentationReference = _documentation.GetReference(element);
 
-        return RenderDocumentationReference(documentationReference);
-    }
-
-    private string RenderDocumentationReference(DocumentationReference? documentationReference)
-    {
         if (documentationReference == null)
         {
             return string.Empty;
@@ -140,14 +115,35 @@ public class PlainTextRenderer
             return RenderSimpleDocumentationReference(simpleDocumentationReference);
         }
 
+        return RenderDocumentationReference(documentationReference);
+    }
+
+    /// <summary>
+    /// Renders a documentation reference.
+    /// </summary>
+    /// <param name="documentationReference"></param>
+    /// <returns></returns>
+    private static string RenderDocumentationReference(DocumentationReference documentationReference)
+    {
         if (documentationReference.Target == null)
         {
             return string.Empty;
         }
 
-        var renderer = new PlainTextRenderer(documentationReference.Target);
+        var text = documentationReference.Target switch
+        {
+            TypeDocumentation typeDocumentation => typeDocumentation.Type.Name,
+            FieldDocumentation fieldDocumentation => fieldDocumentation.MemberName,
+            PropertyDocumentation propertyDocumentation => propertyDocumentation.MemberName,
+            MethodDocumentation methodDocumentation => methodDocumentation.MemberName,
+            _ => string.Empty
+        };
 
-        return renderer.Render();
+        return text;
+
+        // var renderer = new PlainTextRenderer(documentationReference.Target);
+        //
+        // return renderer.Render();
     }
 
     /// <summary>
