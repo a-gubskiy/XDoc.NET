@@ -36,7 +36,7 @@ public class XDocTests
         var propertyDocumentation = xDoc.Get(propertyInfo!);
 
         // Assert
-        Assert.Equal("Field three", propertyDocumentation?.Node?.InnerText.Trim());
+        Assert.Equal("Field same as", propertyDocumentation?.Node?.InnerText.Trim());
     }
 
     [Fact]

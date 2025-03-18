@@ -7,8 +7,8 @@ namespace BitzArt.XDoc.Tests;
 public class PlainTextRendererTests
 {
     // Act
-    // private readonly XDoc _xDoc = new XDoc(new SimpleDocumentationReferenceResolver());
-    private readonly XDoc _xDoc = new XDoc();
+    private readonly XDoc _xDoc = new XDoc(new SimpleDocumentationReferenceResolver());
+    // private readonly XDoc _xDoc = new XDoc();
 
     [Fact]
     public void Render_PlainTextRenderer_ShouldReturnInheritedProperty()
@@ -34,6 +34,8 @@ public class PlainTextRendererTests
 
         // Assert
         Assert.NotNull(comment);
+        
+        // Assert.Equal("123 Name of specific Dog.\nBe carefully with this property.", comment);
     }
 
     [Fact]
@@ -73,6 +75,8 @@ public class PlainTextRendererTests
 
         // Assert
         Assert.NotNull(comment);
+        
+        // Assert.Equal("Animal class", comment);
     }
 
     [Fact]
@@ -105,8 +109,9 @@ public class PlainTextRendererTests
         var text = propertyDocumentation.ToPlainText();
 
         // Assert
-        // Contains("Description of Property1", text);
         Assert.NotNull(text);
+        
+        // Assert.Contains("Description of Property1", text);
     }
 }
 

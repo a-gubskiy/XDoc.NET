@@ -83,8 +83,18 @@ public class PlainTextRenderer
     {
         var builder = new StringBuilder();
 
-        if (IsReference(element))
+        if (element.Attributes["cref"] != null || element.Name == "inheritdoc")
         {
+            if (element.Name == "inheritdoc")
+            {
+                return RenderReference(element);
+            }
+
+            if (element.Name == "see")
+            {
+                return RenderSeeReference(element);
+            }
+
             return RenderReference(element);
         }
 
@@ -98,9 +108,12 @@ public class PlainTextRenderer
         return builder.ToString();
     }
 
-    private bool IsReference(XmlElement element)
+    private string RenderSeeReference(XmlElement element)
     {
-        return element.Attributes["cref"] != null || element.Name == "inheritdoc";
+        var value = element.Attributes["cref"]?.Value ?? string.Empty;
+
+        var lastIndexOf = value.LastIndexOf('.');
+        return value.Substring(lastIndexOf + 1, value.Length - lastIndexOf - 1);
     }
 
     /// <summary>
@@ -112,6 +125,11 @@ public class PlainTextRenderer
     {
         var documentationReference = _documentation.GetReference(element);
 
+        return RenderDocumentationReference(documentationReference);
+    }
+
+    private string RenderDocumentationReference(DocumentationReference? documentationReference)
+    {
         if (documentationReference == null)
         {
             return string.Empty;
@@ -121,17 +139,15 @@ public class PlainTextRenderer
         {
             return RenderSimpleDocumentationReference(simpleDocumentationReference);
         }
-        else
-        {
-            return RenderDocumentationReference(documentationReference);
-        }
-        
-        return string.Empty;
-    }
 
-    private string RenderDocumentationReference(DocumentationReference documentationReference)
-    {
-        throw new NotImplementedException();
+        if (documentationReference.Target == null)
+        {
+            return string.Empty;
+        }
+
+        var renderer = new PlainTextRenderer(documentationReference.Target);
+
+        return renderer.Render();
     }
 
     private string RenderSimpleDocumentationReference(SimpleDocumentationReference simpleDocumentationReference)
@@ -142,14 +158,14 @@ public class PlainTextRenderer
         {
             return string.Empty;
         }
-            
+
         var prefix = cref[..2];
         var lastIndexOf = cref.LastIndexOf('.');
 
         if (prefix is "T:")
         {
             var type = cref.Substring(lastIndexOf + 1, cref.Length - lastIndexOf - 1);
-                
+
             return $"{type}";
         }
 
