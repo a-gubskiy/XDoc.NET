@@ -133,9 +133,17 @@ public class PlainTextRenderer
             return string.Empty;
         }
 
-        var renderer = new PlainTextRenderer(documentationReference.Target);
+        if (documentationReference is SimpleDocumentationReference simpleDocumentationReference)
+        {
+            if (string.IsNullOrWhiteSpace(simpleDocumentationReference.MemberName))
+            {
+                return simpleDocumentationReference.TypeName;
+            }
 
-        return renderer.Render();
+            return $"{simpleDocumentationReference.TypeName}.{simpleDocumentationReference.MemberName}";
+        }
+
+        return string.Empty;
     }
 
     /// <summary>

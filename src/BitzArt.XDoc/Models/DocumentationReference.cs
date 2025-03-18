@@ -15,14 +15,14 @@ public class DocumentationReference
     /// <summary>
     /// Target member documentation
     /// </summary>
-    public MemberDocumentation Target { get; private init; }
+    public MemberDocumentation? Target { get; private init; }
 
     /// <summary>
     /// Default constructor
     /// </summary>
     /// <param name="requirementNode"></param>
     /// <param name="target"></param>
-    public DocumentationReference(XmlNode requirementNode, MemberDocumentation target)
+    public DocumentationReference(XmlNode requirementNode, MemberDocumentation? target)
     {
         RequirementNode = requirementNode;
         Target = target;

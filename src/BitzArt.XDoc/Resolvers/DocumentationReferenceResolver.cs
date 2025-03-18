@@ -165,7 +165,7 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
     /// - "M:Namespace.TypeName.MethodName" for methods
     /// - "F:Namespace.TypeName.FieldName" for fields
     /// </remarks>
-    protected static (string prefix, string typeName, string memberName) GetTypeAndMember(string value)
+    protected static (string prefix, string typeName, string? memberName) GetTypeAndMember(string value)
     {
         if (string.IsNullOrWhiteSpace(value) || value.Length < 2)
         {
@@ -178,7 +178,7 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
         {
             var typeName = value.Substring(2, value.Length - 2);
 
-            return (prefix, typeName, string.Empty);
+            return (prefix, typeName, null);
         }
         else if (prefix is "P:" or "M:" or "F:")
         {

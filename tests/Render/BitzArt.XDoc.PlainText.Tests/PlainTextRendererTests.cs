@@ -10,8 +10,8 @@ public class PlainTextRendererTests
     public void Render_PlainTextRenderer_ShouldReturnInheritedProperty()
     {
         // Arrange
-        // var xDoc = new XDoc(new SimpleDocumentationReferenceResolver());
-        var xDoc = new XDoc(new DocumentationReferenceResolver());
+        var xDoc = new XDoc(new SimpleDocumentationReferenceResolver());
+        // var xDoc = new XDoc(new DocumentationReferenceResolver());
         var propertyDocumentation = xDoc.Get(typeof(Dog).GetProperty(nameof(Dog.Color)));
         
         // Act
@@ -25,8 +25,8 @@ public class PlainTextRendererTests
     public void Render_PlainTextRenderer_ShouldReturnCrefProperty()
     {
         // Arrange
-        // var xDoc = new XDoc(new SimpleDocumentationReferenceResolver());
-        var xDoc = new XDoc(new DocumentationReferenceResolver());
+        var xDoc = new XDoc(new SimpleDocumentationReferenceResolver());
+        // var xDoc = new XDoc(new DocumentationReferenceResolver());
         var propertyDocumentation = xDoc.Get(typeof(Dog).GetProperty(nameof(Dog.Field2)));
         
         // Act
@@ -40,8 +40,8 @@ public class PlainTextRendererTests
     public void Render_PlainTextRenderer_ShouldReturnTypeComment()
     {
         // Arrange
-        // var xDoc = new XDoc(new SimpleDocumentationReferenceResolver());
-        var xDoc = new XDoc(new DocumentationReferenceResolver());
+        var xDoc = new XDoc(new SimpleDocumentationReferenceResolver());
+        // var xDoc = new XDoc(new DocumentationReferenceResolver());
         var propertyDocumentation = xDoc.Get(typeof(Dog));
         
         // Act
@@ -55,8 +55,8 @@ public class PlainTextRendererTests
     public void Render_PlainTextRenderer_ShouldReturnBaseTypeComment()
     {
         // Arrange
-        // var xDoc = new XDoc(new SimpleDocumentationReferenceResolver());
-        var xDoc = new XDoc(new DocumentationReferenceResolver());
+        var xDoc = new XDoc(new SimpleDocumentationReferenceResolver());
+        // var xDoc = new XDoc(new DocumentationReferenceResolver());
         var propertyDocumentation = xDoc.Get(typeof(Cat));
         
         // Act
@@ -93,8 +93,8 @@ public class PlainTextRendererTests
     public void RenderInheritedDocumentation_PlainTextRenderer_ShouldReturnFormattedText()
     {
         // Act
-        var source = new XDoc();
-        var propertyDocumentation = source.Get(typeof(Dog).GetProperty(nameof(Dog.Property1)));
+        var xDoc = new XDoc(new SimpleDocumentationReferenceResolver());
+        var propertyDocumentation = xDoc.Get(typeof(Dog).GetProperty(nameof(Dog.Property1)));
         var text = propertyDocumentation.ToPlainText();
 
 
