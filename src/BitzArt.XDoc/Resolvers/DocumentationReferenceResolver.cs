@@ -38,7 +38,7 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
     /// otherwise, <see langword="null"/>.
     /// </returns>
     /// <exception cref="NotImplementedException">Thrown when the node type is not supported.</exception>
-    public DocumentationReference? GetReference(XDoc source, XmlNode node)
+    public virtual DocumentationReference? GetReference(XDoc source, XmlNode node)
     {
         var cref = node.Attributes?["cref"];
 

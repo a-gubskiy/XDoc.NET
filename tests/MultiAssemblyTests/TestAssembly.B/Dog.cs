@@ -31,11 +31,13 @@ public class Dog : Animal, IDog
     /// <inheritdoc />
     public override string Property1 { get; set; } = "";
 
+    /// <summary>
     /// 123 <inheritdoc cref="Name" />
+    /// </summary>
     public string Field2 { get; set; } = "";
 
     /// <summary>
-    /// Field three
+    /// Field same as <see cref="Cat.Weight"/>
     /// </summary>
     public double Field3 { get; set; }
 

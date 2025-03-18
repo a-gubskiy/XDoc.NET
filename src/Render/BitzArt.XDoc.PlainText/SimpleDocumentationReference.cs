@@ -4,14 +4,14 @@ namespace BitzArt.XDoc;
 
 public class SimpleDocumentationReference : DocumentationReference
 {
-    public string TypeName { get; }
+    public string Cref { get; init; }
     
-    public string? MemberName { get; }
- 
-    public SimpleDocumentationReference(XmlNode requirementNode, string typeName, string? memberName)
+    public bool IsInheritDoc { get; init; }
+
+    public SimpleDocumentationReference(XmlNode requirementNode, string cref, bool isInheritDoc)
         : base(requirementNode, null)
     {
-        TypeName = typeName;
-        MemberName = memberName;
+        Cref = cref;
+        IsInheritDoc = isInheritDoc;
     }
 }

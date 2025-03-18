@@ -83,18 +83,8 @@ public class PlainTextRenderer
     {
         var builder = new StringBuilder();
 
-        if (element.Attributes["cref"] != null || element.Name == "inheritdoc")
+        if (IsReference(element))
         {
-            if (element.Name == "inheritdoc")
-            {
-                return RenderReference(element);
-            }
-
-            if (element.Name == "see")
-            {
-                return RenderSeeReference(element);
-            }
-
             return RenderReference(element);
         }
 
@@ -108,15 +98,9 @@ public class PlainTextRenderer
         return builder.ToString();
     }
 
-    private string RenderSeeReference(XmlElement element)
+    private bool IsReference(XmlElement element)
     {
-        var value = element.Attributes["cref"]?.Value ?? string.Empty;
-
-        var lastIndexOf = value.LastIndexOf('.');
-        var result = value.Substring(lastIndexOf + 1, value.Length - lastIndexOf - 1);
-        // var result = value.Substring(2, value.Length - 2);
-
-        return result;
+        return element.Attributes["cref"] != null || element.Name == "inheritdoc";
     }
 
     /// <summary>
@@ -135,12 +119,47 @@ public class PlainTextRenderer
 
         if (documentationReference is SimpleDocumentationReference simpleDocumentationReference)
         {
-            if (string.IsNullOrWhiteSpace(simpleDocumentationReference.MemberName))
-            {
-                return simpleDocumentationReference.TypeName;
-            }
+            return RenderSimpleDocumentationReference(simpleDocumentationReference);
+        }
+        else
+        {
+            return RenderDocumentationReference(documentationReference);
+        }
+        
+        return string.Empty;
+    }
 
-            return $"{simpleDocumentationReference.TypeName}.{simpleDocumentationReference.MemberName}";
+    private string RenderDocumentationReference(DocumentationReference documentationReference)
+    {
+        throw new NotImplementedException();
+    }
+
+    private string RenderSimpleDocumentationReference(SimpleDocumentationReference simpleDocumentationReference)
+    {
+        var cref = simpleDocumentationReference.Cref;
+
+        if (string.IsNullOrWhiteSpace(cref))
+        {
+            return string.Empty;
+        }
+            
+        var prefix = cref[..2];
+        var lastIndexOf = cref.LastIndexOf('.');
+
+        if (prefix is "T:")
+        {
+            var type = cref.Substring(lastIndexOf + 1, cref.Length - lastIndexOf - 1);
+                
+            return $"{type}";
+        }
+
+        if (prefix is "M:" or "P:" or "F:")
+        {
+            // var type = cref.Substring(2, lastIndexOf - 2);
+            var member = cref.Substring(lastIndexOf + 1, cref.Length - lastIndexOf - 1);
+
+            // return $"{type}.{member}";
+            return $"{member}";
         }
 
         return string.Empty;
