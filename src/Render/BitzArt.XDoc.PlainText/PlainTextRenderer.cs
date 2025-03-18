@@ -150,6 +150,11 @@ public class PlainTextRenderer
         return renderer.Render();
     }
 
+    /// <summary>
+    /// Renders a simple documentation reference.
+    /// </summary>
+    /// <param name="simpleDocumentationReference"></param>
+    /// <returns></returns>
     private string RenderSimpleDocumentationReference(SimpleDocumentationReference simpleDocumentationReference)
     {
         var cref = simpleDocumentationReference.Cref;
