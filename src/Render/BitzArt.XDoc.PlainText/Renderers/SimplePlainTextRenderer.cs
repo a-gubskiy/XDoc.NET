@@ -55,7 +55,13 @@ public class SimplePlainTextRenderer : PlainTextRenderer
 
         if (prefix is "M:" or "P:" or "F:")
         {
-            return cref.Substring(lastIndexOf + 1, cref.Length - lastIndexOf - 1);
+            var type = cref.Substring(2, lastIndexOf - 2);
+            var method = cref.Substring(lastIndexOf + 1, cref.Length - lastIndexOf - 1);
+
+            var typeLastIndexOf = type.LastIndexOf('.');
+            type = type.Substring(typeLastIndexOf + 1, type.Length - typeLastIndexOf - 1);
+
+            return $"{type}.{method}";
         }
 
         return string.Empty;

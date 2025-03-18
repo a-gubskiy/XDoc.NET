@@ -8,7 +8,6 @@ public class SimplePlainTextRendererTests
 {
     // Act
     private readonly XDoc _xDoc = new XDoc(new SimpleDocumentationReferenceResolver());
-    // private readonly XDoc _xDoc = new XDoc();
 
     [Fact]
     public void Render_PlainTextRenderer_ShouldReturnInheritedProperty()
@@ -48,7 +47,7 @@ public class SimplePlainTextRendererTests
         var comment = propertyDocumentation.ToPlainText();
 
         // Assert
-        Assert.Equal("Field same as Weight", comment);
+        Assert.Equal("Field same as Cat.Weight", comment);
     }
 
     [Fact]
@@ -95,7 +94,7 @@ public class SimplePlainTextRendererTests
         var comment = memberDocumentation.ToPlainText();
 
         // Assert
-        Assert.Contains("The ratio of Progress to Objective for this WeeklyMetric.", comment);
+        Assert.Contains("The ratio of WeeklyMetrics.Progress to WeeklyMetrics.Objective for this WeeklyMetric.", comment);
     }
 
     [Fact]
