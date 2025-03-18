@@ -19,7 +19,7 @@ public abstract class MemberDocumentation
     /// </summary>
     public XmlNode? Node { get; private init; }
 
-    internal XDoc Source { get; private init; }
+    public XDoc Source { get; private init; }
 
     private bool IsMyNode(XmlNode node)
     {

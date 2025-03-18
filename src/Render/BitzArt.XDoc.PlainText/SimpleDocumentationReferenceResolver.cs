@@ -19,6 +19,6 @@ public class SimpleDocumentationReferenceResolver : DocumentationReferenceResolv
             return null;
         }
 
-        return new SimpleDocumentationReference(node, cref, isInheritDoc);
+        return new DocumentationReference(node, null, cref);
     }
 }

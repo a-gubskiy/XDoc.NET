@@ -13,6 +13,11 @@ public class DocumentationReference
     public XmlNode RequirementNode { get; private init; }
     
     /// <summary>
+    /// Gets or initializes the code reference string that identifies the target element.
+    /// </summary>
+    public string? Cref { get; init; }
+    
+    /// <summary>
     /// Target member documentation
     /// </summary>
     public MemberDocumentation? Target { get; private init; }
@@ -22,9 +27,11 @@ public class DocumentationReference
     /// </summary>
     /// <param name="requirementNode"></param>
     /// <param name="target"></param>
-    public DocumentationReference(XmlNode requirementNode, MemberDocumentation? target)
+    /// <param name="cref"></param>
+    public DocumentationReference(XmlNode requirementNode, MemberDocumentation? target, string? cref)
     {
         RequirementNode = requirementNode;
         Target = target;
+        Cref = cref;
     }
 }

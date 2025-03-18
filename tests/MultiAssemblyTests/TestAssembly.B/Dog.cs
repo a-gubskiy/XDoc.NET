@@ -23,6 +23,8 @@ public class Dog : Animal, IDog
 
     /// <summary>
     /// Name of specific <see cref="Dog"/>.
+    /// <remarks></remarks>
+    /// Be carefully with this property.
     /// </summary>
     public string Name { get; set; } = "";
 

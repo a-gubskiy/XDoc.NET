@@ -21,24 +21,25 @@ public class PlainTextRenderer
             return string.Empty;
         }
 
-        var renderer = new PlainTextRenderer(documentation);
-
-        return renderer.Render();
+        return new PlainTextRenderer(documentation).Render();
     }
+ 
+    /// <summary>
+    /// The documentation instance to be rendered by this renderer.
+    /// This field is initialized in the constructor and remains readonly afterward.
+    /// </summary>
+    protected readonly MemberDocumentation Documentation;
 
-    private readonly MemberDocumentation _documentation;
-
-    private PlainTextRenderer(MemberDocumentation documentation)
+    protected PlainTextRenderer(MemberDocumentation documentation)
     {
-        _documentation = documentation;
+        Documentation = documentation;
     }
 
-    private string Render()
-    {
-        var result = Normalize(Render(_documentation.Node));
-
-        return result;
-    }
+    /// <summary>
+    /// Renders the current documentation to plain text.
+    /// </summary>
+    /// <returns>A normalized plain text representation of the documentation.</returns>
+    protected string Render() => Normalize(Render(Documentation.Node));
 
     /// <summary>
     /// Renders the content of an XML node to plain text.
@@ -101,18 +102,13 @@ public class PlainTextRenderer
     /// </summary>
     /// <param name="element"></param>
     /// <returns></returns>
-    private string RenderReference(XmlElement element)
+    protected virtual string RenderReference(XmlElement element)
     {
-        var documentationReference = _documentation.GetReference(element);
+        var documentationReference = Documentation.GetReference(element);
 
         if (documentationReference == null)
         {
             return string.Empty;
-        }
-
-        if (documentationReference is SimpleDocumentationReference simpleDocumentationReference)
-        {
-            return RenderSimpleDocumentationReference(simpleDocumentationReference);
         }
 
         return RenderDocumentationReference(documentationReference);
@@ -129,6 +125,11 @@ public class PlainTextRenderer
         {
             return string.Empty;
         }
+        
+        if (documentationReference.RequirementNode.Name == "inheritdoc")
+        {
+            return Render(documentationReference.Target); 
+        }
 
         var text = documentationReference.Target switch
         {
@@ -144,42 +145,6 @@ public class PlainTextRenderer
         // var renderer = new PlainTextRenderer(documentationReference.Target);
         //
         // return renderer.Render();
-    }
-
-    /// <summary>
-    /// Renders a simple documentation reference.
-    /// </summary>
-    /// <param name="simpleDocumentationReference"></param>
-    /// <returns></returns>
-    private string RenderSimpleDocumentationReference(SimpleDocumentationReference simpleDocumentationReference)
-    {
-        var cref = simpleDocumentationReference.Cref;
-
-        if (string.IsNullOrWhiteSpace(cref))
-        {
-            return string.Empty;
-        }
-
-        var prefix = cref[..2];
-        var lastIndexOf = cref.LastIndexOf('.');
-
-        if (prefix is "T:")
-        {
-            var type = cref.Substring(lastIndexOf + 1, cref.Length - lastIndexOf - 1);
-
-            return $"{type}";
-        }
-
-        if (prefix is "M:" or "P:" or "F:")
-        {
-            // var type = cref.Substring(2, lastIndexOf - 2);
-            var member = cref.Substring(lastIndexOf + 1, cref.Length - lastIndexOf - 1);
-
-            // return $"{type}.{member}";
-            return $"{member}";
-        }
-
-        return string.Empty;
     }
 
     /// <summary>

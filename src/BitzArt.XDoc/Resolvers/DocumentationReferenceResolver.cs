@@ -40,11 +40,11 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
     /// <exception cref="NotImplementedException">Thrown when the node type is not supported.</exception>
     public virtual DocumentationReference? GetReference(XDoc source, XmlNode node)
     {
-        var cref = node.Attributes?["cref"];
+        
 
-        if (cref != null)
+        if (node.Attributes?["cref"] != null)
         {
-            return GetCrefReference(source, node, cref);
+            return GetCrefReference(source, node);
         }
 
         if (node.Name == "inheritdoc")
@@ -94,7 +94,7 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
             return null;
         }
 
-        return new DocumentationReference(node, targetDocumentation);
+        return new DocumentationReference(node, targetDocumentation, null);
     }
 
     /// <summary>
@@ -105,11 +105,12 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
     /// <param name="attribute">The cref attribute containing the reference value.</param>
     /// <returns>A documentation reference or null if reference cannot be extracted.</returns>
     /// <exception cref="NotImplementedException">This method is not implemented yet.</exception>
-    protected virtual DocumentationReference? GetCrefReference(XDoc source, XmlNode node, XmlAttribute? attribute)
+    protected virtual DocumentationReference? GetCrefReference(XDoc source, XmlNode node)
     {
         // P:TestAssembly.B.Dog.Name
-        var referenceName = attribute?.Value ?? string.Empty;
-        var (prefix, typeName, memberName) = GetTypeAndMember(referenceName);
+        var cref = node.Attributes?["cref"]?.Value ?? string.Empty;
+        
+        var (prefix, typeName, memberName) = GetTypeAndMember(cref);
 
         var type = GetType(typeName);
 
@@ -129,7 +130,7 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
             return null;
         }
 
-        return new DocumentationReference(node, targetDocumentation);
+        return new DocumentationReference(node, targetDocumentation, cref);
     }
 
     private MemberDocumentation? GetMemberDocumentation(XDoc source, Type type, string memberName)
