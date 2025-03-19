@@ -3,10 +3,10 @@ using System.Xml;
 namespace BitzArt.XDoc;
 
 /// <inheritdoc />
-public class SimpleCrossAssemblyDocumentationReferenceResolver : CrossAssemblyDocumentationReferenceResolver
+public class SimpleDocumentationReferenceResolver : IDocumentationReferenceResolver
 {
     /// <inheritdoc />
-    public override DocumentationReference? GetReference(XDoc source, XmlNode node)
+    public DocumentationReference? GetReference(XDoc source, XmlNode node)
     {
         var cref = node.Attributes?["cref"]?.Value ?? string.Empty;
 
