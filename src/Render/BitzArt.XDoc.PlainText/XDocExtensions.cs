@@ -12,6 +12,11 @@ public static class XDocExtensions
     /// <returns></returns>
     public static string ToPlainText(this MemberDocumentation? documentation)
     {
-        return documentation == null ? string.Empty : PlainTextRenderer.Render(documentation);
+        if (documentation == null)
+        {
+            return string.Empty;
+        }
+            
+        return PlainTextRenderer.Render(documentation);
     }
 }

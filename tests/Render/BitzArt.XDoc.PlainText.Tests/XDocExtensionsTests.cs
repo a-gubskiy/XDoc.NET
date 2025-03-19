@@ -29,7 +29,7 @@ public class XDocExtensionsTests
 
         // Assert
         Assert.NotEmpty(str);
-        Assert.Contains("Dog: Dog.Name = \"Rex\"", str);
+        Assert.Contains("Name of specific Dog.", str);
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public class XDocExtensionsTests
         var type = typeof(Dog);
         // var type = typeof(Animal);
 
-        var methodInfo = typeof(IAnimal).GetMethod(nameof(IAnimal.GetProperty1));
+        // var methodInfo = typeof(IAnimal).GetMethod(nameof(IAnimal.GetProperty1));
         // var methodInfo = typeof(Dog).GetMethod(nameof(IAnimal.GetProperty1));
         // new Dog().GetInfo()
 

@@ -1,5 +1,4 @@
 using System.Xml;
-using BitzArt.XDoc.Resolvers;
 
 namespace BitzArt.XDoc;
 
@@ -9,6 +8,8 @@ namespace BitzArt.XDoc;
 /// </summary>
 public abstract class MemberDocumentation
 {
+    private readonly Dictionary<XmlNode, DocumentationReference?> _references = [];
+    
     // Documentation of a code member:
     // - Type as a member of an Assembly;
     // - MemberInfo as a member of Type.
@@ -18,39 +19,46 @@ public abstract class MemberDocumentation
     /// </summary>
     public XmlNode? Node { get; private init; }
 
-    internal XDoc Source { get; private init; }
+    public XDoc Source { get; private init; }
 
-    private bool _isResolved = false;
-    private InheritanceMemberDocumentationReference? _inherited;
-    private IReadOnlyCollection<MemberDocumentationReference>? _references;
-
-    /// <summary>
-    /// Contains references to inherited documentation.
-    /// </summary>
-    public InheritanceMemberDocumentationReference? Inherited
+    private bool IsMyNode(XmlNode node)
     {
-        get
+        while (node.ParentNode != null)
         {
-            OnRequireResolve();
+            if (node.ParentNode == Node)
+            {
+                return true;
+            }   
 
-            return _inherited;
+            node = node.ParentNode;
         }
-    }
 
-    /// <summary>
-    /// Contains references to other documentation.
-    /// </summary>
-    public IReadOnlyCollection<MemberDocumentationReference> References
-    {
-        get
-        {
-            OnRequireResolve();
-
-            return _references!;
-        }
+        return false;
     }
     
-    
+    public DocumentationReference? GetReference(XmlNode node)
+    {
+        // // <dsffsf cref="BitzArt.XDoc.Models.TypeDocumentation" /> 
+        // // <inheritdoc cref="Name" /> 
+        // // <inheritdoc /> 
+        
+        if (_references.TryGetValue(node, out var result))
+        {
+            return result;
+        }
+
+        if (!IsMyNode(node))
+        {
+            throw new InvalidOperationException("The provided node is not defined in this documentation.");
+        }
+
+        var documentationReference = Source.ReferenceResolver.GetReference(Source, node);
+        
+        _references[node] = documentationReference;
+        
+        return documentationReference;
+    }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MemberDocumentation"/> class.
     /// </summary>
@@ -60,21 +68,5 @@ public abstract class MemberDocumentation
     {
         Source = source;
         Node = node;
-    }
-
-    /// <summary>
-    /// Resolves the documentation.
-    /// </summary>
-    private void OnRequireResolve()
-    {
-        if (_isResolved)
-        {
-            return;
-        }
-
-        _inherited = InheritanceResolver.Resolve(this);
-        _references = CrefResolver.Resolve(this);
-
-        _isResolved = true;
     }
 }

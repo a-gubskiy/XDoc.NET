@@ -14,7 +14,7 @@ public class Dog : Animal, IDog
     /// See <see cref=""""/> and
     /// <see cref=""T:System.String""/> for details.
     /// </summary>
-    public string PropertyWIthInalidCref { get; set; }
+    public string PropertyWIthInvalidCref { get; set; }
 
     /// <summary>
     /// Dog's Age
@@ -22,11 +22,7 @@ public class Dog : Animal, IDog
     public int Age;
 
     /// <summary>
-    /// Class B Name of specific <see cref="Dog"/>.
-    /// Not all <see cref="Animal"/>s can have a name.
-    /// <example>
-    ///     Dog: Dog.Name = "Rex"
-    /// </example>
+    /// Name of specific <see cref="Dog"/>.
     /// <remarks></remarks>
     /// Be carefully with this property.
     /// </summary>
@@ -35,13 +31,18 @@ public class Dog : Animal, IDog
     /// <inheritdoc />
     public override string Property1 { get; set; } = "";
 
+    /// <summary>
     /// 123 <inheritdoc cref="Name" />
+    /// </summary>
     public string Field2 { get; set; } = "";
 
     /// <summary>
-    /// Field three
+    /// Field same as <see cref="Cat.Weight"/>
     /// </summary>
     public double Field3 { get; set; }
+
+    /// <inheritdoc/>
+    public override string Color { get; set; }
 
 
     /// <summary>

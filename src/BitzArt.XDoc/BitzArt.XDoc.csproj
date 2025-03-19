@@ -17,18 +17,15 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageIcon>xdoc-logo.png</PackageIcon>
     </PropertyGroup>
-
-    <ItemGroup>
-        <None Include="..\..\assets\xdoc-logo.png" Pack="True" Visible="false" PackagePath="\"/>
-        <None Include="..\..\README.md" Pack="True" Visible="false" PackagePath="\"/>
-    </ItemGroup>
-
+    
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
             <_Parameter1>BitzArt.XDoc.Tests</_Parameter1>
         </AssemblyAttribute>
-    </ItemGroup>
 
+        <AssemblyAttribute Include="JetBrains.Annotations.PublicAPIAttribute" />
+    </ItemGroup>
+            
     <ItemGroup>
         <None Include="..\..\assets\xdoc-logo.png" Pack="True" Visible="false" PackagePath="\"/>
         <None Include="..\..\README.md" Pack="True" Visible="false" PackagePath="\"/>

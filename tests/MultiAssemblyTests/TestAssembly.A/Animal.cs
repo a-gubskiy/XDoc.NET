@@ -6,8 +6,16 @@ public abstract class BaseAnimal
     /// Unique identifier.
     /// </summary>
     public int Id { get; set; }
+    
+    /// <summary>
+    /// Animal color
+    /// </summary>
+    public abstract string Color { get; set; }
 }
 
+/// <summary>
+/// Animal class
+/// </summary>
 public abstract class Animal : BaseAnimal, IAnimal
 {
     /// <summary>
@@ -19,4 +27,7 @@ public abstract class Animal : BaseAnimal, IAnimal
     /// Description of Property1
     /// </summary>
     public virtual string Property1 { get; set; }
+
+    /// <inheritdoc/>
+    public override string Color { get; set; }
 }

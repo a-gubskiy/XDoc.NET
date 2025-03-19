@@ -25,7 +25,7 @@ public abstract class TypeMemberDocumentation<TMember> : MemberDocumentation
     /// <summary>
     /// Name of the member.
     /// </summary>
-    internal string MemberName => _member.Name;
+    public string MemberName => _member.Name;
 
     internal TypeMemberDocumentation(XDoc source, TypeDocumentation declaringTypeDocumentation, TMember member, XmlNode node)
         : base(source, node)
