@@ -16,26 +16,25 @@ public record Cref
 
         var lastIndexOf = cref.LastIndexOf('.');
 
-        if (Prefix is "T:")
+        switch (Prefix)
         {
-            Type = cref.Substring(lastIndexOf + 1, cref.Length - lastIndexOf - 1);
-            Member = null;
-        }
-        else if (Prefix is "M:" or "P:" or "F:")
-        {
-            Type = cref.Substring(2, lastIndexOf - 2);
-            Member = cref.Substring(lastIndexOf + 1, cref.Length - lastIndexOf - 1);
-        }
-        else
-        {
-            throw new ArgumentException($"Invalid cref: {cref}");
+            case "T:":
+                Type = cref.Substring(lastIndexOf + 1, cref.Length - lastIndexOf - 1);
+                Member = null;
+                break;
+            case "M:" or "P:" or "F:":
+                Type = cref.Substring(2, lastIndexOf - 2);
+                Member = cref.Substring(lastIndexOf + 1, cref.Length - lastIndexOf - 1);
+                break;
+            default:
+                throw new ArgumentException($"Invalid cref: {cref}");
         }
 
         var typeLastIndexOf = Type.LastIndexOf('.');
 
         ShortType = Type.Substring(typeLastIndexOf + 1, Type.Length - typeLastIndexOf - 1);
     }
-    
+
     /// <summary>
     /// The prefix of the cref (e.g. "T:", "M:", "P:", "F:").
     /// </summary>
@@ -63,5 +62,25 @@ public record Cref
     public override string ToString()
     {
         return $"{Prefix}{Type}{(Member != null ? "." + Member : string.Empty)}";
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="cref"></param>
+    /// <returns></returns>
+    public static bool TryCreate(string? value, out Cref? cref)
+    {
+        try
+        {
+            cref = new Cref(value!);
+        }
+        catch
+        {
+            cref = null;
+        }
+
+        return cref != null;
     }
 }

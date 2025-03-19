@@ -27,11 +27,11 @@ public class DocumentationReference
     /// </summary>
     /// <param name="requirementNode"></param>
     /// <param name="target"></param>
-    /// <param name="cref"></param>
-    public DocumentationReference(XmlNode requirementNode, MemberDocumentation? target, string? cref)
+    /// <param name="crefValue"></param>
+    public DocumentationReference(XmlNode requirementNode, MemberDocumentation? target, string? crefValue)
     {
         Target = target;
         RequirementNode = requirementNode;
-        Cref = string.IsNullOrWhiteSpace(cref) ? null : new Cref(cref);
+        Cref = Cref.TryCreate(crefValue, out var cref) ? cref : null;
     }
 }
