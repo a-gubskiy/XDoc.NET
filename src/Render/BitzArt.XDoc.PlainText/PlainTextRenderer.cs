@@ -115,7 +115,7 @@ public class PlainTextRenderer
         {
             return RenderDocumentationReference(documentationReference);
         }
-        else if (!string.IsNullOrWhiteSpace(documentationReference.Cref))
+        else if (documentationReference.Cref != null)
         {
             return RenderSimpleDocumentationReference(documentationReference);
         }
@@ -127,28 +127,19 @@ public class PlainTextRenderer
     {
         var cref = documentationReference.Cref;
 
-        if (string.IsNullOrWhiteSpace(cref))
+        if (cref is null)
         {
             return string.Empty;
         }
 
-        var prefix = cref[..2];
-        var lastIndexOf = cref.LastIndexOf('.');
-
-        if (prefix is "T:")
+        if (cref.Prefix is "T:")
         {
-            return cref.Substring(lastIndexOf + 1, cref.Length - lastIndexOf - 1);
+            return cref.ShortType;
         }
 
-        if (prefix is "M:" or "P:" or "F:")
+        if (cref.Prefix is "M:" or "P:" or "F:")
         {
-            var type = cref.Substring(2, lastIndexOf - 2);
-            var method = cref.Substring(lastIndexOf + 1, cref.Length - lastIndexOf - 1);
-
-            var typeLastIndexOf = type.LastIndexOf('.');
-            type = type.Substring(typeLastIndexOf + 1, type.Length - typeLastIndexOf - 1);
-
-            return $"{type}.{method}";
+            return $"{cref.ShortType}.{cref.Member}";
         }
 
         return string.Empty;

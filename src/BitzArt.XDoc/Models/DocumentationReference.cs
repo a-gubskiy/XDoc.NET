@@ -11,12 +11,12 @@ public class DocumentationReference
     /// Actual XML node that caused this requirement
     /// </summary>
     public XmlNode RequirementNode { get; private init; }
-    
+
     /// <summary>
-    /// Gets or initializes the code reference string that identifies the target element.
+    /// The code reference that identifies the target element.
     /// </summary>
-    public string? Cref { get; init; }
-    
+    public Cref? Cref { get; init; }
+
     /// <summary>
     /// Target member documentation
     /// </summary>
@@ -30,8 +30,8 @@ public class DocumentationReference
     /// <param name="cref"></param>
     public DocumentationReference(XmlNode requirementNode, MemberDocumentation? target, string? cref)
     {
-        RequirementNode = requirementNode;
         Target = target;
-        Cref = cref;
+        RequirementNode = requirementNode;
+        Cref = string.IsNullOrWhiteSpace(cref) ? null : new Cref(cref);
     }
 }
