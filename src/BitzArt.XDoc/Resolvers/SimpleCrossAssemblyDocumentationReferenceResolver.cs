@@ -3,7 +3,7 @@ using System.Xml;
 namespace BitzArt.XDoc;
 
 /// <inheritdoc />
-public class SimpleDocumentationReferenceResolver : DocumentationReferenceResolver
+public class SimpleCrossAssemblyDocumentationReferenceResolver : CrossAssemblyDocumentationReferenceResolver
 {
     /// <inheritdoc />
     public override DocumentationReference? GetReference(XDoc source, XmlNode node)

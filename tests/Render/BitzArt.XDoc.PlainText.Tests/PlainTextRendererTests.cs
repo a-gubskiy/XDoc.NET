@@ -1,4 +1,3 @@
-using System.Xml;
 using TestAssembly.A;
 using TestAssembly.B;
 
@@ -6,7 +5,7 @@ namespace BitzArt.XDoc.Tests;
 
 public class PlainTextRendererTests
 {
-    private readonly XDoc _xDoc = new XDoc();
+    private readonly XDoc _xDoc = new XDoc(new CrossAssemblyDocumentationReferenceResolver());
 
     [Fact]
     public void Render_PlainTextRenderer_ShouldReturnInheritedProperty()
@@ -91,7 +90,7 @@ public class PlainTextRendererTests
         var comment = memberDocumentation.ToPlainText();
 
         // Assert
-        Assert.Contains("The ratio of Progress to Objective for this WeeklyMetric.", comment);
+        Assert.Contains("The ratio of WeeklyMetrics.Progress to WeeklyMetrics.Objective for this WeeklyMetric.", comment);
     }
 
     [Fact]

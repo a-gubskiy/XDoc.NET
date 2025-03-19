@@ -5,7 +5,7 @@ namespace BitzArt.XDoc.Tests;
 public class TestPropertyDocumentation : MemberDocumentation
 {
     public TestPropertyDocumentation(string xml)
-        : base(new XDoc(new SimpleDocumentationReferenceResolver()), GetXmlNode(xml))
+        : base(new XDoc(new SimpleCrossAssemblyDocumentationReferenceResolver()), GetXmlNode(xml))
     {
     }
 

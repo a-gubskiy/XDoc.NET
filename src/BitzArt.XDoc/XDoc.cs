@@ -31,7 +31,7 @@ public class XDoc
 
     public XDoc()
     {
-        ReferenceResolver = new DocumentationReferenceResolver();
+        ReferenceResolver = new SimpleCrossAssemblyDocumentationReferenceResolver();
     }
 
     public XDoc(IDocumentationReferenceResolver documentationReferenceResolver)

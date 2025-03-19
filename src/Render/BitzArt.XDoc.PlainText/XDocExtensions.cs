@@ -16,11 +16,6 @@ public static class XDocExtensions
         {
             return string.Empty;
         }
-        
-        if (documentation.Source.ReferenceResolver is SimpleDocumentationReferenceResolver)
-        {
-            return SimplePlainTextRenderer.Render(documentation);    
-        }
             
         return PlainTextRenderer.Render(documentation);
     }

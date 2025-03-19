@@ -3,30 +3,10 @@ using System.Xml;
 namespace BitzArt.XDoc;
 
 /// <summary>
-/// Resolves documentation references from XML nodes.
+/// Default implementation of <see cref="IDocumentationReferenceResolver"/> that
+/// extracts references from XML documentation nodes.
 /// </summary>
-/// <remarks>
-/// This interface is used to extract documentation references from XML documentation comments,
-/// such as cref links and inheritdoc elements, to create structured representation of code references.
-/// </remarks>
-public interface IDocumentationReferenceResolver
-{
-    /// <summary>
-    /// Extracts a documentation reference from the provided XML node.
-    /// </summary>
-    /// <param name="source"></param>
-    /// <param name="node">The XML node to extract the reference from.</param>
-    /// <returns>
-    /// A <see cref="DocumentationReference"/> object if a reference can be extracted;
-    /// otherwise, <see langword="null"/>.
-    /// </returns>
-    DocumentationReference? GetReference(XDoc source, XmlNode node);
-}
-
-/// <summary>
-/// Default implementation of <see cref="IDocumentationReferenceResolver"/> that extracts references from XML documentation nodes.
-/// </summary>
-public class DocumentationReferenceResolver : IDocumentationReferenceResolver
+public class CrossAssemblyDocumentationReferenceResolver : IDocumentationReferenceResolver
 {
     /// <summary>
     /// Extracts a documentation reference from the provided XML node.
@@ -40,8 +20,6 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
     /// <exception cref="NotImplementedException">Thrown when the node type is not supported.</exception>
     public virtual DocumentationReference? GetReference(XDoc source, XmlNode node)
     {
-        
-
         if (node.Attributes?["cref"] != null)
         {
             return GetCrefReference(source, node);
@@ -109,7 +87,7 @@ public class DocumentationReferenceResolver : IDocumentationReferenceResolver
     {
         // P:TestAssembly.B.Dog.Name
         var cref = node.Attributes?["cref"]?.Value ?? string.Empty;
-        
+
         var (prefix, typeName, memberName) = GetTypeAndMember(cref);
 
         var type = GetType(typeName);

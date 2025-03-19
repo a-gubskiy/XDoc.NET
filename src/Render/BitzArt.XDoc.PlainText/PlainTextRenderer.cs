@@ -23,7 +23,7 @@ public class PlainTextRenderer
 
         return new PlainTextRenderer(documentation).Render();
     }
- 
+
     /// <summary>
     /// The documentation instance to be rendered by this renderer.
     /// This field is initialized in the constructor and remains readonly afterward.
@@ -111,24 +111,59 @@ public class PlainTextRenderer
             return string.Empty;
         }
 
-        return RenderDocumentationReference(documentationReference);
+        if (documentationReference.Target != null)
+        {
+            return RenderDocumentationReference(documentationReference);
+        }
+        else if (!string.IsNullOrWhiteSpace(documentationReference.Cref))
+        {
+            return RenderSimpleDocumentationReference(documentationReference);
+        }
+
+        return string.Empty;
     }
 
-    /// <summary>
-    /// Renders a documentation reference.
-    /// </summary>
-    /// <param name="documentationReference"></param>
-    /// <returns></returns>
+    private string RenderSimpleDocumentationReference(DocumentationReference documentationReference)
+    {
+        var cref = documentationReference.Cref;
+
+        if (string.IsNullOrWhiteSpace(cref))
+        {
+            return string.Empty;
+        }
+
+        var prefix = cref[..2];
+        var lastIndexOf = cref.LastIndexOf('.');
+
+        if (prefix is "T:")
+        {
+            return cref.Substring(lastIndexOf + 1, cref.Length - lastIndexOf - 1);
+        }
+
+        if (prefix is "M:" or "P:" or "F:")
+        {
+            var type = cref.Substring(2, lastIndexOf - 2);
+            var method = cref.Substring(lastIndexOf + 1, cref.Length - lastIndexOf - 1);
+
+            var typeLastIndexOf = type.LastIndexOf('.');
+            type = type.Substring(typeLastIndexOf + 1, type.Length - typeLastIndexOf - 1);
+
+            return $"{type}.{method}";
+        }
+
+        return string.Empty;
+    }
+
     private static string RenderDocumentationReference(DocumentationReference documentationReference)
     {
         if (documentationReference.Target == null)
         {
             return string.Empty;
         }
-        
+
         if (documentationReference.RequirementNode.Name == "inheritdoc")
         {
-            return Render(documentationReference.Target); 
+            return Render(documentationReference.Target);
         }
 
         var text = documentationReference.Target switch
