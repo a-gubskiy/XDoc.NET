@@ -182,7 +182,7 @@ public class PlainTextRenderer
 
         var text = documentationReference.Target switch
         {
-            TypeDocumentation typeDocumentation => typeDocumentation.Type.Name,
+            TypeDocumentation typeDocumentation => RenderType(typeDocumentation),
             FieldDocumentation fieldDocumentation => RenderMember(fieldDocumentation),
             PropertyDocumentation propertyDocumentation => RenderMember(propertyDocumentation),
             MethodDocumentation methodDocumentation => RenderMember(methodDocumentation),
@@ -190,6 +190,16 @@ public class PlainTextRenderer
         };
 
         return text;
+    }
+
+    private string RenderType(TypeDocumentation typeDocumentation)
+    {
+        if (_options.UseShortTypeNames)
+        {
+            return typeDocumentation.Type.Name;
+        }
+
+        return typeDocumentation.Type.FullName!;
     }
 
     private string RenderMember<T>(TypeMemberDocumentation<T> documentation)
