@@ -1,9 +1,12 @@
+using JetBrains.Annotations;
+
 namespace BitzArt.XDoc;
 
 /// <summary>
 /// Represents a parsed C# XML documentation code reference (cref) attribute.
 /// Extracts and stores the type and member information from a cref string.
 /// </summary>
+[PublicAPI]
 public record Cref
 {
     /// <summary>
@@ -36,6 +39,16 @@ public record Cref
     }
 
     /// <summary>
+    /// Is the cref a type reference (e.g. "T:")?
+    /// </summary>
+    public bool IsType => Prefix is "T:";
+
+    /// <summary>
+    /// Is the cref a member reference (e.g. "M:", "P:", "F:")?
+    /// </summary>
+    public bool IsMember => Prefix is "M:" or "P:" or "F:";
+
+    /// <summary>
     /// The prefix of the cref (e.g. "T:", "M:", "P:", "F:").
     /// </summary>
     public string Prefix { get; init; }
@@ -59,10 +72,7 @@ public record Cref
     /// <summary>
     /// Returns a string that represents the current object.
     /// </summary>
-    public override string ToString()
-    {
-        return $"{Prefix}{Type}{(Member != null ? "." + Member : string.Empty)}";
-    }
+    public override string ToString() => $"{Prefix}{Type}{(Member != null ? "." + Member : string.Empty)}";
 
     /// <summary>
     /// 
