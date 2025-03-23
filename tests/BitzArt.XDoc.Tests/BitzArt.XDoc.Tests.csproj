@@ -28,7 +28,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\BitzArt.XDoc\BitzArt.XDoc.csproj"/>
-        <ProjectReference Include="..\MultiAssemblyTests\TestAssembly.B\TestAssembly.B.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
