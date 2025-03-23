@@ -2,7 +2,7 @@ using System.Xml;
 
 namespace BitzArt.XDoc.Tests;
 
-public class TestClass
+public class SomeClass
 {
     public int MyProperty { get; set; }
 }
@@ -58,8 +58,8 @@ public class XmlParserTests
 
         var content = "blah";
 
-        var testType = typeof(TestClass);
-        var testProperty = testType.GetProperty(nameof(TestClass.MyProperty))!;
+        var testType = typeof(SomeClass);
+        var testProperty = testType.GetProperty(nameof(SomeClass.MyProperty))!;
         var testNode = new TestMemberNode(testProperty, content);
 
         var xml = new TestMemberNode[] { testNode }.GetXml(assembly);

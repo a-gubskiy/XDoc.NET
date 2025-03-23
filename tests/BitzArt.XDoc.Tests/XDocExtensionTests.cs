@@ -13,9 +13,10 @@ public class XDocExtensionTests
         // Act
         services.AddXDoc();
 
+        var serviceDescriptor = services.First();
+        
         // Assert
-        var serviceDescriptor = Assert.Single(services);
-
+        Assert.Single(services);
         Assert.Equal(typeof(XDoc), serviceDescriptor.ServiceType);
         Assert.Equal(ServiceLifetime.Singleton, serviceDescriptor.Lifetime);
     }
@@ -56,10 +57,8 @@ public class XDocExtensionTests
         services.AddXDoc();
         services.AddXDoc();
 
-
         // Act
         var serviceProvider = services.BuildServiceProvider();
-
         var xDoc = serviceProvider.GetRequiredService<XDoc>();
 
         // Assert
