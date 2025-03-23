@@ -9,7 +9,7 @@ namespace BitzArt.XDoc;
 public abstract class MemberDocumentation
 {
     private readonly Dictionary<XmlNode, DocumentationReference?> _references = [];
-    
+
     // Documentation of a code member:
     // - Type as a member of an Assembly;
     // - MemberInfo as a member of Type.
@@ -28,20 +28,20 @@ public abstract class MemberDocumentation
             if (node.ParentNode == Node)
             {
                 return true;
-            }   
+            }
 
             node = node.ParentNode;
         }
 
         return false;
     }
-    
+
     public DocumentationReference? GetReference(XmlNode node)
     {
         // // <dsffsf cref="BitzArt.XDoc.Models.TypeDocumentation" /> 
         // // <inheritdoc cref="Name" /> 
         // // <inheritdoc /> 
-        
+
         if (_references.TryGetValue(node, out var result))
         {
             return result;
@@ -53,9 +53,9 @@ public abstract class MemberDocumentation
         }
 
         var documentationReference = Source.ReferenceResolver.GetReference(Source, node);
-        
+
         _references[node] = documentationReference;
-        
+
         return documentationReference;
     }
 

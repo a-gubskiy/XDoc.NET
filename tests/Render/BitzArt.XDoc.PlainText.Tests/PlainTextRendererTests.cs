@@ -6,7 +6,7 @@ namespace BitzArt.XDoc.Tests;
 public class PlainTextRendererTests
 {
     // Act
-    private readonly XDoc _xDoc = new XDoc(new SimpleDocumentationReferenceResolver());
+    private readonly XDoc _xDoc = new XDoc(new DocumentationReferenceResolver());
 
     [Fact]
     public void Render_PlainTextRenderer_ShouldReturnInheritedProperty()

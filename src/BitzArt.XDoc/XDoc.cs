@@ -27,14 +27,14 @@ public class XDoc
 {
     private readonly ConcurrentDictionary<Assembly, AssemblyDocumentation> _collectedAssemblies = [];
 
-    public IDocumentationReferenceResolver ReferenceResolver { get; private set; }
+    internal DocumentationReferenceResolver ReferenceResolver { get; private set; }
 
     public XDoc()
     {
-        ReferenceResolver = new SimpleDocumentationReferenceResolver();
+        ReferenceResolver = new DocumentationReferenceResolver();
     }
 
-    public XDoc(IDocumentationReferenceResolver documentationReferenceResolver)
+    public XDoc(DocumentationReferenceResolver documentationReferenceResolver)
     {
         ReferenceResolver = documentationReferenceResolver;
     }
