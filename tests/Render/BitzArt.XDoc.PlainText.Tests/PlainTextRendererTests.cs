@@ -61,7 +61,7 @@ public class PlainTextRendererTests
     }
 
     [Fact]
-    public void Render_RendersCrefReference_ReturnsShortTypeName_WhenUseShortTypeNamesIsTrue()
+    public void Render_RendersCrefReference_ReturnsShortTypeName()
     {
         var xmlDocument = new XmlDocument();
         XmlNode xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "test", null);
@@ -82,6 +82,30 @@ public class PlainTextRendererTests
 
         // Assert
         Assert.Equal("SomeType", result);
+    }
+    
+    [Fact]
+    public void Render_RendersCrefReference_ReturnsMethodName()
+    {
+        var xmlDocument = new XmlDocument();
+        XmlNode xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "test", null);
+
+
+        // Arrange
+        var element = xmlDocument.CreateElement("see");
+        element.SetAttribute("cref", "M:BitzArt.XDoc.Models.SomeType.SomeMethod");
+        xmlNode.AppendChild(element);
+
+        xmlDocument.AppendChild(xmlNode);
+
+
+        var memberDocumentation = new FakeMemberDocumentation(xmlNode);
+
+        // Act
+        var result = PlainTextRenderer.Render(memberDocumentation);
+
+        // Assert
+        Assert.Equal("SomeType.SomeMethod", result);
     }
 
     [Fact]
