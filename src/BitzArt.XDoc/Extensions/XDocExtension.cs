@@ -1,5 +1,6 @@
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace BitzArt.XDoc;
 
@@ -14,5 +15,10 @@ public static class XDocExtension
     /// <param name="services"></param>
     /// <returns></returns>
     [PublicAPI]
-    public static IServiceCollection AddXDoc(this IServiceCollection services) => services.AddSingleton<XDoc>();
+    public static IServiceCollection AddXDoc(this IServiceCollection services)
+    {
+        services.TryAddSingleton<XDoc>();
+
+        return services;
+    }
 }
