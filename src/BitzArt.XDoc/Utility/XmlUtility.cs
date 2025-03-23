@@ -52,7 +52,7 @@ internal static class XmlUtility
         }
     }
 
-    public static string GetXmlDocumentationFilePath(Assembly assembly)
+    private static string GetXmlDocumentationFilePath(Assembly assembly)
     {
         // Try to find local XML documentation file
         var assemblyLocation = assembly.Location;
