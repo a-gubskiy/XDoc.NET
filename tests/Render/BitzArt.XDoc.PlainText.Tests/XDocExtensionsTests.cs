@@ -1,6 +1,3 @@
-using TestAssembly.A;
-using TestAssembly.B;
-
 namespace BitzArt.XDoc.Tests;
 
 public class XDocExtensionsTests
