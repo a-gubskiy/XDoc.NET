@@ -29,8 +29,12 @@ internal class XmlParser
 
     internal Dictionary<Type, TypeDocumentation> Parse()
     {
-        var nodeList = _xml.SelectNodes("/doc/members/member")
-                       ?? throw new InvalidOperationException("No documentation found in the XML file.");
+        var nodeList = _xml.SelectNodes("/doc/members/member");
+        
+        if (nodeList == null || nodeList.Count == 0)
+        {
+            throw new InvalidOperationException("No documentation found in the XML file.");
+        }
 
         foreach (XmlNode node in nodeList) Parse(node);
 

@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Xml;
 
 namespace BitzArt.XDoc.Tests;
 
@@ -140,5 +141,27 @@ public class XDocGetMemberDocumentationTests
 
             return memberDocumentation;
         });
+    }
+
+    [Fact]
+    public void GetMember_NullMember_ThrowsXDocException()
+    {
+        // Arrange
+        var xml = @"<?xml version=""1.0""?>
+            <doc>
+                <assembly><name>BitzArt.XDoc.Tests</name></assembly>
+            </doc>";
+
+        var type = typeof(TestClass);
+        
+        var assembly = Assembly.GetAssembly(type);
+
+        var doc = new XmlDocument();
+        doc.LoadXml(xml);
+        var xdoc = new XDoc();
+
+
+        // Assert
+        Assert.Throws<XDocException>(() => { XmlUtility.Fetch(doc, xdoc, assembly); });
     }
 }
