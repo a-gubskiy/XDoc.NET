@@ -6,12 +6,6 @@ namespace BitzArt.XDoc.Tests;
 
 public class EntitiesCommentConfiguratorTests
 {
-    private class TestEntity
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-    }
-
     private class TestDbContext1(Action<TestDbContext, ModelBuilder> onModelCreating) : TestDbContext(onModelCreating);
 
     [Fact]
@@ -24,9 +18,7 @@ public class EntitiesCommentConfiguratorTests
         {
             modelBuilder.Entity<MyFirstClass>();
 
-            var configurator = new EntitiesCommentConfigurator(xDoc);
-
-            configurator.ConfigureComments(modelBuilder);
+            new EntitiesCommentConfigurator(xDoc).ConfigureComments(modelBuilder);
         });
 
         // Act
@@ -34,11 +26,8 @@ public class EntitiesCommentConfiguratorTests
 
         var designTimeModel = testContext.GetService<IDesignTimeModel>();
         var model = designTimeModel.Model;
+        var idComment = model.FindEntityType(typeof(MyFirstClass)).FindProperty(nameof(MyFirstClass.Id)).GetComment();
 
-        var entityType = model.FindEntityType(typeof(MyFirstClass));
-        var property = entityType.FindProperty(nameof(MyFirstClass.Id));
-        var comment = property.GetComment();
-
-        Assert.Equal("Id Comment", comment);
+        Assert.Equal(MyFirstClass.IdComment, idComment);
     }
 }
