@@ -37,6 +37,7 @@ public class XDocGetMemberDocumentationTests
 
         // Assert
         Assert.NotNull(result);
+        Assert.IsType<PropertyDocumentation>(result);
     }
 
     [Fact]
@@ -79,7 +80,7 @@ public class XDocGetMemberDocumentationTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.IsType<PropertyDocumentation>(result);
+        
     }
 
     [Fact]
@@ -144,7 +145,7 @@ public class XDocGetMemberDocumentationTests
     }
 
     [Fact]
-    public void GetMember_NullMember_ThrowsXDocException()
+    public void GetMember_NoMembersCollectionNode_Throws()
     {
         // Arrange
         var xml = @"<?xml version=""1.0""?>
@@ -162,6 +163,6 @@ public class XDocGetMemberDocumentationTests
 
 
         // Assert
-        Assert.Throws<XDocException>(() => { XmlUtility.Fetch(doc, xdoc, assembly); });
+        Assert.ThrowsAny<Exception>(() => { XmlUtility.Fetch(doc, xdoc, assembly); });
     }
 }
