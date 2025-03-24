@@ -41,13 +41,13 @@ internal static class XmlUtility
     {
         try
         {
-            var typeDocumentations = XmlParser.Parse(source, assembly, xmlDocument);
+            var typesDocumentation = XmlParser.Parse(source, assembly, xmlDocument);
             
-            return typeDocumentations;
+            return typesDocumentation;
         }
         catch (Exception ex)
         {
-            throw new XDocException("Something went wrong while trying to parse the XML documentation file. " +
+            throw new AggregateException("Something went wrong while trying to parse the XML documentation file. " +
                                     "See inner exception for details.", ex);
         }
     }

@@ -3,7 +3,7 @@ using Moq;
 
 namespace BitzArt.XDoc.Tests;
 
-public class TestPropertyDocumentation : MemberDocumentation
+public class TestPropertyDocumentation : DocumentationElement
 {
     public TestPropertyDocumentation(string xml)
         : base(new XDoc(new DocumentationReferenceResolver()), GetXmlNode(xml))
@@ -19,7 +19,7 @@ public class TestPropertyDocumentation : MemberDocumentation
     }
 }
 
-public class FakeMemberDocumentation : MemberDocumentation
+public class FakeMemberDocumentation : DocumentationElement
 {
     public FakeMemberDocumentation(XmlElement element)
         : base(new XDoc(new DocumentationReferenceResolver()), element)

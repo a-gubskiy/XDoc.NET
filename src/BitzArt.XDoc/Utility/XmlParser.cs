@@ -94,7 +94,7 @@ internal class XmlParser
 
         var typeDocumentation = ResolveOwnerType(type);
 
-        var propertyDocumentation = new PropertyDocumentation(_source, typeDocumentation, propertyInfo, node);
+        var propertyDocumentation = new PropertyDocumentation(_source, propertyInfo, node);
 
         typeDocumentation.AddMemberData(propertyInfo, propertyDocumentation);
 
@@ -116,7 +116,7 @@ internal class XmlParser
 
         var typeDocumentation = ResolveOwnerType(type);
 
-        var fieldDocumentation = new FieldDocumentation(_source, typeDocumentation, fieldInfo, node);
+        var fieldDocumentation = new FieldDocumentation(_source, fieldInfo, node);
 
         typeDocumentation.AddMemberData(fieldInfo, fieldDocumentation);
 
@@ -159,7 +159,7 @@ internal class XmlParser
 
         var typeDocumentation = ResolveOwnerType(type);
 
-        var methodDocumentation = new MethodDocumentation(_source, typeDocumentation, methodInfo, node);
+        var methodDocumentation = new MethodDocumentation(_source, methodInfo, node);
 
         typeDocumentation.AddMemberData(methodInfo, methodDocumentation);
 

@@ -13,7 +13,7 @@ public static class XDocExtensions
     /// <param name="forceSingleLine"></param>
     /// <returns></returns>
     public static string ToPlainText(
-        this MemberDocumentation? documentation,
+        this DocumentationElement? documentation,
         bool forceSingleLine = false,
         bool useShortTypeNames = true)
     {

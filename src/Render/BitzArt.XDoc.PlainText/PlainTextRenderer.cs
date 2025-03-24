@@ -18,7 +18,7 @@ public class PlainTextRenderer
     /// <param name="useShortTypeNames"></param>
     /// <returns></returns>
     public static string Render(
-        MemberDocumentation? documentation,
+        DocumentationElement? documentation,
         bool forceSingleLine = false,
         bool useShortTypeNames = true)
     {
@@ -38,11 +38,11 @@ public class PlainTextRenderer
     /// The documentation instance to be rendered by this renderer.
     /// This field is initialized in the constructor and remains readonly afterward.
     /// </summary>
-    private readonly MemberDocumentation _documentation;
+    private readonly DocumentationElement _documentation;
 
     private readonly RendererOptions _options;
 
-    private PlainTextRenderer(MemberDocumentation documentation, RendererOptions rendererOptions)
+    private PlainTextRenderer(DocumentationElement documentation, RendererOptions rendererOptions)
     {
         _options = rendererOptions;
         _documentation = documentation;
@@ -202,15 +202,15 @@ public class PlainTextRenderer
         return typeDocumentation.Type.FullName!;
     }
 
-    private string RenderMember<T>(TypeMemberDocumentation<T> documentation)
+    private string RenderMember<T>(MemberDocumentation<T> documentation)
         where T : MemberInfo
     {
         if (_options.UseShortTypeNames)
         {
-            return $"{documentation.DeclaringType.Name}.{documentation.MemberName}";
+            return $"{documentation.Member.DeclaringType!.Name}.{documentation.Member.Name}";
         }
 
-        return $"{documentation.DeclaringType.FullName}.{documentation.MemberName}";
+        return $"{documentation.Member.DeclaringType!.FullName}.{documentation.Member.Name}";
     }
 
     /// <summary>

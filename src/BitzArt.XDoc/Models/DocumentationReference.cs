@@ -20,7 +20,7 @@ public class DocumentationReference
     /// <summary>
     /// Target member documentation
     /// </summary>
-    public MemberDocumentation? Target { get; private init; }
+    public DocumentationElement? Target { get; private init; }
 
     /// <summary>
     /// Default constructor
@@ -28,13 +28,13 @@ public class DocumentationReference
     /// <param name="requirementNode"></param>
     /// <param name="target"></param>
     /// <param name="crefValue"></param>
-    public DocumentationReference(XmlNode requirementNode, MemberDocumentation? target, string? crefValue)
+    public DocumentationReference(XmlNode requirementNode, DocumentationElement? target, string? crefValue)
         : this(requirementNode, target, Cref.TryCreate(crefValue, out var cref) ? cref : null)
     {
     }
 
 
-    public DocumentationReference(XmlNode requirementNode, MemberDocumentation? target, Cref? cref)
+    public DocumentationReference(XmlNode requirementNode, DocumentationElement? target, Cref? cref)
     {
         Target = target;
         RequirementNode = requirementNode;
