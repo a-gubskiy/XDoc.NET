@@ -118,7 +118,7 @@ public class PlainTextRenderer : IDocumentationRenderer
 
     private string RenderReference(XmlElement element, XmlAttribute crefAttribute)
     {
-        var cref = new Cref(crefAttribute.Value);
+        var cref = new MemberIdentifier(crefAttribute.Value);
 
         var type = _options.UseShortTypeNames ? cref.ShortType : cref.Type;
         
@@ -132,7 +132,7 @@ public class PlainTextRenderer : IDocumentationRenderer
 
     private string RenderInheritanceWithReference(XmlElement element, XmlAttribute crefAttribute)
     {
-        var cref = new Cref(crefAttribute.Value);
+        var cref = new MemberIdentifier(crefAttribute.Value);
 
         var type = _options.UseShortTypeNames ? cref.ShortType : cref.Type;
         
@@ -146,8 +146,13 @@ public class PlainTextRenderer : IDocumentationRenderer
 
     private string RenderDirectInheritance(XmlElement element)
     {
-        //We can't now get the parent node of the current node, so we can't get the parent node of the parent node
+        
 
+        var parentNode = element.ParentNode;
+        var nameAttribute = parentNode.Attributes["name"];
+        var memberIdentifier = new MemberIdentifier(nameAttribute?.Value);
+
+        //We can't now get the parent node of the current node, so we can't get the parent node of the parent node
         return string.Empty;
         // _xdoc.Get()
     }
