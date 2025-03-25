@@ -27,17 +27,17 @@ public class XDoc
 {
     private readonly ConcurrentDictionary<Assembly, AssemblyDocumentation> _fetchedAssemblies = [];
 
-    internal DocumentationReferenceResolver ReferenceResolver { get; private set; }
+    // internal DocumentationReferenceResolver ReferenceResolver { get; private set; }
 
     public XDoc()
     {
-        ReferenceResolver = new DocumentationReferenceResolver();
+        // ReferenceResolver = new DocumentationReferenceResolver();
     }
 
-    public XDoc(DocumentationReferenceResolver documentationReferenceResolver)
-    {
-        ReferenceResolver = documentationReferenceResolver;
-    }
+    // public XDoc(DocumentationReferenceResolver documentationReferenceResolver)
+    // {
+    //     ReferenceResolver = documentationReferenceResolver;
+    // }
 
     /// <summary>
     /// Fetches documentation for the specified <see cref="Assembly"/>.

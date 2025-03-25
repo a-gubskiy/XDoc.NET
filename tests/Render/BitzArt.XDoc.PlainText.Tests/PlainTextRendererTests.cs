@@ -4,11 +4,13 @@ namespace BitzArt.XDoc.Tests;
 
 public class PlainTextRendererTests
 {
+    private PlainTextRenderer _plainTextRenderer = new PlainTextRenderer();
+    
     [Fact]
     public void Render_ReturnsEmptyString_WhenDocumentationIsNull()
     {
         // Act
-        var result = PlainTextRenderer.Render(null);
+        var result = _plainTextRenderer.Render(null);
 
         // Assert
         Assert.Equal(string.Empty, result);
@@ -22,7 +24,7 @@ public class PlainTextRendererTests
         var memberDocumentation = new FakeMemberDocumentation(textNode);
 
         // Act
-        var result = PlainTextRenderer.Render(memberDocumentation);
+        var result = _plainTextRenderer.Render(memberDocumentation);
 
         // Assert
         Assert.Equal("Hello World", result);
@@ -38,7 +40,7 @@ public class PlainTextRendererTests
         var memberDocumentation = new FakeMemberDocumentation(element);
 
         // Act
-        var result = PlainTextRenderer.Render(memberDocumentation, forceSingleLine: false);
+        var result = _plainTextRenderer.Render(memberDocumentation);
 
         // Assert
         Assert.Equal("Line1\nLine2\nLine3", result);
@@ -54,7 +56,7 @@ public class PlainTextRendererTests
         var memberDocumentation = new FakeMemberDocumentation(element);
 
         // Act
-        var result = PlainTextRenderer.Render(memberDocumentation, forceSingleLine: true);
+        var result = _plainTextRenderer.Render(memberDocumentation);
 
         // Assert
         Assert.Equal("Line1 Line2 Line3", result);
@@ -78,7 +80,7 @@ public class PlainTextRendererTests
         var memberDocumentation = new FakeMemberDocumentation(xmlNode);
 
         // Act
-        var result = PlainTextRenderer.Render(memberDocumentation);
+        var result = _plainTextRenderer.Render(memberDocumentation);
 
         // Assert
         Assert.Equal("SomeType", result);
@@ -102,7 +104,7 @@ public class PlainTextRendererTests
         var memberDocumentation = new FakeMemberDocumentation(xmlNode);
 
         // Act
-        var result = PlainTextRenderer.Render(memberDocumentation);
+        var result = _plainTextRenderer.Render(memberDocumentation);
 
         // Assert
         Assert.Equal("SomeType.SomeMethod", result);
@@ -116,7 +118,7 @@ public class PlainTextRendererTests
         var memberDocumentation = new FakeMemberDocumentation(element);
 
         // Act
-        var result = PlainTextRenderer.Render(memberDocumentation);
+        var result = _plainTextRenderer.Render(memberDocumentation);
 
         // Assert
         Assert.Equal(string.Empty, result);

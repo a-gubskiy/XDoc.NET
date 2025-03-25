@@ -6,7 +6,7 @@ namespace BitzArt.XDoc.Tests;
 public class TestPropertyDocumentation : DocumentationElement
 {
     public TestPropertyDocumentation(string xml)
-        : base(new XDoc(new DocumentationReferenceResolver()), GetXmlNode(xml))
+        : base(new XDoc(), GetXmlNode(xml))
     {
     }
 
@@ -22,17 +22,17 @@ public class TestPropertyDocumentation : DocumentationElement
 public class FakeMemberDocumentation : DocumentationElement
 {
     public FakeMemberDocumentation(XmlElement element)
-        : base(new XDoc(new DocumentationReferenceResolver()), element)
+        : base(new XDoc(), element)
     {
     }
 
     public FakeMemberDocumentation(XmlText textNode)
-        : base(new XDoc(new DocumentationReferenceResolver()), textNode)
+        : base(new XDoc(), textNode)
     {
     }
 
     public FakeMemberDocumentation(XmlNode textNode) :
-        base(new XDoc(new DocumentationReferenceResolver()), textNode)
+        base(new XDoc(), textNode)
     {
     }
 }
