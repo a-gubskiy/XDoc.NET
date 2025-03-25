@@ -5,7 +5,7 @@ namespace BitzArt.XDoc;
 /// </summary>
 public static class XDocExtensions
 {
-    private static readonly IDcoumentationRenderer _renderer = new PlainTextRenderer();
+    private static readonly IDocumentationRenderer _renderer = new PlainTextRenderer();
 
     /// <summary>
     /// Renders the documentation of a <see cref="Type"/> as plain text.
