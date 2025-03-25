@@ -4,23 +4,10 @@ using System.Xml;
 namespace BitzArt.XDoc;
 
 /// <summary>
-/// Interface for rendering documentation elements.
-/// </summary>
-public interface IDocumentationRenderer
-{
-    /// <summary>
-    /// Renders the provided documentation element to a string.
-    /// </summary>
-    /// <param name="documentation"></param>
-    /// <returns></returns>
-    string Render(DocumentationElement documentation);
-}
-
-/// <summary>
 /// Lightweight renderer that converts XML documentation to plain text.
 /// This implementation, can only render the text content of the XML nodes, but not resolve and render references.
 /// </summary>
-public class PlainTextRenderer : IDocumentationRenderer
+public class PlainTextRenderer
 {
     private readonly XDoc _xdoc;
     private readonly RendererOptions _options;
@@ -36,7 +23,11 @@ public class PlainTextRenderer : IDocumentationRenderer
         _options = options;
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Renders the provided documentation element to a string.
+    /// </summary>
+    /// <param name="documentation"></param>
+    /// <returns></returns>
     public string Render(DocumentationElement documentation)
     {
         return Normalize(Render(documentation?.Node));
@@ -91,23 +82,19 @@ public class PlainTextRenderer : IDocumentationRenderer
         var builder = new StringBuilder();
 
         var crefAttribute = element.Attributes["cref"];
-
-        if (element.Name == "inheritdoc" && crefAttribute == null)
-        {
-            // Direct inheritance
-            return RenderDirectInheritance(element);
-        }
-        else if (element.Name == "inheritdoc" && crefAttribute != null)
-        {
-            // Inheritance with reference
-            return RenderInheritanceWithReference(element, crefAttribute);
-        }
-        else if (crefAttribute != null)
+        
+        if (crefAttribute != null)
         {
             // Reference
             return RenderReference(element, crefAttribute);
         }
 
+        if (element.Name == "inheritdoc")
+        {
+            // Direct inheritance
+            return RenderDirectInheritance(element);
+        }
+       
         foreach (XmlNode child in element.ChildNodes)
         {
             builder.Append(Render(child));
@@ -121,39 +108,19 @@ public class PlainTextRenderer : IDocumentationRenderer
         var cref = new MemberIdentifier(crefAttribute.Value);
 
         var type = _options.UseShortTypeNames ? cref.ShortType : cref.Type;
-        
+
         if (cref.IsMember)
         {
             return $"{type}.{cref.Member}";
         }
 
-        return  type;
+        return type;
     }
-
-    private string RenderInheritanceWithReference(XmlElement element, XmlAttribute crefAttribute)
-    {
-        var cref = new MemberIdentifier(crefAttribute.Value);
-
-        var type = _options.UseShortTypeNames ? cref.ShortType : cref.Type;
-        
-        if (cref.IsMember)
-        {
-            return $"{type}.{cref.Member}";
-        }
-
-        return  type;
-    }
-
+    
     private string RenderDirectInheritance(XmlElement element)
     {
+        //We can't now get the parent type, so we just return an empty string
         
-
-        var parentNode = element.ParentNode;
-        var nameAttribute = parentNode.Attributes["name"];
-        var memberIdentifier = new MemberIdentifier(nameAttribute?.Value);
-
-        //We can't now get the parent node of the current node, so we can't get the parent node of the parent node
         return string.Empty;
-        // _xdoc.Get()
     }
 }
