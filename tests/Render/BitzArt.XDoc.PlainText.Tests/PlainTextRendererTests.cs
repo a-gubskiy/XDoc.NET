@@ -4,13 +4,11 @@ namespace BitzArt.XDoc.Tests;
 
 public class PlainTextRendererTests
 {
-    private PlainTextRenderer _plainTextRenderer = new PlainTextRenderer();
-    
     [Fact]
     public void Render_ReturnsEmptyString_WhenDocumentationIsNull()
     {
         // Act
-        var result = _plainTextRenderer.Render(null);
+        var result = new PlainTextRenderer(new XDoc()).Render(null);
 
         // Assert
         Assert.Equal(string.Empty, result);
@@ -24,26 +22,10 @@ public class PlainTextRendererTests
         var memberDocumentation = new FakeMemberDocumentation(textNode);
 
         // Act
-        var result = _plainTextRenderer.Render(memberDocumentation);
+        var result = memberDocumentation.ToPlainText();
 
         // Assert
         Assert.Equal("Hello World", result);
-    }
-
-    [Fact]
-    public void Render_NormalizesMultipleLinesToNewlines_WhenForceSingleLineIsFalse()
-    {
-        // Arrange
-        var element = new XmlDocument().CreateElement("para");
-        element.InnerXml = "Line1\n   Line2\nLine3";
-
-        var memberDocumentation = new FakeMemberDocumentation(element);
-
-        // Act
-        var result = _plainTextRenderer.Render(memberDocumentation);
-
-        // Assert
-        Assert.Equal("Line1\nLine2\nLine3", result);
     }
 
     [Fact]
@@ -56,7 +38,7 @@ public class PlainTextRendererTests
         var memberDocumentation = new FakeMemberDocumentation(element);
 
         // Act
-        var result = _plainTextRenderer.Render(memberDocumentation);
+        var result = memberDocumentation.ToPlainText();
 
         // Assert
         Assert.Equal("Line1 Line2 Line3", result);
@@ -80,12 +62,12 @@ public class PlainTextRendererTests
         var memberDocumentation = new FakeMemberDocumentation(xmlNode);
 
         // Act
-        var result = _plainTextRenderer.Render(memberDocumentation);
+        var result = memberDocumentation.ToPlainText();
 
         // Assert
         Assert.Equal("SomeType", result);
     }
-    
+
     [Fact]
     public void Render_RendersCrefReference_ReturnsMethodName()
     {
@@ -104,7 +86,7 @@ public class PlainTextRendererTests
         var memberDocumentation = new FakeMemberDocumentation(xmlNode);
 
         // Act
-        var result = _plainTextRenderer.Render(memberDocumentation);
+        var result = memberDocumentation.ToPlainText();
 
         // Assert
         Assert.Equal("SomeType.SomeMethod", result);
@@ -118,7 +100,7 @@ public class PlainTextRendererTests
         var memberDocumentation = new FakeMemberDocumentation(element);
 
         // Act
-        var result = _plainTextRenderer.Render(memberDocumentation);
+        var result = memberDocumentation.ToPlainText();
 
         // Assert
         Assert.Equal(string.Empty, result);

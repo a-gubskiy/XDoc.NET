@@ -4,15 +4,11 @@
 //
 // namespace BitzArt.XDoc;
 //
-// public interface IDcoumentationRenderer
-// {
-// }
-//
 // /// <summary>
 // /// Lightweight XML renderer that converts XML documentation to plain text.
 // /// This implementation, can only render the text content of the XML nodes, but not resolve and render references.
 // /// </summary>
-// public class PlainTextRenderer : IDcoumentationRenderer
+// public class PlainTextRenderer123
 // {
 //     /// <summary>
 //     /// Converts an XML documentation node to the plain text.
@@ -31,7 +27,7 @@
 //             return string.Empty;
 //         }
 //
-//         return new PlainTextRenderer(documentation, new RendererOptions
+//         return new PlainTextRenderer123(documentation, new RendererOptions
 //         {
 //             ForceSingleLine = forceSingleLine,
 //             UseShortTypeNames = useShortTypeNames
@@ -46,7 +42,7 @@
 //
 //     private readonly RendererOptions _options;
 //
-//     private PlainTextRenderer(DocumentationElement documentation, RendererOptions rendererOptions)
+//     private PlainTextRenderer123(DocumentationElement documentation, RendererOptions rendererOptions)
 //     {
 //         _options = rendererOptions;
 //         _documentation = documentation;

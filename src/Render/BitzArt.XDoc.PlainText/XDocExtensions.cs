@@ -5,8 +5,6 @@ namespace BitzArt.XDoc;
 /// </summary>
 public static class XDocExtensions
 {
-    private static readonly IDocumentationRenderer _renderer = new PlainTextRenderer();
-
     /// <summary>
     /// Renders the documentation of a <see cref="Type"/> as plain text.
     /// </summary>
@@ -19,6 +17,10 @@ public static class XDocExtensions
             return string.Empty;
         }
 
-        return _renderer.Render(documentation);
+        return new PlainTextRenderer(documentation.Source, new RendererOptions
+        {
+            ForceSingleLine = true,
+            UseShortTypeNames = true
+        }).Render(documentation);
     }
 }
