@@ -120,24 +120,28 @@ public class PlainTextRenderer : IDocumentationRenderer
     {
         var cref = new Cref(crefAttribute.Value);
 
+        var type = _options.UseShortTypeNames ? cref.ShortType : cref.Type;
+        
         if (cref.IsMember)
         {
-            return $"{cref.ShortType}.{cref.Member}";
+            return $"{type}.{cref.Member}";
         }
 
-        return cref.ShortType;
+        return  type;
     }
 
     private string RenderInheritanceWithReference(XmlElement element, XmlAttribute crefAttribute)
     {
         var cref = new Cref(crefAttribute.Value);
 
+        var type = _options.UseShortTypeNames ? cref.ShortType : cref.Type;
+        
         if (cref.IsMember)
         {
-            return $"{cref.ShortType}.{cref.Member}";
+            return $"{type}.{cref.Member}";
         }
 
-        return cref.ShortType;
+        return  type;
     }
 
     private string RenderDirectInheritance(XmlElement element)
