@@ -82,7 +82,7 @@ public class PlainTextRenderer
         var builder = new StringBuilder();
 
         var crefAttribute = element.Attributes["cref"];
-        
+
         if (crefAttribute != null)
         {
             // Reference
@@ -94,7 +94,7 @@ public class PlainTextRenderer
             // Direct inheritance
             return RenderDirectInheritance(element);
         }
-       
+
         foreach (XmlNode child in element.ChildNodes)
         {
             builder.Append(Render(child));
@@ -105,7 +105,12 @@ public class PlainTextRenderer
 
     private string RenderReference(XmlElement element, XmlAttribute crefAttribute)
     {
-        var cref = new MemberIdentifier(crefAttribute.Value);
+        var cref = MemberIdentifier.TryCreate(crefAttribute.Value, out var result) ? result : null;
+
+        if (cref == null)
+        {
+            return string.Empty;
+        }
 
         var type = _options.UseShortTypeNames ? cref.ShortType : cref.Type;
 
@@ -116,11 +121,11 @@ public class PlainTextRenderer
 
         return type;
     }
-    
+
     private string RenderDirectInheritance(XmlElement element)
     {
         //We can't now get the parent type, so we just return an empty string
-        
+
         return string.Empty;
     }
 }
