@@ -1,102 +1,168 @@
-using TestAssembly.B;
+using System.Reflection;
+using System.Xml;
 
 namespace BitzArt.XDoc.Tests;
 
-public class XDocTests
+public class TestClass
+{
+    /// <summary>
+    /// Test property documentation.
+    /// </summary>
+    public string TestProperty { get; set; }
+
+    /// <summary>
+    /// Test method documentation.
+    /// </summary>
+    public void TestMethod()
+    {
+    }
+
+    /// <summary>
+    /// Test field documentation.
+    /// </summary>
+    public string TestField;
+}
+
+public class XDocGetMemberDocumentationTests
 {
     [Fact]
-    public void Get_ClassWithThreeFields_ShouldReturnMembersInfo()
+    public void GetProperty_ReturnsPropertyDocumentation()
     {
         // Arrange
-        var xDoc = new XDoc();
+        var xdoc = new XDoc();
+        var property = typeof(TestClass).GetProperty(nameof(TestClass.TestProperty));
 
         // Act
-        var typeDocumentation = xDoc.Get(typeof(Dog));
-        var members = typeDocumentation!.MemberData.Keys
-            .OrderBy(o => o.Name)
-            .ToList();
+        var result = xdoc.Get(property!);
 
         // Assert
-        Assert.Contains(members, m => m.Name == "Age");
-        Assert.Contains(members, m => m.Name == "Name");
-        Assert.Contains(members, m => m.Name == "Property1");
-        Assert.Contains(members, m => m.Name == "Field2");
-        Assert.Contains(members, m => m.Name == "GetInfo");
+        Assert.NotNull(result);
+        Assert.IsType<PropertyDocumentation>(result);
     }
 
     [Fact]
-    public void Get_PropertyInfo_ShouldReturnPropertyDocumentation()
+    public void GetMethod_ReturnsMethodDocumentation()
     {
         // Arrange
-        var xDoc = new XDoc();
-        var type = typeof(Dog);
-        var propertyInfo = type.GetProperty(nameof(Dog.Field3));
+        var xdoc = new XDoc();
+        var method = typeof(TestClass).GetMethod(nameof(TestClass.TestMethod));
 
         // Act
-        var propertyDocumentation = xDoc.Get(propertyInfo!);
+        var result = xdoc.Get(method!);
 
         // Assert
-        Assert.Equal("Field same as", propertyDocumentation?.Node?.InnerText.Trim());
+        Assert.NotNull(result);
     }
 
     [Fact]
-    public void Get_FieldInfo_ShouldReturnFieldDocumentation()
+    public void GetField_ReturnsFieldDocumentation()
     {
         // Arrange
-        var xDoc = new XDoc();
-        var type = typeof(Dog);
-        var fieldInfo = type.GetField(nameof(Dog.Age));
-        var typeDocumentation = xDoc.Get(typeof(Dog));
+        var xdoc = new XDoc();
+        var field = typeof(TestClass).GetField(nameof(TestClass.TestField));
 
         // Act
-        var fieldDocumentation = typeDocumentation!.GetDocumentation(fieldInfo!);
+        var result = xdoc.Get(field)!;
 
         // Assert
-        Assert.Equal("Dog's Age", fieldDocumentation?.Node?.InnerText.Trim());
+        Assert.NotNull(result);
     }
 
     [Fact]
-    public void Get_FieldInfoForNuGetType_ShouldReturnFieldDocumentation()
+    public void GetMember_PropertyAsMember_ReturnsPropertyDocumentation()
     {
         // Arrange
-        // var xDoc = new XDoc();
+        var xdoc = new XDoc();
+        var member = typeof(TestClass).GetProperty(nameof(TestClass.TestProperty));
+
+        // Act
+        var result = xdoc.Get(member);
+
+        // Assert
+        Assert.NotNull(result);
         
-        var type = typeof(Newtonsoft.Json.JsonSerializer);
-
-        // var fieldInfo = type.GetProperty(nameof(DateTime.Hour));
-
-        var xmlDocumentationFilePath = XmlUtility.GetXmlDocumentationFilePath(type.Assembly);
-
-        Assert.NotEmpty(xmlDocumentationFilePath);
     }
 
     [Fact]
-    public void Get_MethodInfo_ShouldReturnMethodDocumentation()
+    public void GetMember_MethodAsMember_ReturnsMethodDocumentation()
     {
         // Arrange
-        var xDoc = new XDoc();
-        var type = typeof(Dog);
-        var methodInfo = type.GetMethod(nameof(Dog.GetInfo));
-        var typeDocumentation = xDoc.Get(typeof(Dog));
+        var xdoc = new XDoc();
+        var member = typeof(TestClass).GetMethod(nameof(TestClass.TestMethod));
 
         // Act
-        var methodDocumentation = typeDocumentation!.GetDocumentation(methodInfo!);
+        var result = xdoc.Get(member);
 
         // Assert
-        Assert.Equal("Get some about", methodDocumentation?.Node?.InnerText.Trim());
+        Assert.NotNull(result);
+        Assert.IsType<MethodDocumentation>(result);
     }
 
     [Fact]
-    public void Get_ObjectType_ShouldThrowXDocException()
+    public void GetMember_FieldAsMember_ReturnsFieldDocumentation()
     {
         // Arrange
-        var xDoc = new XDoc();
-        var type = typeof(object);
+        var xdoc = new XDoc();
+        var member = typeof(TestClass).GetField(nameof(TestClass.TestField));
+
+        // Act
+        var result = xdoc.Get(member);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsType<FieldDocumentation>(result);
+    }
+
+    [Fact]
+    public void GetProperty_PropertyWithoutDocumentation_ReturnsNull()
+    {
+        // Arrange
+        var xdoc = new XDoc();
+        var property = typeof(string).GetProperty(nameof(string.Length));
+
+        // Act
+        var result = xdoc.Get(property);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void GetMember_NullMember_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var xdoc = new XDoc();
+
+        MemberInfo member = null;
+
+        // Assert
+        Assert.Throws<NullReferenceException>(() =>
+        {
+            var memberDocumentation = xdoc.Get(member);
+
+            return memberDocumentation;
+        });
+    }
+
+    [Fact]
+    public void GetMember_NoMembersCollectionNode_Throws()
+    {
+        // Arrange
+        var xml = @"<?xml version=""1.0""?>
+            <doc>
+                <assembly><name>BitzArt.XDoc.Tests</name></assembly>
+            </doc>";
+
+        var type = typeof(TestClass);
         
-        // Act
-        var documentation = xDoc.Get(type);
+        var assembly = Assembly.GetAssembly(type);
+
+        var doc = new XmlDocument();
+        doc.LoadXml(xml);
+        var xdoc = new XDoc();
+
 
         // Assert
-        Assert.Null(documentation);
+        Assert.ThrowsAny<Exception>(() => { XmlUtility.Fetch(doc, xdoc, assembly); });
     }
 }

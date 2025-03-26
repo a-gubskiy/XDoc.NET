@@ -5,21 +5,23 @@ namespace BitzArt.XDoc;
 /// <summary>
 /// Holds information about the documentation of an <see cref="System.Reflection.Assembly"/>.
 /// </summary>
-public sealed class AssemblyDocumentation
+public sealed class AssemblyDocumentation : DocumentationElement, IDocumentationElement<Assembly>
 {
     /// <summary>
-    /// The <see cref="System.Reflection.Assembly"/> this documentation is fetched for.
+    /// The <see cref="System.Reflection.Assembly"/> this documentation is provided for.
     /// </summary>
-    private readonly Assembly _assembly;
+    public Assembly Assembly { get; private init; }
+
+    Assembly IDocumentationElement<Assembly>.Target => Assembly;
 
     /// <summary>
-    /// Type documentation found for this assembly.
+    /// Documentation found for types in this <see cref="System.Reflection.Assembly"/>.
     /// </summary>
     private readonly Dictionary<Type, TypeDocumentation> _typeData;
 
-    internal AssemblyDocumentation(XDoc source, Assembly assembly)
+    internal AssemblyDocumentation(XDoc source, Assembly assembly) : base(source, null)
     {
-        _assembly = assembly;
+        Assembly = assembly;
         _typeData = XmlUtility.Fetch(source, assembly);
     }
 
@@ -28,21 +30,19 @@ public sealed class AssemblyDocumentation
     /// </summary>
     /// <param name="type">The <see cref="Type"/> to retrieve documentation for.</param>
     /// <returns><see cref="TypeDocumentation"/> for the specified <see cref="Type"/> if available; otherwise, <see langword="null"/>.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the provided <see cref="Type"/> is not defined in this assembly.</exception>
     public TypeDocumentation? GetDocumentation(Type type)
-        => _typeData.TryGetValue(Validate(type), out var result)
-            ? result
-            : null;
-
-    private Type Validate(Type type)
     {
-        if (type.Assembly != _assembly)
+        if (type.Assembly != Assembly)
         {
             throw new InvalidOperationException("The provided type is not defined in this assembly.");
         }
-        
-        return type;
+
+        return _typeData.TryGetValue(type, out var result)
+                ? result
+                : null;
     }
 
     /// <inheritdoc/>
-    public override string ToString() => $"{nameof(AssemblyDocumentation)} (Assembly:'{_assembly.GetName().Name!}')";
+    public override string ToString() => $"Documentation for Assembly '{Assembly.GetName().Name}'";
 }

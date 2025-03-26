@@ -29,8 +29,12 @@ internal class XmlParser
 
     internal Dictionary<Type, TypeDocumentation> Parse()
     {
-        var nodeList = _xml.SelectNodes("/doc/members/member")
-                       ?? throw new InvalidOperationException("No documentation found in the XML file.");
+        var nodeList = _xml.SelectNodes("/doc/members/member");
+        
+        if (nodeList == null || nodeList.Count == 0)
+        {
+            throw new InvalidOperationException("No documentation found in the XML file.");
+        }
 
         foreach (XmlNode node in nodeList) Parse(node);
 
@@ -90,7 +94,7 @@ internal class XmlParser
 
         var typeDocumentation = ResolveOwnerType(type);
 
-        var propertyDocumentation = new PropertyDocumentation(_source, typeDocumentation, propertyInfo, node);
+        var propertyDocumentation = new PropertyDocumentation(_source, propertyInfo, node);
 
         typeDocumentation.AddMemberData(propertyInfo, propertyDocumentation);
 
@@ -112,7 +116,7 @@ internal class XmlParser
 
         var typeDocumentation = ResolveOwnerType(type);
 
-        var fieldDocumentation = new FieldDocumentation(_source, typeDocumentation, fieldInfo, node);
+        var fieldDocumentation = new FieldDocumentation(_source, fieldInfo, node);
 
         typeDocumentation.AddMemberData(fieldInfo, fieldDocumentation);
 
@@ -155,7 +159,7 @@ internal class XmlParser
 
         var typeDocumentation = ResolveOwnerType(type);
 
-        var methodDocumentation = new MethodDocumentation(_source, typeDocumentation, methodInfo, node);
+        var methodDocumentation = new MethodDocumentation(_source, methodInfo, node);
 
         typeDocumentation.AddMemberData(methodInfo, methodDocumentation);
 
