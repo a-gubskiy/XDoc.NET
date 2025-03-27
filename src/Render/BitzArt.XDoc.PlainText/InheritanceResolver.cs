@@ -56,9 +56,7 @@ internal class InheritanceResolver
 
     private DocumentationElement? FindMemberDocumentationElement(MemberInfo memberInfo)
     {
-        var type = memberInfo.DeclaringType ?? memberInfo.ReflectedType!;
-
-        var documentation = FindMemberDocumentationElement(memberInfo, type);
+        var documentation = FindMemberDocumentationElement(memberInfo, memberInfo.ReflectedType!);
 
         return documentation;
     }

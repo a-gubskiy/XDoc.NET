@@ -76,4 +76,17 @@ public class InheritanceResolverTests
         Assert.NotNull(documentationElement);
         Assert.Equal("This is a method", documentationElement.Node.InnerText.Trim());
     }
+    
+    [Fact]
+    public void GetMemberInheritedComment_CommentOnParentClass_ShouldReturnComment()
+    {
+        var resolver = new InheritanceResolver(new XDoc());
+        var type = typeof(TestingClass);
+        var memberInfo = type.GetMember(nameof(TestingClass.MethodThree)).First();
+
+        var documentationElement = resolver.GetDocumentationElement(memberInfo);
+
+        Assert.NotNull(documentationElement);
+        Assert.Equal("This is third method", documentationElement.Node.InnerText.Trim());
+    }
 }
