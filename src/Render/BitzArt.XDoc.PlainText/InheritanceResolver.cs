@@ -13,13 +13,13 @@ internal class InheritanceResolver
 
     public DocumentationElement? GetDocumentationElement(MemberInfo target)
     {
-        DocumentationElement? documentationElement = null;
+        DocumentationElement? documentationElement;
 
         if (target is Type type)
         {
             documentationElement = FindTypeDocumentationElement(type);
         }
-        else if (target is PropertyInfo or FieldInfo or MethodInfo)
+        else
         {
             documentationElement = FindMemberDocumentationElement(target);
         }
@@ -27,7 +27,7 @@ internal class InheritanceResolver
         return documentationElement;
     }
 
-    internal DocumentationElement? FindTypeDocumentationElement(Type type)
+    private DocumentationElement? FindTypeDocumentationElement(Type type)
     {
         var parents = type.GetParents();
 
@@ -54,7 +54,7 @@ internal class InheritanceResolver
         return null;
     }
 
-    internal  DocumentationElement? FindMemberDocumentationElement(MemberInfo memberInfo)
+    private DocumentationElement? FindMemberDocumentationElement(MemberInfo memberInfo)
     {
         var type = memberInfo.DeclaringType ?? memberInfo.ReflectedType!;
 
