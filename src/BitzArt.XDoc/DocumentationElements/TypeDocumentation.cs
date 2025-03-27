@@ -72,7 +72,7 @@ public sealed class TypeDocumentation : DocumentationElement, IDocumentationElem
     {
         if (member.DeclaringType != Type)
         {
-            throw new InvalidOperationException("The provided property is not defined in this type.");
+            throw new InvalidOperationException("The provided property is not declared in this type.");
         }
 
         if (member.DeclaringType != member.ReflectedType)

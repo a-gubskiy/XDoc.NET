@@ -25,7 +25,17 @@ namespace BitzArt.XDoc;
 /// </summary>
 public class XDoc
 {
-    private readonly ConcurrentDictionary<Assembly, AssemblyDocumentation> _fetchedAssemblies = [];
+    private readonly ConcurrentDictionary<Assembly, AssemblyDocumentation> _fetchedAssemblies;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XDoc"/> class.
+    /// </summary>
+    public XDoc() : this(new()) { }
+
+    internal XDoc(ConcurrentDictionary<Assembly, AssemblyDocumentation> fetchedAssemblies)
+    {
+        _fetchedAssemblies = fetchedAssemblies;
+    }
 
     /// <summary>
     /// Fetches documentation for the specified <see cref="Assembly"/>.

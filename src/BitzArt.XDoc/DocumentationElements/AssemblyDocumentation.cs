@@ -19,10 +19,13 @@ public sealed class AssemblyDocumentation : DocumentationElement, IDocumentation
     /// </summary>
     private readonly Dictionary<Type, TypeDocumentation> _typeData;
 
-    internal AssemblyDocumentation(XDoc source, Assembly assembly) : base(source, null)
+    internal AssemblyDocumentation(XDoc source, Assembly assembly)
+        : this(source, assembly, XmlUtility.Fetch(source, assembly)) { }
+
+    internal AssemblyDocumentation(XDoc source, Assembly assembly, Dictionary<Type, TypeDocumentation> typeData) : base(source, null)
     {
         Assembly = assembly;
-        _typeData = XmlUtility.Fetch(source, assembly);
+        _typeData = typeData;
     }
 
     /// <summary>
