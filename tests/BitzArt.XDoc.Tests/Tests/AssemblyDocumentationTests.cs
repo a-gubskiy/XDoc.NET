@@ -22,8 +22,10 @@ public class AssemblyDocumentationTests
         var assembly = GetType().Assembly;
         var assemblyDocumentation = new AssemblyDocumentation(new XDoc(), assembly, []);
         var testType = typeof(TestClass);
+        
         // Act
         var result = assemblyDocumentation.GetDocumentation(testType);
+        
         // Assert
         Assert.Null(result);
     }
