@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using System.Xml;
 
@@ -12,12 +13,12 @@ public class PlainTextRenderer
     private readonly XDoc _xdoc;
     private readonly RendererOptions _options;
 
-    public PlainTextRenderer(XDoc xdoc)
+    internal PlainTextRenderer(XDoc xdoc)
         : this(xdoc, new RendererOptions())
     {
     }
 
-    public PlainTextRenderer(XDoc xdoc, RendererOptions options)
+    internal PlainTextRenderer(XDoc xdoc, RendererOptions options)
     {
         _xdoc = xdoc;
         _options = options;
@@ -28,9 +29,41 @@ public class PlainTextRenderer
     /// </summary>
     /// <param name="documentation"></param>
     /// <returns></returns>
-    public string Render(DocumentationElement documentation)
+    public string Render(DocumentationElement? documentation)
     {
-        return Normalize(Render(documentation?.Node));
+        if (documentation == null)
+        {
+            return string.Empty;
+        }
+
+        var target = GetTarget(documentation);
+
+        return Normalize(Render(documentation.Node, target));
+    }
+
+    private MemberInfo? GetTarget(DocumentationElement documentation)
+    {
+        if (documentation is IDocumentationElement<Type> typeDocumentation)
+        {
+            return typeDocumentation.Target;
+        }
+
+        if (documentation is IDocumentationElement<PropertyInfo> propertyDocumentation)
+        {
+            return propertyDocumentation.Target;
+        }
+
+        if (documentation is IDocumentationElement<MethodInfo> methodDocumentation)
+        {
+            return methodDocumentation.Target;
+        }
+
+        if (documentation is IDocumentationElement<FieldInfo> fieldDocumentation)
+        {
+            return fieldDocumentation.Target;
+        }
+
+        return null;
     }
 
     /// <summary>
@@ -54,11 +87,11 @@ public class PlainTextRenderer
         return string.Join(separator, lines);
     }
 
-    private string Render(XmlNode? node) => node switch
+    private string Render(XmlNode? node, MemberInfo? target) => node switch
     {
         null => string.Empty,
         XmlText textNode => RenderTextNode(textNode),
-        XmlElement element => RenderXmlElement(element),
+        XmlElement element => RenderXmlElement(element, target),
         _ => node.InnerText
     };
 
@@ -76,41 +109,35 @@ public class PlainTextRenderer
     /// Renders the content of an XML element to plain text, including handling child nodes and references.
     /// </summary>
     /// <param name="element">The XML element to render.</param>
+    /// <param name="target"></param>
     /// <returns>The plain text representation of the XML element.</returns>
-    private string RenderXmlElement(XmlElement element)
+    private string RenderXmlElement(XmlElement element, MemberInfo? target)
     {
-        var builder = new StringBuilder();
-
-        var crefAttribute = element.Attributes["cref"];
-
-        if (crefAttribute != null)
+        if (element.Attributes["cref"] != null)
         {
             // Reference
-            return RenderReference(element, crefAttribute);
+            return RenderReference(element);
         }
 
         if (element.Name == "inheritdoc")
         {
             // Direct inheritance
-            return RenderDirectInheritance(element);
+            return RenderDirectInheritance(element, target);
         }
+
+        var builder = new StringBuilder();
 
         foreach (XmlNode child in element.ChildNodes)
         {
-            builder.Append(Render(child));
+            builder.Append(Render(child, null));
         }
 
         return builder.ToString();
     }
 
-    private string RenderReference(XmlElement element, XmlAttribute crefAttribute)
+    private string RenderReference(XmlElement element)
     {
-        var cref = MemberIdentifier.TryCreate(crefAttribute.Value, out var result) ? result : null;
-
-        if (cref == null)
-        {
-            return string.Empty;
-        }
+        var cref = new MemberIdentifier(element.Attributes["cref"]!.Value);
 
         var type = _options.UseShortTypeNames ? cref.ShortType : cref.Type;
 
@@ -122,9 +149,29 @@ public class PlainTextRenderer
         return type;
     }
 
-    private string RenderDirectInheritance(XmlElement element)
+    private string RenderDirectInheritance(XmlElement element, MemberInfo? target)
     {
-        //We can't now get the parent type, so we just return an empty string
+        if (target == null)
+        {
+            return string.Empty;
+        }
+
+        if (target is Type type)
+        {
+            //TODO: Implement
+        }
+        else if (target is PropertyInfo propertyInfo)
+        {
+            //TODO: Implement
+        }
+        else if (target is FieldInfo fieldInfo)
+        {
+            //TODO: Implement   
+        }
+        else if (target is MethodInfo methodInfo)
+        {
+            //TODO: Implement
+        }
 
         return string.Empty;
     }
