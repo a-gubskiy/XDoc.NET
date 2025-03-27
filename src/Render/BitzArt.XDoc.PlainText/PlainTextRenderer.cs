@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Text;
 using System.Xml;
@@ -156,93 +155,10 @@ public class PlainTextRenderer
         {
             return string.Empty;
         }
-
-        if (target is Type type)
-        {
-            return GetTypeInheritedComment(type);
-        }
-        else if (target is PropertyInfo propertyInfo)
-        {
-            return GetMemberInheritedComment(propertyInfo);
-        }
-        else if (target is FieldInfo fieldInfo)
-        {
-            return GetMemberInheritedComment(fieldInfo);
-        }
-        else if (target is MethodInfo methodInfo)
-        {
-            return GetMemberInheritedComment(methodInfo);
-        }
-
-        return string.Empty;
-    }
-
-    internal string GetMemberInheritedComment(MemberInfo memberInfo)
-    {
-        var type = memberInfo.DeclaringType ?? memberInfo.ReflectedType!;
         
-        return GetMemberInheritedComment(memberInfo, type);
-    }
+        var resolver = new InheritanceResolver(_xdoc);
+        var documentationElement = resolver.GetDocumentationElement(target);
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="memberInfo"></param>
-    /// <param name="owner"></param>
-    /// <returns></returns>
-    private string GetMemberInheritedComment(MemberInfo memberInfo, Type owner)
-    {
-        var parents = owner.GetParents();
-
-        foreach (var parent in parents)
-        {
-            var memberFromTheParent = parent.GetMemberWithSameMetadataDefinitionAs(memberInfo);
-
-            var documentation = _xdoc.Get(memberFromTheParent);
-
-            if (documentation != null)
-            {
-                return Render(documentation);
-            }
-        }
-
-        foreach (var parent in parents)
-        {
-            var comment = GetMemberInheritedComment(memberInfo, parent);
-
-            if (!string.IsNullOrWhiteSpace(comment))
-            {
-                return comment;
-            }
-        }
-
-        return string.Empty;
-    }
-
-    private string GetTypeInheritedComment(Type type)
-    {
-        var parents = type.GetParents();
-
-        foreach (var parent in parents)
-        {
-            var documentation = _xdoc.Get(parent);
-
-            if (documentation != null)
-            {
-                return Render(documentation);
-            }
-        }
-
-        foreach (var parent in parents)
-        {
-            var inheritedComment = GetTypeInheritedComment(parent);
-
-            if (!string.IsNullOrWhiteSpace(inheritedComment))
-            {
-                return inheritedComment;
-            }
-        }
-
-        return string.Empty;
+        return documentationElement != null ? Render(documentationElement) : string.Empty;
     }
 }
