@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Text;
 using System.Xml;
@@ -149,7 +150,7 @@ public class PlainTextRenderer
         return type;
     }
 
-    private string RenderDirectInheritance(XmlElement element, MemberInfo? target)
+    internal string RenderDirectInheritance(XmlElement element, MemberInfo? target)
     {
         if (target == null)
         {
@@ -176,26 +177,28 @@ public class PlainTextRenderer
         return string.Empty;
     }
 
-    private string GetMemberInheritedComment(MemberInfo memberInfo)
+    internal string GetMemberInheritedComment(MemberInfo memberInfo)
     {
         var type = memberInfo.DeclaringType ?? memberInfo.ReflectedType!;
+        
         return GetMemberInheritedComment(memberInfo, type);
     }
 
-    private string GetMemberInheritedComment(MemberInfo memberInfo, Type type)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="memberInfo"></param>
+    /// <param name="owner"></param>
+    /// <returns></returns>
+    private string GetMemberInheritedComment(MemberInfo memberInfo, Type owner)
     {
-        // 1. Check Interfaces (own interfaces, not those inherited from base type)
-        // 2. Enter Base Type
-        // 3. Check own members
-        // 4. Return to step 1
-        
-        var typeInterfaces = type.GetInterfaces();
+        var parents = owner.GetParents();
 
-        foreach (var interfaceType in typeInterfaces)
+        foreach (var parent in parents)
         {
-            var memberWithSameMetadataDefinition = interfaceType.GetMemberWithSameMetadataDefinitionAs(memberInfo);
+            var memberFromTheParent = parent.GetMemberWithSameMetadataDefinitionAs(memberInfo);
 
-            var documentation = _xdoc.Get(memberWithSameMetadataDefinition);
+            var documentation = _xdoc.Get(memberFromTheParent);
 
             if (documentation != null)
             {
@@ -203,21 +206,14 @@ public class PlainTextRenderer
             }
         }
 
-        // 2. Enter Base Type
-        if (type.BaseType != null && type.BaseType != typeof(object))
+        foreach (var parent in parents)
         {
-            var memberWithSameMetadataDefinition = type.BaseType.GetMemberWithSameMetadataDefinitionAs(memberInfo);
-            
-            // 3. Check own members (in this context, check base type's documentation)
-            var documentation = _xdoc.Get(memberWithSameMetadataDefinition);
+            var comment = GetMemberInheritedComment(memberInfo, parent);
 
-            if (documentation != null)
+            if (!string.IsNullOrWhiteSpace(comment))
             {
-                return Render(documentation);
+                return comment;
             }
-
-            // 4. Return to step 1 (recursively check the inheritance hierarchy)
-            return GetMemberInheritedComment(memberInfo, type.BaseType);
         }
 
         return string.Empty;
@@ -225,19 +221,11 @@ public class PlainTextRenderer
 
     private string GetTypeInheritedComment(Type type)
     {
-        // 1. Check Interfaces (own interfaces, not those inherited from base type)
-        // 2. Enter Base Type
-        // 3. Check own members
-        // 4. Return to step 1
+        var parents = type.GetParents();
 
-        // 1. Check Interfaces (own interfaces, not those inherited from base type)
-        // var baseInterfaces = type.BaseType?.GetInterfaces() ?? [];
-
-        var typeInterfaces = type.GetInterfaces();
-
-        foreach (var interfaceType in typeInterfaces)
+        foreach (var parent in parents)
         {
-            var documentation = _xdoc.Get(interfaceType);
+            var documentation = _xdoc.Get(parent);
 
             if (documentation != null)
             {
@@ -245,19 +233,14 @@ public class PlainTextRenderer
             }
         }
 
-        // 2. Enter Base Type
-        if (type.BaseType != null && type.BaseType != typeof(object))
+        foreach (var parent in parents)
         {
-            // 3. Check own members (in this context, check base type's documentation)
-            var documentation = _xdoc.Get(type.BaseType);
+            var inheritedComment = GetTypeInheritedComment(parent);
 
-            if (documentation != null)
+            if (!string.IsNullOrWhiteSpace(inheritedComment))
             {
-                return Render(documentation);
+                return inheritedComment;
             }
-
-            // 4. Return to step 1 (recursively check the inheritance hierarchy)
-            return GetTypeInheritedComment(type.BaseType);
         }
 
         return string.Empty;
