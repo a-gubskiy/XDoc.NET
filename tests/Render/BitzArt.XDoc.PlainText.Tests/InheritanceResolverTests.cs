@@ -58,7 +58,7 @@ public class InheritanceResolverTests
         var resolver = new InheritanceResolver(new XDoc());
 
         var type = typeof(TestingClass);
-        var documentationElement = resolver.FindTypeDocumentationElement(type);
+        var documentationElement = resolver.GetDocumentationElement(type);
 
         Assert.NotNull(documentationElement);
         Assert.Equal("Test comment for the type", documentationElement.Node.InnerText.Trim());
@@ -69,9 +69,9 @@ public class InheritanceResolverTests
     {
         var resolver = new InheritanceResolver(new XDoc());
         var type = typeof(TestingClass);
-        var memberInfo = type.GetMember("Method").First();
+        var memberInfo = type.GetMember(nameof(TestingClass.MethodOne)).First();
 
-        var documentationElement = resolver.FindMemberDocumentationElement(memberInfo);
+        var documentationElement = resolver.GetDocumentationElement(memberInfo);
 
         Assert.NotNull(documentationElement);
         Assert.Equal("This is a method", documentationElement.Node.InnerText.Trim());
