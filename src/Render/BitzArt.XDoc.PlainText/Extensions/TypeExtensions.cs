@@ -7,7 +7,6 @@ namespace BitzArt.XDoc;
 /// </summary>
 internal static class TypeExtensions
 {
-
     public static IEnumerable<Type> GetImmediateInterfaces(this Type type)
     {
         var inheritedInterfaces = type.GetInterfaces().SelectMany(i => i.GetInterfaces()).ToList();
@@ -16,60 +15,64 @@ internal static class TypeExtensions
         return type.GetInterfaces().Except(inheritedInterfaces);
     }
 
-    /// <summary>
-    /// Gets a member with the same signature as the specified member.
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="memberInfo"></param>
-    /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
-    public static MemberInfo? GetMemberWithSameSignature(this Type type, MemberInfo memberInfo)
+    public static bool Has(this Type type, PropertyInfo property)
     {
-        var memberInfos = type.GetMember(memberInfo.Name).ToList();
+        var properties = type.GetProperties();
 
-        if (memberInfos.Count == 1)
-        {
-            return memberInfos[0];
-        }
-
-        if (memberInfos.Count == 0)
-        {
-            return null;
-        }
-
-        memberInfos = memberInfos
-            .Where(m => IsSameSignature(m, memberInfo))
-            .ToList();
-
-        if (memberInfos.Count != 1)
-        {
-            throw new InvalidOperationException($"Cannot resolve member {memberInfo.Name} in {type.FullName}");
-        }
-
-        return memberInfos.First();
+        return properties.Any(p =>
+            p.Name == property.Name &&
+            p.PropertyType == property.PropertyType);
     }
 
-    private static bool IsSameSignature(MemberInfo a, MemberInfo b)
+    public static bool Has(this Type type, MethodInfo method)
     {
-        if (a.MemberType != b.MemberType || a.Name != b.Name)
+        var methods = type
+            .GetMethods()
+            .Where(m => m.Name == method.Name)
+            .ToList();
+
+        foreach (var candidate in methods)
+        {
+            if (IsSameSignature(candidate, method))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool IsSameSignature(MethodInfo a, MethodInfo b)
+    {
+        var paramsA = a.GetParameters();
+        var paramsB = b.GetParameters();
+
+        if (paramsA.Length != paramsB.Length)
         {
             return false;
         }
 
-        switch (a)
+        // Compare return types and parameter types.
+        if (a.ReturnType != b.ReturnType)
         {
-            case MethodInfo methodA when b is MethodInfo methodB:
-                var paramsA = methodA.GetParameters();
-                var paramsB = methodB.GetParameters();
-                return paramsA.Length == paramsB.Length &&
-                       paramsA.Select(p => p.ParameterType)
-                           .SequenceEqual(paramsB.Select(p => p.ParameterType));
-            case PropertyInfo propertyA when b is PropertyInfo propertyB:
-                return propertyA.PropertyType == propertyB.PropertyType;
-            case FieldInfo fieldA when b is FieldInfo fieldB:
-                return fieldA.FieldType == fieldB.FieldType;
-            default:
-                return false;
+            return false;
         }
+
+        return paramsA
+            .Select(p => p.ParameterType)
+            .SequenceEqual(paramsB.Select(p => p.ParameterType));
+    }
+
+    public static bool Has(this Type type, FieldInfo field)
+    {
+        var fields = type.GetFields(
+            BindingFlags.Instance |
+            BindingFlags.Static |
+            BindingFlags.Public |
+            BindingFlags.NonPublic);
+
+        return fields.Any(f =>
+            f.Name == field.Name &&
+            f.FieldType == field.FieldType);
     }
 }

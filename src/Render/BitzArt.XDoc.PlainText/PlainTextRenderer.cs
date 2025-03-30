@@ -155,10 +155,16 @@ public class PlainTextRenderer
         {
             return string.Empty;
         }
-        
-        var resolver = new InheritanceResolver(_xdoc);
-        var documentationElement = resolver.GetDocumentationElement(target);
 
-        return documentationElement != null ? Render(documentationElement) : string.Empty;
+        var targetMember = InheritanceResolver.GetTargetMember(target, element);
+
+        if (targetMember == null)
+        {
+            return string.Empty;
+        }
+
+        var documentationElement = _xdoc.Get(targetMember);
+
+        return Render(documentationElement);
     }
 }
