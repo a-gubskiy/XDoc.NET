@@ -6,16 +6,14 @@ namespace BitzArt.XDoc;
 /// <summary>
 /// Holds information about documentation of a <see cref="System.Type"/>.
 /// </summary>
-public sealed class TypeDocumentation : DocumentationElement, IDocumentationElement<Type>
+public sealed class TypeDocumentation : MemberDocumentation<Type>, IDocumentationElement<Type>
 {
     private readonly Dictionary<MemberInfo, DocumentationElement> _memberData;
 
     /// <summary>
-    /// The <see cref="Type"/> this documentation if provided for.
+    /// The Type this documentation if provided for.
     /// </summary>
-    public Type Type { get; private init; }
-
-    Type IDocumentationElement<Type>.Target => Type;
+    public Type Type => Member;
 
     /// <summary>
     /// List of members declared by this <see cref="Type"/>.
@@ -23,10 +21,8 @@ public sealed class TypeDocumentation : DocumentationElement, IDocumentationElem
     internal IReadOnlyDictionary<MemberInfo, DocumentationElement> MemberData => _memberData.AsReadOnly();
 
     internal TypeDocumentation(XDoc source, Type type, XmlNode? node)
-        : base(source, node)
+        : base(source, type, node)
     {
-        Type = type;
-
         _memberData = [];
     }
 
