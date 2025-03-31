@@ -30,7 +30,9 @@ public class XDoc
     /// <summary>
     /// Initializes a new instance of the <see cref="XDoc"/> class.
     /// </summary>
-    public XDoc() : this(new()) { }
+    public XDoc() : this(new())
+    {
+    }
 
     internal XDoc(ConcurrentDictionary<Assembly, AssemblyDocumentation> fetchedAssemblies)
     {
@@ -115,6 +117,10 @@ public class XDoc
     /// </summary>
     /// <param name="memberInfo"></param>
     /// <returns></returns>
-    public DocumentationElement? Get(MemberInfo memberInfo)
-        => Get(memberInfo.DeclaringType!)?.GetDocumentation(memberInfo);
+    public DocumentationElement? Get(MemberInfo memberInfo) =>
+        memberInfo switch
+        {
+            Type type => Get(type),
+            _ => Get(memberInfo.DeclaringType!)?.GetDocumentation(memberInfo)
+        };
 }

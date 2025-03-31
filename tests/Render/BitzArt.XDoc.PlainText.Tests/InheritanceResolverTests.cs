@@ -2,6 +2,9 @@ using System.Xml;
 
 namespace BitzArt.XDoc.Tests;
 
+/// <summary>
+/// Comment on MyBaseClass
+/// </summary>
 abstract class MyBaseClass
 {
     /// <summary>
@@ -15,6 +18,9 @@ class MyClassA : MyBaseClass
     public override string MyMethod() => "MyClassA.MyMethod";
 }
 
+/// <summary>
+/// Comment on IMyInterface
+/// </summary>
 interface IMyInterface
 {
     /// <summary>
@@ -28,6 +34,7 @@ class MyClassB : IMyInterface
     public string MyMethod() => "MyClassB.MyMethod";
 }
 
+/// <inheritdoc />
 interface IMyInterface1 : IMyInterface
 {
     int MethodA();
@@ -38,6 +45,7 @@ interface IMyInterface2
     int MethodB();
 }
 
+/// <inheritdoc />
 class MyClassC : IMyInterface1, IMyInterface2
 {
     public string MyMethod() => "MyClassC.MyMethod";
@@ -60,6 +68,7 @@ public class InheritanceResolverTests
 {
     private const string MyMethodInIMyInterface = "My method in IMyInterface";
     private const string MyMethodInMyBaseClass = "My method in MyBaseClass";
+    private const string CommentOnMyBaseClass = "Comment on MyBaseClass";
 
     [Fact]
     public void GetTargetMember_CommentOnMethodInBaseClass_ShouldReturnComment()
@@ -141,6 +150,34 @@ public class InheritanceResolverTests
         var documentationElement = xdoc.Get(targetMember!);
 
         Assert.NotNull(documentationElement);
-        Assert.Equal(MyMethodInMyBaseClass, documentationElement.Text); // Assuming base class priority
+        Assert.Equal(MyMethodInMyBaseClass, documentationElement.Text);
     }
+    
+    [Fact]
+    public void GetTargetMember_CommentsOnBaseClass_ShouldPriorityBaseClass()
+    {
+        XmlNode? node = null;
+        var xdoc = new XDoc();
+        var type = typeof(MyClassWithMultipleInheritance);
+
+        var targetMember = InheritanceResolver.GetTargetMember(type, node);
+        var documentationElement = xdoc.Get(targetMember!);
+
+        Assert.NotNull(documentationElement);
+        Assert.Equal(CommentOnMyBaseClass, documentationElement.Text);
+    }
+    
+    // [Fact]
+    // public void GetTargetMember_CommentsOnBaseInterface_ShouldPriorityBaseClass()
+    // {
+    //     XmlNode? node = null;
+    //     var xdoc = new XDoc();
+    //     var type = typeof(MyClassC);
+    //
+    //     var targetMember = InheritanceResolver.GetTargetMember(type, node);
+    //     var documentationElement = xdoc.Get(targetMember!);
+    //
+    //     Assert.NotNull(documentationElement);
+    //     Assert.Equal(MyMethodInIMyInterface, documentationElement.Text);
+    // }
 }
