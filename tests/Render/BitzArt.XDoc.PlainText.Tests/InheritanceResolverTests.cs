@@ -51,6 +51,11 @@ class MyClassD : MyClassA
 {
 }
 
+class MyClassWithMultipleInheritance : MyBaseClass, IMyInterface
+{
+    public override string MyMethod() => "MyClassWithMultipleInheritance.MyMethod";
+}
+
 public class InheritanceResolverTests
 {
     private const string MyMethodInIMyInterface = "My method in IMyInterface";
@@ -110,5 +115,32 @@ public class InheritanceResolverTests
 
         Assert.NotNull(documentationElement);
         Assert.Equal(MyMethodInIMyInterface, documentationElement.Text);
+    }
+
+    [Fact]
+    public void GetTargetMember_NoCommentsInHierarchy_ShouldReturnNull()
+    {
+        XmlNode? node = null;
+        var xdoc = new XDoc();
+        var methodInfo = typeof(MyClassC).GetMethod(nameof(MyClassC.MethodA))!;
+
+        var targetMember = InheritanceResolver.GetTargetMember(methodInfo, node);
+        var documentationElement = xdoc.Get(targetMember!);
+
+        Assert.Null(documentationElement);
+    }
+
+    [Fact]
+    public void GetTargetMember_CommentsOnBothInterfaceAndBaseClass_ShouldPriorityBaseClass()
+    {
+        XmlNode? node = null;
+        var xdoc = new XDoc();
+        var methodInfo = typeof(MyClassWithMultipleInheritance).GetMethod(nameof(MyClassWithMultipleInheritance.MyMethod))!;
+
+        var targetMember = InheritanceResolver.GetTargetMember(methodInfo, node);
+        var documentationElement = xdoc.Get(targetMember!);
+
+        Assert.NotNull(documentationElement);
+        Assert.Equal(MyMethodInMyBaseClass, documentationElement.Text); // Assuming base class priority
     }
 }
