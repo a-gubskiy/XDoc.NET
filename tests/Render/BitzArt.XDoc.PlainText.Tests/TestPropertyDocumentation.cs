@@ -1,5 +1,4 @@
 using System.Xml;
-using Moq;
 
 namespace BitzArt.XDoc.Tests;
 
