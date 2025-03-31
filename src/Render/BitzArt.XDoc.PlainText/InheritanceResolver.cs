@@ -24,9 +24,7 @@ internal static class InheritanceResolver
             return type.BaseType;
         }
 
-        var interfaces = type.GetImmediateInterfaces();
-        
-        return interfaces.FirstOrDefault();
+        return type.GetImmediateInterfaces().FirstOrDefault();
     }
 
     private static MemberInfo? FindTargetMember(Type type, MemberInfo sourceMember, bool checkOwnMembers = false)
@@ -38,10 +36,20 @@ internal static class InheritanceResolver
                 return found;
             }
         }
-        
-        if (type.BaseType != null && CheckPresence(type.BaseType, sourceMember, out var foundInBaseType))
+
+        if (type.BaseType != null)
         {
-            return foundInBaseType;
+            if (CheckPresence(type.BaseType, sourceMember, out var foundInBaseType))
+            {
+                return foundInBaseType;
+            }
+            
+            var result = FindTargetMember(type.BaseType, sourceMember, true);
+
+            if (result is not null)
+            {
+                return result;
+            }
         }
 
         foreach (var immediateInterface in type.GetImmediateInterfaces())
@@ -50,23 +58,8 @@ internal static class InheritanceResolver
             {
                 return found;
             }
-        }
-
-        if (type.BaseType == null)
-        {
-            return null;
-        }
-
-        var result = FindTargetMember(type.BaseType, sourceMember, true);
-
-        if (result is not null)
-        {
-            return result;
-        }
-
-        foreach (var immediateInterface in type.GetImmediateInterfaces())
-        {
-            result = FindTargetMember(immediateInterface, sourceMember, true);
+        
+            var result = FindTargetMember(immediateInterface, sourceMember, true);
 
             if (result is not null)
             {
@@ -80,7 +73,7 @@ internal static class InheritanceResolver
     private static bool CheckPresence(Type type, MemberInfo sourceMember, out MemberInfo? found)
     {
         var memberInfos = type.GetMembers();
-        
+
         foreach (var member in memberInfos)
         {
             if (member.MemberType != sourceMember.MemberType)
@@ -92,7 +85,7 @@ internal static class InheritanceResolver
             {
                 continue;
             }
-    
+
             if (sourceMember is MethodInfo sourceMethod && member is MethodInfo targetMethod)
             {
                 var sourceParams = sourceMethod.GetParameters();
@@ -102,9 +95,9 @@ internal static class InheritanceResolver
                 {
                     continue;
                 }
-    
+
                 var parametersMatch = true;
-                
+
                 for (var i = 0; i < sourceParams.Length; i++)
                 {
                     if (sourceParams[i].ParameterType != targetParams[i].ParameterType)
@@ -119,14 +112,14 @@ internal static class InheritanceResolver
                     continue;
                 }
             }
-    
+
             found = member;
-            
+
             return true;
         }
-    
+
         found = null;
-        
+
         return false;
     }
 }
