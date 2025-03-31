@@ -13,7 +13,7 @@ internal static class InheritanceResolver
         return sourceMember switch
         {
             Type type => FindTargetType(type),
-            _ => FindTargetMember(sourceMember.DeclaringType!, sourceMember)
+            _ => FindTargetMember(sourceMember.ReflectedType!, sourceMember, false)
         };
     }
 
@@ -24,74 +24,109 @@ internal static class InheritanceResolver
             return type.BaseType;
         }
 
-        return type.GetImmediateInterfaces().FirstOrDefault();
+        var interfaces = type.GetImmediateInterfaces();
+        
+        return interfaces.FirstOrDefault();
     }
 
     private static MemberInfo? FindTargetMember(Type type, MemberInfo sourceMember, bool checkOwnMembers = false)
     {
         if (checkOwnMembers)
         {
-            if (CheckPresence(type, out var found))
+            if (CheckPresence(type, sourceMember, out var found))
             {
                 return found;
             }
+        }
+        
+        if (type.BaseType != null && CheckPresence(type.BaseType, sourceMember, out var foundInBaseType))
+        {
+            return foundInBaseType;
         }
 
         foreach (var immediateInterface in type.GetImmediateInterfaces())
         {
-            if (CheckPresence(immediateInterface, out var found))
+            if (CheckPresence(immediateInterface, sourceMember, out var found))
             {
                 return found;
             }
         }
 
-        return FindTargetMember(type.BaseType!, sourceMember, true);
-    }
-
-    private static bool CheckPresence(Type type, out MemberInfo? found)
-    {
-        var memberInfos = type.GetMembers();
-
-        foreach (var memberInfo in memberInfos)
+        if (type.BaseType == null)
         {
-            switch (memberInfo)
+            return null;
+        }
+
+        var result = FindTargetMember(type.BaseType, sourceMember, true);
+
+        if (result is not null)
+        {
+            return result;
+        }
+
+        foreach (var immediateInterface in type.GetImmediateInterfaces())
+        {
+            result = FindTargetMember(immediateInterface, sourceMember, true);
+
+            if (result is not null)
             {
-                case PropertyInfo propertyInfo:
-                {
-                    if (type.Has(propertyInfo))
-                    {
-                        found = memberInfo;
-                        return true;
-                    }
-
-                    break;
-                }
-                case FieldInfo fieldInfo:
-                {
-                    if (type.Has(fieldInfo))
-                    {
-                        found = memberInfo;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MethodInfo methodInfo:
-                {
-                    if (type.Has(methodInfo))
-                    {
-                        found = memberInfo;
-                        return true;
-                    }
-
-                    break;
-                }
-                default: throw new NotSupportedException("Unsupported member type");
+                return result;
             }
         }
 
-        found = null;
+        return null;
+    }
 
+    private static bool CheckPresence(Type type, MemberInfo sourceMember, out MemberInfo? found)
+    {
+        var memberInfos = type.GetMembers();
+        
+        foreach (var member in memberInfos)
+        {
+            if (member.MemberType != sourceMember.MemberType)
+            {
+                continue;
+            }
+
+            if (member.Name != sourceMember.Name)
+            {
+                continue;
+            }
+    
+            if (sourceMember is MethodInfo sourceMethod && member is MethodInfo targetMethod)
+            {
+                var sourceParams = sourceMethod.GetParameters();
+                var targetParams = targetMethod.GetParameters();
+
+                if (sourceParams.Length != targetParams.Length)
+                {
+                    continue;
+                }
+    
+                var parametersMatch = true;
+                
+                for (var i = 0; i < sourceParams.Length; i++)
+                {
+                    if (sourceParams[i].ParameterType != targetParams[i].ParameterType)
+                    {
+                        parametersMatch = false;
+                        break;
+                    }
+                }
+
+                if (!parametersMatch)
+                {
+                    continue;
+                }
+            }
+    
+            found = member;
+            
+            return true;
+        }
+    
+        found = null;
+        
         return false;
     }
 }

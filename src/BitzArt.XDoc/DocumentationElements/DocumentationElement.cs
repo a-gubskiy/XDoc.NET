@@ -28,4 +28,9 @@ public abstract class DocumentationElement : IDocumentationElement
         Source = source;
         Node = node;
     }
+
+    /// <summary>
+    /// Gets the text content of the XML node.
+    /// </summary>
+    public string Text => Node?.InnerText.Trim() ?? string.Empty;
 }
