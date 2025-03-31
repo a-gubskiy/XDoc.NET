@@ -52,12 +52,10 @@ class MyClassC : IMyInterface1, IMyInterface2
 
     public void MethodA()
     {
-        throw new NotImplementedException();
     }
 
     public void MethodB()
     {
-        throw new NotImplementedException();
     }
 }
 
