@@ -149,7 +149,7 @@ public class PlainTextRenderer
         return type;
     }
 
-    internal string RenderDirectInheritance(XmlElement element, MemberInfo? target)
+    private string RenderDirectInheritance(XmlElement element, MemberInfo? target)
     {
         if (target == null)
         {
