@@ -59,6 +59,11 @@ class MyClassC : IMyInterface1, IMyInterface2
     }
 }
 
+class MyClassD : MyClassA
+{
+    
+}
+
 public class InheritanceResolverTests
 {
     [Fact]
@@ -67,6 +72,20 @@ public class InheritanceResolverTests
         XmlNode? node = null;
         var xdoc = new XDoc();
         var methodInfo = typeof(MyClassA).GetMethod(nameof(MyClassA.MyMethod))!;
+        
+        var targetMember = InheritanceResolver.GetTargetMember(methodInfo, node);
+        var documentationElement = xdoc.Get(targetMember!);
+        
+        Assert.NotNull(documentationElement);
+        Assert.Equal("My method in MyBaseClass", documentationElement.Text);
+    }
+    
+    [Fact]
+    public void GetTargetMember_CommentOnMethodInBaseClassOfBaseClass_ShouldReturnComment()
+    {
+        XmlNode? node = null;
+        var xdoc = new XDoc();
+        var methodInfo = typeof(MyClassD).GetMethod(nameof(MyClassD.MyMethod))!;
         
         var targetMember = InheritanceResolver.GetTargetMember(methodInfo, node);
         var documentationElement = xdoc.Get(targetMember!);

@@ -13,7 +13,7 @@ internal static class InheritanceResolver
         return sourceMember switch
         {
             Type type => FindTargetType(type),
-            _ => FindTargetMember(sourceMember.ReflectedType!, sourceMember, false)
+            _ => FindTargetMember(sourceMember.DeclaringType!, sourceMember, false)
         };
     }
 
