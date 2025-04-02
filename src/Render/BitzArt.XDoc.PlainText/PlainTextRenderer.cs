@@ -82,7 +82,7 @@ public class PlainTextRenderer
             .Where(o => !string.IsNullOrWhiteSpace(o))
             .ToList();
 
-        var separator = _options.ForceSingleLine ? " " : "\n";
+        var separator = _options.Trim ? " " : "\n";
 
         return string.Join(separator, lines);
     }
@@ -122,14 +122,14 @@ public class PlainTextRenderer
         if (element.Name == "inheritdoc")
         {
             // Direct inheritance
-            return RenderDirectInheritance(element, target);
+            return RenderDirectInheritance(target);
         }
 
         var builder = new StringBuilder();
 
         foreach (XmlNode child in element.ChildNodes)
         {
-            builder.Append(Render(child, null));
+            builder.Append(Render(child, target));
         }
 
         return builder.ToString();
@@ -137,9 +137,14 @@ public class PlainTextRenderer
 
     private string RenderReference(XmlElement element)
     {
-        var cref = new MemberIdentifier(element.Attributes["cref"]!.Value);
+        MemberIdentifier.TryCreate(element.Attributes["cref"]?.Value, out var cref);
 
-        var type = _options.UseShortTypeNames ? cref.ShortType : cref.Type;
+        if (cref == null)
+        {
+            return string.Empty;
+        }
+        
+        var type = _options.RemoveNamespace ? cref.ShortType : cref.Type;
 
         if (cref.IsMember)
         {
@@ -149,14 +154,14 @@ public class PlainTextRenderer
         return type;
     }
 
-    private string RenderDirectInheritance(XmlElement element, MemberInfo? target)
+    private string RenderDirectInheritance(MemberInfo? target)
     {
         if (target == null)
         {
             return string.Empty;
         }
 
-        var targetMember = InheritanceResolver.GetTargetMember(target, element);
+        var targetMember = InheritanceResolver.GetTargetMember(target);
 
         if (targetMember == null)
         {
@@ -164,6 +169,11 @@ public class PlainTextRenderer
         }
 
         var documentationElement = _xdoc.Get(targetMember);
+
+        if (documentationElement == null)
+        {
+            return RenderDirectInheritance(targetMember);
+        }
 
         return Render(documentationElement);
     }

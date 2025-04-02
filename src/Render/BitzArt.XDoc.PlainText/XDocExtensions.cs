@@ -19,8 +19,8 @@ public static class XDocExtensions
 
         return new PlainTextRenderer(documentation.Source, new RendererOptions
         {
-            ForceSingleLine = true,
-            UseShortTypeNames = true
+            Trim = true,
+            RemoveNamespace = true
         }).Render(documentation);
     }
 }

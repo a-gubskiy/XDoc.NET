@@ -10,12 +10,10 @@ public record RendererOptions
     /// When set to true, any line breaks in the content will be removed or replaced.
     /// When set to false, the content will maintain its original line structure.
     /// </summary>
-    public bool ForceSingleLine { get; init; } = true;
+    public bool Trim { get; init; } = true;
 
     /// <summary>
-    /// Indicating whether type names should be rendered in their short form.
-    /// When set to true, simple type names will be used (e.g., "string" instead of "System.String").
-    /// When set to false, fully qualified type names will be used.
+    /// Whether to remove the namespace from the type names.
     /// </summary>
-    public bool UseShortTypeNames { get; init; } = true;
+    public bool RemoveNamespace { get; init; } = true;
 }

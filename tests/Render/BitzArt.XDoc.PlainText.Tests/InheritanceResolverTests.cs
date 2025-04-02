@@ -1,15 +1,12 @@
-using System.Xml;
-
 namespace BitzArt.XDoc.Tests;
 
-/// <summary>
-/// Comment on MyBaseClass
-/// </summary>
+class MyClassWithoutInheritance
+{
+    public int MyProperty => 1;
+}
+
 abstract class MyBaseClass
 {
-    /// <summary>
-    /// My method in MyBaseClass
-    /// </summary>
     public abstract string MyMethod();
 }
 
@@ -18,166 +15,67 @@ class MyClassA : MyBaseClass
     public override string MyMethod() => "MyClassA.MyMethod";
 }
 
-/// <summary>
-/// Comment on IMyInterface
-/// </summary>
-interface IMyInterface
+class MyClassB : MyClassA
 {
-    /// <summary>
-    /// My method in IMyInterface
-    /// </summary>
+    public override string MyMethod() => "MyClassD.MyMethod";
+}
+
+interface IMyInterface1
+{
     string MyMethod();
-}
-
-class MyClassB : IMyInterface
-{
-    public string MyMethod() => "MyClassB.MyMethod";
-}
-
-/// <inheritdoc />
-interface IMyInterface1 : IMyInterface
-{
-    int MethodA();
 }
 
 interface IMyInterface2
 {
-    int MethodB();
+    string MyMethod();
 }
 
-/// <inheritdoc />
-class MyClassC : IMyInterface1, IMyInterface2
+class MyClassWithMultipleInterfaces : IMyInterface1, IMyInterface2
 {
-    public string MyMethod() => "MyClassC.MyMethod";
-
-    public int MethodA() => 0;
-
-    public int MethodB() => 0;
-}
-
-class MyClassD : MyClassA
-{
-}
-
-class MyClassWithMultipleInheritance : MyBaseClass, IMyInterface
-{
-    public override string MyMethod() => "MyClassWithMultipleInheritance.MyMethod";
+    public string MyMethod() => "MyClassWithMultipleInheritance.MyMethod";
 }
 
 public class InheritanceResolverTests
 {
-    private const string MyMethodInIMyInterface = "My method in IMyInterface";
-    private const string MyMethodInMyBaseClass = "My method in MyBaseClass";
-    private const string CommentOnMyBaseClass = "Comment on MyBaseClass";
-
     [Fact]
-    public void GetTargetMember_CommentOnMethodInBaseClass_ShouldReturnComment()
+    public void GetTargetMember_MethodOverrideFromBaseClass_ShouldReturnFromBaseClass()
     {
-        XmlNode? node = null;
-        var xdoc = new XDoc();
-        var methodInfo = typeof(MyClassA).GetMethod(nameof(MyClassA.MyMethod))!;
-
-        var targetMember = InheritanceResolver.GetTargetMember(methodInfo, node);
-        var documentationElement = xdoc.Get(targetMember!);
-
-        Assert.NotNull(documentationElement);
-        Assert.Equal(MyMethodInMyBaseClass, documentationElement.Text);
-    }
-
-    [Fact]
-    public void GetTargetMember_CommentOnMethodInBaseClassOfBaseClass_ShouldReturnComment()
-    {
-        XmlNode? node = null;
-        var xdoc = new XDoc();
-        var methodInfo = typeof(MyClassD).GetMethod(nameof(MyClassD.MyMethod))!;
-
-        var targetMember = InheritanceResolver.GetTargetMember(methodInfo, node);
-        var documentationElement = xdoc.Get(targetMember!);
-
-        Assert.NotNull(documentationElement);
-        Assert.Equal(MyMethodInMyBaseClass, documentationElement.Text);
-    }
-
-    [Fact]
-    public void GetTargetMember_CommentOnMethodInBaseInterface_ShouldReturnComment()
-    {
-        XmlNode? node = null;
-        var xdoc = new XDoc();
+        // Arrange
         var methodInfo = typeof(MyClassB).GetMethod(nameof(MyClassB.MyMethod))!;
+        var expected = typeof(MyClassA).GetMethod(nameof(MyClassA.MyMethod))!;
 
-        var targetMember = InheritanceResolver.GetTargetMember(methodInfo, node);
-        var documentationElement = xdoc.Get(targetMember!);
+        // Act
+        var targetMember = InheritanceResolver.GetTargetMember(methodInfo);
 
-        Assert.NotNull(documentationElement);
-        Assert.Equal(MyMethodInIMyInterface, documentationElement.Text);
+        // Assert
+        Assert.Equal(expected, targetMember);
+    }
+
+
+    [Fact]
+    public void GetTargetMember_MethodImplementedFromMultipleINterfaces_ShouldReturnFromFirstInterface()
+    {
+        // Arrange
+        var methodInfo = typeof(MyClassWithMultipleInterfaces).GetMethod(nameof(MyClassWithMultipleInterfaces.MyMethod))!;
+        var expected = typeof(IMyInterface1).GetMethod(nameof(IMyInterface1.MyMethod))!;
+
+        // Act
+        var targetMember = InheritanceResolver.GetTargetMember(methodInfo);
+
+        // Assert
+        Assert.Equal(expected, targetMember);
     }
 
     [Fact]
-    public void GetTargetMember_CommentOnMethodInBaseInterfaceOfBaceInterace_ShouldReturnComment()
+    public void GetTargetMember_PropertyImplementedOnlyItself_ShouldReturnNull()
     {
-        XmlNode? node = null;
-        var xdoc = new XDoc();
-        var methodInfo = typeof(MyClassC).GetMethod(nameof(MyClassC.MyMethod))!;
+        // Arrange
+        var methodInfo = typeof(MyClassWithoutInheritance).GetProperty(nameof(MyClassWithoutInheritance.MyProperty))!;
 
-        var targetMember = InheritanceResolver.GetTargetMember(methodInfo, node);
-        var documentationElement = xdoc.Get(targetMember!);
+        // Act
+        var targetMember = InheritanceResolver.GetTargetMember(methodInfo);
 
-        Assert.NotNull(documentationElement);
-        Assert.Equal(MyMethodInIMyInterface, documentationElement.Text);
+        // Assert
+        Assert.Null(targetMember);
     }
-
-    [Fact]
-    public void GetTargetMember_NoCommentsInHierarchy_ShouldReturnNull()
-    {
-        XmlNode? node = null;
-        var xdoc = new XDoc();
-        var methodInfo = typeof(MyClassC).GetMethod(nameof(MyClassC.MethodA))!;
-
-        var targetMember = InheritanceResolver.GetTargetMember(methodInfo, node);
-        var documentationElement = xdoc.Get(targetMember!);
-
-        Assert.Null(documentationElement);
-    }
-
-    [Fact]
-    public void GetTargetMember_CommentsOnBothInterfaceAndBaseClass_ShouldPriorityBaseClass()
-    {
-        XmlNode? node = null;
-        var xdoc = new XDoc();
-        var methodInfo = typeof(MyClassWithMultipleInheritance).GetMethod(nameof(MyClassWithMultipleInheritance.MyMethod))!;
-
-        var targetMember = InheritanceResolver.GetTargetMember(methodInfo, node);
-        var documentationElement = xdoc.Get(targetMember!);
-
-        Assert.NotNull(documentationElement);
-        Assert.Equal(MyMethodInMyBaseClass, documentationElement.Text);
-    }
-    
-    [Fact]
-    public void GetTargetMember_CommentsOnBaseClass_ShouldPriorityBaseClass()
-    {
-        XmlNode? node = null;
-        var xdoc = new XDoc();
-        var type = typeof(MyClassWithMultipleInheritance);
-
-        var targetMember = InheritanceResolver.GetTargetMember(type, node);
-        var documentationElement = xdoc.Get(targetMember!);
-
-        Assert.NotNull(documentationElement);
-        Assert.Equal(CommentOnMyBaseClass, documentationElement.Text);
-    }
-    
-    // [Fact]
-    // public void GetTargetMember_CommentsOnBaseInterface_ShouldPriorityBaseClass()
-    // {
-    //     XmlNode? node = null;
-    //     var xdoc = new XDoc();
-    //     var type = typeof(MyClassC);
-    //
-    //     var targetMember = InheritanceResolver.GetTargetMember(type, node);
-    //     var documentationElement = xdoc.Get(targetMember!);
-    //
-    //     Assert.NotNull(documentationElement);
-    //     Assert.Equal(MyMethodInIMyInterface, documentationElement.Text);
-    // }
 }
