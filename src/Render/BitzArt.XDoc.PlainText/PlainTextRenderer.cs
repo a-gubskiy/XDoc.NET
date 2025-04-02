@@ -122,7 +122,7 @@ public class PlainTextRenderer
         if (element.Name == "inheritdoc")
         {
             // Direct inheritance
-            return RenderDirectInheritance(element, target);
+            return RenderDirectInheritance(target);
         }
 
         var builder = new StringBuilder();
@@ -149,14 +149,14 @@ public class PlainTextRenderer
         return type;
     }
 
-    private string RenderDirectInheritance(XmlElement element, MemberInfo? target)
+    private string RenderDirectInheritance(MemberInfo? target)
     {
         if (target == null)
         {
             return string.Empty;
         }
 
-        MemberInfo? targetMember = InheritanceResolver.GetTargetMember(target);
+        var targetMember = InheritanceResolver.GetTargetMember(target);
 
         if (targetMember == null)
         {
@@ -167,9 +167,8 @@ public class PlainTextRenderer
 
         if (documentationElement == null)
         {
-            return RenderDirectInheritance(element, targetMember);
+            return RenderDirectInheritance(targetMember);
         }
-
 
         return Render(documentationElement);
     }
