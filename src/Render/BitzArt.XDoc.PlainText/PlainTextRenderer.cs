@@ -82,7 +82,7 @@ public class PlainTextRenderer
             .Where(o => !string.IsNullOrWhiteSpace(o))
             .ToList();
 
-        var separator = _options.ForceSingleLine ? " " : "\n";
+        var separator = _options.Trim ? " " : "\n";
 
         return string.Join(separator, lines);
     }
@@ -139,7 +139,7 @@ public class PlainTextRenderer
     {
         var cref = new MemberIdentifier(element.Attributes["cref"]!.Value);
 
-        var type = _options.UseShortTypeNames ? cref.ShortType : cref.Type;
+        var type = _options.RemoveNamespace ? cref.ShortType : cref.Type;
 
         if (cref.IsMember)
         {
@@ -156,7 +156,7 @@ public class PlainTextRenderer
             return string.Empty;
         }
 
-        var targetMember = InheritanceResolver.GetTargetMember(target, element);
+        var targetMember = InheritanceResolver.GetTargetMember(target);
 
         if (targetMember == null)
         {

@@ -1,5 +1,4 @@
 using System.Reflection;
-using System.Xml;
 
 namespace BitzArt.XDoc;
 
@@ -8,58 +7,45 @@ namespace BitzArt.XDoc;
 /// </summary>
 internal static class InheritanceResolver
 {
-    public static MemberInfo? GetTargetMember(MemberInfo sourceMember, XmlNode? node)
+    public static MemberInfo? GetTargetMember(MemberInfo sourceMember)
     {
         return sourceMember switch
         {
             Type type => FindTargetType(type),
-            _ => FindTargetMember(sourceMember.DeclaringType!, sourceMember, false)
+            MemberInfo => FindTargetMember(sourceMember.DeclaringType!, sourceMember)
         };
     }
 
-    private static MemberInfo? FindTargetType(Type type)
+    private static Type? FindTargetType(Type type)
     {
         if (type.BaseType is not null)
         {
             return type.BaseType;
         }
 
-        return type.GetImmediateInterfaces().FirstOrDefault();
+        return GetImmediateInterfaces(type).FirstOrDefault();
     }
 
-    private static MemberInfo? FindTargetMember(Type type, MemberInfo sourceMember, bool checkOwnMembers = false)
+    private static MemberInfo? FindTargetMember(Type type, MemberInfo sourceMember)
     {
-        if (checkOwnMembers)
-        {
-            if (CheckPresence(type, sourceMember, out var found))
-            {
-                return found;
-            }
-        }
-
-        if (type.BaseType != null)
+        // 1. Check base type members
+        if (type.BaseType is not null)
         {
             if (CheckPresence(type.BaseType, sourceMember, out var foundInBaseType))
             {
                 return foundInBaseType;
             }
-            
-            var result = FindTargetMember(type.BaseType, sourceMember, true);
-
-            if (result is not null)
-            {
-                return result;
-            }
         }
 
-        foreach (var immediateInterface in type.GetImmediateInterfaces())
+        // 2. Check own immediate interfaces' members
+        foreach (var immediateInterface in GetImmediateInterfaces(type))
         {
             if (CheckPresence(immediateInterface, sourceMember, out var found))
             {
                 return found;
             }
         
-            var result = FindTargetMember(immediateInterface, sourceMember, true);
+            var result = FindTargetMember(immediateInterface, sourceMember);
 
             if (result is not null)
             {
@@ -67,59 +53,45 @@ internal static class InheritanceResolver
             }
         }
 
+        // 3. Recursively visit base type (if any).
+        if (type.BaseType is not null)
+        {
+            var result = FindTargetMember(type.BaseType, sourceMember);
+
+            if (result is not null)
+            {
+                return result;
+            }
+        }
+            
+
         return null;
     }
 
     private static bool CheckPresence(Type type, MemberInfo sourceMember, out MemberInfo? found)
     {
-        var memberInfos = type.GetMembers();
-
-        foreach (var member in memberInfos)
+        found = sourceMember switch
         {
-            if (member.MemberType != sourceMember.MemberType)
-            {
-                continue;
-            }
+            PropertyInfo propertyInfo => type.GetProperty(propertyInfo.Name),
 
-            if (member.Name != sourceMember.Name)
-            {
-                continue;
-            }
+            FieldInfo fieldInfo => type.GetField(fieldInfo.Name),
 
-            if (sourceMember is MethodInfo sourceMethod && member is MethodInfo targetMethod)
-            {
-                var sourceParams = sourceMethod.GetParameters();
-                var targetParams = targetMethod.GetParameters();
+            MethodInfo methodInfo => type.GetMethod(
+                methodInfo.Name,
+                methodInfo.GetGenericArguments().Length,
+                [.. methodInfo.GetParameters().Select(p => p.ParameterType)]),
 
-                if (sourceParams.Length != targetParams.Length)
-                {
-                    continue;
-                }
+            _ => throw new NotSupportedException()
+        };
 
-                var parametersMatch = true;
+        return found is not null;
+    }
 
-                for (var i = 0; i < sourceParams.Length; i++)
-                {
-                    if (sourceParams[i].ParameterType != targetParams[i].ParameterType)
-                    {
-                        parametersMatch = false;
-                        break;
-                    }
-                }
+    private static IEnumerable<Type> GetImmediateInterfaces(Type type)
+    {
+        var inheritedInterfaces = type.GetInterfaces().SelectMany(i => i.GetInterfaces()).ToList();
+        inheritedInterfaces.AddRange(type.BaseType?.GetInterfaces() ?? []);
 
-                if (!parametersMatch)
-                {
-                    continue;
-                }
-            }
-
-            found = member;
-
-            return true;
-        }
-
-        found = null;
-
-        return false;
+        return type.GetInterfaces().Except(inheritedInterfaces);
     }
 }

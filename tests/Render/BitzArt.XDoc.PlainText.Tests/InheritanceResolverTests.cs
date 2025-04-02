@@ -31,7 +31,8 @@ interface IMyInterface
 
 class MyClassB : IMyInterface
 {
-    public string MyMethod() => "MyClassB.MyMethod";
+    /// <inheritdoc/>
+    public virtual string MyMethod() => "MyClassB.MyMethod";
 }
 
 /// <inheritdoc />
@@ -57,6 +58,7 @@ class MyClassC : IMyInterface1, IMyInterface2
 
 class MyClassD : MyClassA
 {
+    public override string MyMethod() => "MyClassD.MyMethod";
 }
 
 class MyClassWithMultipleInheritance : MyBaseClass, IMyInterface
@@ -71,13 +73,13 @@ public class InheritanceResolverTests
     private const string CommentOnMyBaseClass = "Comment on MyBaseClass";
 
     [Fact]
-    public void GetTargetMember_CommentOnMethodInBaseClass_ShouldReturnComment()
+    public void GetTargetMember_MethodInBaseClass_ShouldReturnBaseClassMember()
     {
         XmlNode? node = null;
         var xdoc = new XDoc();
         var methodInfo = typeof(MyClassA).GetMethod(nameof(MyClassA.MyMethod))!;
 
-        var targetMember = InheritanceResolver.GetTargetMember(methodInfo, node);
+        var targetMember = InheritanceResolver.GetTargetMember(methodInfo);
         var documentationElement = xdoc.Get(targetMember!);
 
         Assert.NotNull(documentationElement);
@@ -85,17 +87,17 @@ public class InheritanceResolverTests
     }
 
     [Fact]
-    public void GetTargetMember_CommentOnMethodInBaseClassOfBaseClass_ShouldReturnComment()
+    public void GetTargetMember_MethodOverrideFromBaseClass_ShouldReturnFromBaseClass()
     {
-        XmlNode? node = null;
-        var xdoc = new XDoc();
+        // Arrange
         var methodInfo = typeof(MyClassD).GetMethod(nameof(MyClassD.MyMethod))!;
+        var expected = typeof(MyClassA).GetMethod(nameof(MyClassA.MyMethod))!;
 
-        var targetMember = InheritanceResolver.GetTargetMember(methodInfo, node);
-        var documentationElement = xdoc.Get(targetMember!);
+        // Act
+        var targetMember = InheritanceResolver.GetTargetMember(methodInfo);
 
-        Assert.NotNull(documentationElement);
-        Assert.Equal(MyMethodInMyBaseClass, documentationElement.Text);
+        // Assert
+        Assert.Equal(expected, targetMember);
     }
 
     [Fact]
@@ -105,7 +107,7 @@ public class InheritanceResolverTests
         var xdoc = new XDoc();
         var methodInfo = typeof(MyClassB).GetMethod(nameof(MyClassB.MyMethod))!;
 
-        var targetMember = InheritanceResolver.GetTargetMember(methodInfo, node);
+        var targetMember = InheritanceResolver.GetTargetMember(methodInfo);
         var documentationElement = xdoc.Get(targetMember!);
 
         Assert.NotNull(documentationElement);
@@ -119,7 +121,7 @@ public class InheritanceResolverTests
         var xdoc = new XDoc();
         var methodInfo = typeof(MyClassC).GetMethod(nameof(MyClassC.MyMethod))!;
 
-        var targetMember = InheritanceResolver.GetTargetMember(methodInfo, node);
+        var targetMember = InheritanceResolver.GetTargetMember(methodInfo);
         var documentationElement = xdoc.Get(targetMember!);
 
         Assert.NotNull(documentationElement);
@@ -133,7 +135,7 @@ public class InheritanceResolverTests
         var xdoc = new XDoc();
         var methodInfo = typeof(MyClassC).GetMethod(nameof(MyClassC.MethodA))!;
 
-        var targetMember = InheritanceResolver.GetTargetMember(methodInfo, node);
+        var targetMember = InheritanceResolver.GetTargetMember(methodInfo);
         var documentationElement = xdoc.Get(targetMember!);
 
         Assert.Null(documentationElement);
@@ -146,7 +148,7 @@ public class InheritanceResolverTests
         var xdoc = new XDoc();
         var methodInfo = typeof(MyClassWithMultipleInheritance).GetMethod(nameof(MyClassWithMultipleInheritance.MyMethod))!;
 
-        var targetMember = InheritanceResolver.GetTargetMember(methodInfo, node);
+        var targetMember = InheritanceResolver.GetTargetMember(methodInfo);
         var documentationElement = xdoc.Get(targetMember!);
 
         Assert.NotNull(documentationElement);
@@ -160,7 +162,7 @@ public class InheritanceResolverTests
         var xdoc = new XDoc();
         var type = typeof(MyClassWithMultipleInheritance);
 
-        var targetMember = InheritanceResolver.GetTargetMember(type, node);
+        var targetMember = InheritanceResolver.GetTargetMember(type);
         var documentationElement = xdoc.Get(targetMember!);
 
         Assert.NotNull(documentationElement);
