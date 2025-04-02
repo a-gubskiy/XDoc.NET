@@ -43,7 +43,6 @@ public class PlainTextRendererTests
         // Arrange
         var assembly = GetType().Assembly;
 
-
         List<TestMemberNode> nodes =
         [
             new TestMemberNode(typeof(TestClass), "node with inherit doc test"),
@@ -63,7 +62,7 @@ public class PlainTextRendererTests
         var plainTextRenderer = new PlainTextRenderer(new XDoc());
         var comment = plainTextRenderer.Render(memberDocumentation);
 
-        Assert.Equal("", comment);
+        Assert.Equal(string.Empty, comment);
     }
 
     [Fact]

@@ -78,4 +78,18 @@ public class InheritanceResolverTests
         // Assert
         Assert.Null(targetMember);
     }
+    
+    [Fact]
+    public void GetTargetMember_MyClassA_ShouldReturnMyBaseClass()
+    {
+        // Arrange
+        var type = typeof(MyClassA);
+        var expected = typeof(MyBaseClass);
+
+        // Act
+        var targetMember = InheritanceResolver.GetTargetMember(type);
+
+        // Assert
+        Assert.Equal(expected, targetMember);
+    }
 }

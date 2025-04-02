@@ -5,30 +5,32 @@ class MyClass
     /// <summary>
     /// This is testing property from MyClass.
     /// </summary>
-    public virtual int TestPropertyFromMyClass { get; set; }
+    public virtual int MyProperty { get; set; }
 }
 
 class MyInheritedClass : MyClass
 {
     /// <inheritdoc />
-    public override int TestPropertyFromMyClass { get; set; }
+    public override int MyProperty { get; set; }
 
 
     /// <summary>
     /// This is testing property from inherited class.
     /// </summary>
-    public int TestPropertyFromMyInheritedClass { get; set; }
+    public int AnotherProperty { get; set; }
 }
 
 class MyDoubleInheritedClass : MyInheritedClass
 {
     /// <inheritdoc />
-    public override int TestPropertyFromMyClass { get; set; }
+    public override int MyProperty { get; set; }
 }
 
 class MySimpleClass
 {
     public int MyMethod() => 1;
+
+    public int MyMethod(int x) => x + 1;
 }
 
 public class PlainTextRendererEndToEndTests
@@ -37,11 +39,11 @@ public class PlainTextRendererEndToEndTests
     private const string ThisIsTestingPropertyFromInheritedClass = "This is testing property from inherited class.";
 
     [Fact]
-    public void Render_ExtractsPropertySummary_ForMyInheritedClassReturnXmlCommentFromMyClass()
+    public void ToPlainText_MyPropertyFromMyInheritedClass_ReturnsThisIsTestingPropertyFromMyClass()
     {
         // Arrange
         var xdoc = new XDoc();
-        var propertyInfo = typeof(MyInheritedClass).GetProperty(nameof(MyInheritedClass.TestPropertyFromMyClass));
+        var propertyInfo = typeof(MyInheritedClass).GetProperty(nameof(MyInheritedClass.MyProperty));
 
         // Act
         var propertyDocumentation = xdoc.Get(propertyInfo);
@@ -52,12 +54,11 @@ public class PlainTextRendererEndToEndTests
     }
 
     [Fact]
-    public void Render_ExtractsPropertySummary_ForMyDoubleInheritedClassReturnXmlCommentFromMyClass()
+    public void ToPlainText_MyPropertyFromMyDoubleInheritedClass_ReturnsThisIsTestingPropertyFromMyClass()
     {
         // Arrange
         var xdoc = new XDoc();
-        var propertyInfo =
-            typeof(MyDoubleInheritedClass).GetProperty(nameof(MyDoubleInheritedClass.TestPropertyFromMyClass));
+        var propertyInfo = typeof(MyDoubleInheritedClass).GetProperty(nameof(MyDoubleInheritedClass.MyProperty));
 
         // Act
         var propertyDocumentation = xdoc.Get(propertyInfo);
@@ -68,11 +69,11 @@ public class PlainTextRendererEndToEndTests
     }
 
     [Fact]
-    public void Render_ExtractsPropertySummary_ForMyInheritedClassReturnXmlCommentFromMyInheritedClass()
+    public void ToPlainText_AnotherPropertyFromMyInheritedClass_ReturnsThisIsTestingPropertyFromInheritedClass()
     {
         // Arrange
         var xdoc = new XDoc();
-        var propertyInfo = typeof(MyInheritedClass).GetProperty(nameof(MyInheritedClass.TestPropertyFromMyInheritedClass));
+        var propertyInfo = typeof(MyInheritedClass).GetProperty(nameof(MyInheritedClass.AnotherProperty));
 
         // Act
         var propertyDocumentation = xdoc.Get(propertyInfo);
@@ -83,11 +84,11 @@ public class PlainTextRendererEndToEndTests
     }
 
     [Fact]
-    public void Render_ExtractsPropertySummary_ForMySimpleClassReturnEmpty()
+    public void ToPlainText_MyMethodFromMySimpleClass_ReturnsEmptyString()
     {
         // Arrange
         var xdoc = new XDoc();
-        var methodInfo = typeof(MySimpleClass).GetMethod(nameof(MySimpleClass.MyMethod));
+        var methodInfo = typeof(MySimpleClass).GetMethod(nameof(MySimpleClass.MyMethod), [typeof(int)])!;
 
         // Act
         var methodocumentation = xdoc.Get(methodInfo);
@@ -95,14 +96,14 @@ public class PlainTextRendererEndToEndTests
 
         // Assert
         Assert.Equal(string.Empty, xmlComment);
-    }  
-    
+    }
+
     [Fact]
-    public void Render_ExtractsPropertySummary_ForMyClassReturnComment()
+    public void ToPlainText_MyPropertyFromMyClass_ReturnsThisIsTestingPropertyFromMyClass()
     {
         // Arrange
         var xdoc = new XDoc();
-        var propertyInfo = typeof(MyClass).GetProperty(nameof(MyClass.TestPropertyFromMyClass));
+        var propertyInfo = typeof(MyClass).GetProperty(nameof(MyClass.MyProperty));
 
         // Act
         var methodocumentation = xdoc.Get(propertyInfo);
