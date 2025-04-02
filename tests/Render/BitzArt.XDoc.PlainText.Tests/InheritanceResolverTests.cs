@@ -7,8 +7,6 @@ class MyClassWithoutInheritance
 
 abstract class MyBaseClass
 {
-    public int MyProperty => 1;
-
     public abstract string MyMethod();
 }
 
@@ -17,31 +15,24 @@ class MyClassA : MyBaseClass
     public override string MyMethod() => "MyClassA.MyMethod";
 }
 
+class MyClassB : MyClassA
+{
+    public override string MyMethod() => "MyClassD.MyMethod";
+}
+
 interface IMyInterface1
 {
     string MyMethod();
-
-    int MethodA();
 }
 
 interface IMyInterface2
 {
     string MyMethod();
-
-    int MethodB();
-}
-class MyClassD : MyClassA
-{
-    public override string MyMethod() => "MyClassD.MyMethod";
 }
 
 class MyClassWithMultipleInterfaces : IMyInterface1, IMyInterface2
 {
     public string MyMethod() => "MyClassWithMultipleInheritance.MyMethod";
-
-    public int MethodA() => 1;
-
-    public int MethodB() => 1;
 }
 
 public class InheritanceResolverTests
@@ -50,7 +41,7 @@ public class InheritanceResolverTests
     public void GetTargetMember_MethodOverrideFromBaseClass_ShouldReturnFromBaseClass()
     {
         // Arrange
-        var methodInfo = typeof(MyClassD).GetMethod(nameof(MyClassD.MyMethod))!;
+        var methodInfo = typeof(MyClassB).GetMethod(nameof(MyClassB.MyMethod))!;
         var expected = typeof(MyClassA).GetMethod(nameof(MyClassA.MyMethod))!;
 
         // Act

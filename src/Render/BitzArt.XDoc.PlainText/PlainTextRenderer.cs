@@ -129,7 +129,7 @@ public class PlainTextRenderer
 
         foreach (XmlNode child in element.ChildNodes)
         {
-            builder.Append(Render(child, null));
+            builder.Append(Render(child, target));
         }
 
         return builder.ToString();
