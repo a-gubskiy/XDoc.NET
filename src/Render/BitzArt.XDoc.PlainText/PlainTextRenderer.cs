@@ -137,8 +137,13 @@ public class PlainTextRenderer
 
     private string RenderReference(XmlElement element)
     {
-        var cref = new MemberIdentifier(element.Attributes["cref"]!.Value);
+        MemberIdentifier.TryCreate(element.Attributes["cref"]?.Value, out var cref);
 
+        if (cref == null)
+        {
+            return string.Empty;
+        }
+        
         var type = _options.RemoveNamespace ? cref.ShortType : cref.Type;
 
         if (cref.IsMember)
