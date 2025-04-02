@@ -156,7 +156,7 @@ public class PlainTextRenderer
             return string.Empty;
         }
 
-        var targetMember = InheritanceResolver.GetTargetMember(target);
+        MemberInfo? targetMember = InheritanceResolver.GetTargetMember(target);
 
         if (targetMember == null)
         {
@@ -164,6 +164,12 @@ public class PlainTextRenderer
         }
 
         var documentationElement = _xdoc.Get(targetMember);
+
+        if (documentationElement == null)
+        {
+            return RenderDirectInheritance(element, targetMember);
+        }
+
 
         return Render(documentationElement);
     }
