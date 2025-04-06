@@ -1,7 +1,6 @@
 using JetBrains.Annotations;
 
-namespace BitzArt.XDoc;
-
+namespace BitzArt.XDoc.PlainText;
 
 /// <summary>
 /// Represents and parses XML documentation references (crefs) for types and members.

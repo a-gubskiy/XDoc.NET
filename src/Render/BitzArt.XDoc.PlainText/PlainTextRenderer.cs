@@ -2,7 +2,7 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 
-namespace BitzArt.XDoc;
+namespace BitzArt.XDoc.PlainText;
 
 /// <summary>
 /// Lightweight renderer that converts XML documentation to plain text.

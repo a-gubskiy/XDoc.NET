@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace BitzArt.XDoc;
+namespace BitzArt.XDoc.PlainText;
 
 /// <summary>
 /// Direct inheritance resolver (<c>&lt;inheritdoc/&gt;</c>)
@@ -89,9 +89,13 @@ internal static class InheritanceResolver
 
     private static IEnumerable<Type> GetImmediateInterfaces(Type type)
     {
-        var inheritedInterfaces = type.GetInterfaces().SelectMany(i => i.GetInterfaces()).ToList();
-        inheritedInterfaces.AddRange(type.BaseType?.GetInterfaces() ?? []);
+        var inheritedInterfaces = type
+            .GetInterfaces()
+            .SelectMany(i => i.GetInterfaces())
+            .Union(type.BaseType?.GetInterfaces() ?? []);
 
-        return type.GetInterfaces().Except(inheritedInterfaces);
+        var result = type.GetInterfaces().Except(inheritedInterfaces);
+
+        return result;
     }
 }

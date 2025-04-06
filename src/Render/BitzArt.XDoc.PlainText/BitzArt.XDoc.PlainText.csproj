@@ -5,7 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <RootNamespace>BitzArt.XDoc</RootNamespace>
+        <RootNamespace>BitzArt.XDoc.PlainText</RootNamespace>
 
         <PackageId>BitzArt.XDoc.PlainText</PackageId>
         <Authors>BitzArt</Authors>

@@ -23,7 +23,7 @@ public abstract class DocumentationElement : IDocumentationElement
     /// </summary>
     /// <param name="source">The source of the documentation.</param>
     /// <param name="node">The XML node that contains the documentation.</param>
-    protected DocumentationElement(XDoc source, XmlNode? node)
+    internal DocumentationElement(XDoc source, XmlNode? node)
     {
         Source = source;
         Node = node;

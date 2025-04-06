@@ -1,6 +1,6 @@
 using System.Xml;
 
-namespace BitzArt.XDoc.Tests;
+namespace BitzArt.XDoc.PlainText.Tests;
 
 public class FakeMemberDocumentation : DocumentationElement
 {
