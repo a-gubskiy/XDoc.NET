@@ -1,20 +1,17 @@
-using JetBrains.Annotations;
-
 namespace BitzArt.XDoc.PlainText;
 
 /// <summary>
 /// Represents and parses XML documentation references (crefs) for types and members.
 /// Handles type references (T:), method references (M:), property references (P:), and field references (F:).
 /// </summary>
-[PublicAPI]
-public record MemberIdentifier
+internal record MemberIdentifier
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="MemberIdentifier"/> class by parsing a cref string.
     /// </summary>
     /// <param name="cref">The cref string to parse (e.g., "T:Namespace.TypeName" or "M:Namespace.TypeName.MethodName").</param>
     /// <exception cref="ArgumentException">Thrown when the cref format is invalid.</exception>
-    public MemberIdentifier(string cref)
+    private MemberIdentifier(string cref)
     {
         Prefix = cref[..2];
 
