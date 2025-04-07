@@ -92,10 +92,9 @@ public class PlainTextRendererEndToEndTests
 
         // Act
         var methodocumentation = xdoc.Get(methodInfo);
-        var xmlComment = methodocumentation.ToPlainText();
 
         // Assert
-        Assert.Equal(string.Empty, xmlComment);
+        Assert.Null(methodocumentation);
     }
 
     [Fact]

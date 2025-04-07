@@ -30,7 +30,7 @@ public class PlainTextRendererTests
 
         var node = xmlDocument.SelectSingleNode("//member[@name='P:BitzArt.XDoc.Tests.TestClass.TestProperty']");
 
-        var memberDocumentation = new FakeMemberDocumentation(node);
+        var memberDocumentation = new TestDocumentationElement(node);
 
         var plainTextRenderer = new PlainTextRenderer(new XDoc());
         var comment = plainTextRenderer.Render(memberDocumentation);
@@ -58,7 +58,7 @@ public class PlainTextRendererTests
 
         var node = xmlDocument.SelectSingleNode("//inheritdoc");
 
-        var memberDocumentation = new FakeMemberDocumentation(node);
+        var memberDocumentation = new TestDocumentationElement(node);
 
         var plainTextRenderer = new PlainTextRenderer(new XDoc());
         var comment = plainTextRenderer.Render(memberDocumentation);
@@ -81,7 +81,7 @@ public class PlainTextRendererTests
     {
         // Arrange
         var textNode = new XmlDocument().CreateTextNode("Hello World");
-        var memberDocumentation = new FakeMemberDocumentation(textNode);
+        var memberDocumentation = new TestDocumentationElement(textNode);
         var plainTextRenderer = new PlainTextRenderer(new XDoc());
 
         // Act
@@ -98,7 +98,7 @@ public class PlainTextRendererTests
         var element = new XmlDocument().CreateElement("para");
         element.InnerXml = "Line1\n   Line2\nLine3";
 
-        var memberDocumentation = new FakeMemberDocumentation(element);
+        var memberDocumentation = new TestDocumentationElement(element);
         var plainTextRenderer = new PlainTextRenderer(new XDoc());
 
         // Act
@@ -121,7 +121,7 @@ public class PlainTextRendererTests
 
         xmlDocument.AppendChild(xmlNode);
 
-        var memberDocumentation = new FakeMemberDocumentation(xmlNode);
+        var memberDocumentation = new TestDocumentationElement(xmlNode);
         var plainTextRenderer = new PlainTextRenderer(new XDoc());
 
         // Act
@@ -144,7 +144,7 @@ public class PlainTextRendererTests
 
         xmlDocument.AppendChild(xmlNode);
 
-        var memberDocumentation = new FakeMemberDocumentation(xmlNode);
+        var memberDocumentation = new TestDocumentationElement(xmlNode);
         var plainTextRenderer = new PlainTextRenderer(new XDoc());
 
         // Act
@@ -159,7 +159,7 @@ public class PlainTextRendererTests
     {
         // Arrange
         var element = new XmlDocument().CreateElement("empty");
-        var memberDocumentation = new FakeMemberDocumentation(element);
+        var memberDocumentation = new TestDocumentationElement(element);
         var plainTextRenderer = new PlainTextRenderer(new XDoc());
 
         // Act
