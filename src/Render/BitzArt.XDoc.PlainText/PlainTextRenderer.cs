@@ -29,7 +29,7 @@ public class PlainTextRenderer
     /// </summary>
     /// <param name="documentation"></param>
     /// <returns></returns>
-    public string Render(DocumentationElement? documentation)
+    public string Render(IDocumentationElement? documentation)
     {
         if (documentation == null)
         {
@@ -41,7 +41,7 @@ public class PlainTextRenderer
         return Normalize(Render(documentation.Node, target));
     }
 
-    private MemberInfo? GetTarget(DocumentationElement documentation)
+    private MemberInfo? GetTarget(IDocumentationElement documentation)
     {
         if (documentation is IDocumentationElement<Type> typeDocumentation)
         {
@@ -82,7 +82,7 @@ public class PlainTextRenderer
             .Where(o => !string.IsNullOrWhiteSpace(o))
             .ToList();
 
-        var separator = _options.Trim ? " " : "\n";
+        var separator = _options.RemoveNamespace ? " " : "\n";
 
         return string.Join(separator, lines);
     }
