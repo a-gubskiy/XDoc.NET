@@ -114,7 +114,7 @@ public class PlainTextRendererEndToEndTests
     }
     
     [Fact]
-    public void ToPlainText_MyPropertyFromMyDoubleInheritedClassWithNamesapces_ReturnsThisIsTestingPropertyFromMyClass()
+    public void ToPlainText_MyPropertyFromMyDoubleInheritedClassWithNamespaces_ReturnsThisIsTestingPropertyFromMyClass()
     {
         // Arrange
         var xdoc = new XDoc();
