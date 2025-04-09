@@ -29,8 +29,15 @@ public static class PropertyBuilderExtensions
         Expression<Func<TCommentTargetEntity, TCommentTargetProperty>> commentTargetPropertyExpression)
         where TCommentTargetEntity : class
     {
-        var comment = xdoc.Get(commentTargetPropertyExpression).ToPlainText();
+        var documentationElement = xdoc.Get(commentTargetPropertyExpression);
 
+        if (documentationElement == null)
+        {
+            return propertyBuilder;
+        }
+
+        var comment = documentationElement.ToPlainText();
+        
         return propertyBuilder.HasComment(comment);
     }
 
@@ -51,7 +58,14 @@ public static class PropertyBuilderExtensions
         Expression<Func<TCommentTargetEntity, TCommentTargetProperty>> commentTargetPropertyExpression)
         where TCommentTargetEntity : class
     {
-        var comment = xdoc.Get(commentTargetPropertyExpression).ToPlainText();
+        var documentationElement = xdoc.Get(commentTargetPropertyExpression);
+        
+        if (documentationElement == null)
+        {
+            return propertyBuilder;
+        }
+        
+        var comment = documentationElement.ToPlainText();
 
         return propertyBuilder.HasComment(comment);
     }
