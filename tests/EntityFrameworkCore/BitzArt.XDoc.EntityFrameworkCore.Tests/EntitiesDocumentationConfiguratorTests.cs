@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace BitzArt.XDoc.Tests;
 
-public class EntitiesCommentConfiguratorTests
+public class EntitiesDocumentationConfiguratorTests
 {
     private class TestDbContext1(Action<TestDbContext, ModelBuilder> onModelCreating) : TestDbContext(onModelCreating);
 
@@ -18,7 +18,7 @@ public class EntitiesCommentConfiguratorTests
         {
             modelBuilder.Entity<MyFirstClass>();
 
-            new EntitiesCommentConfigurator(xDoc).ConfigureComments(modelBuilder);
+            new EntitiesDocumentationConfigurator(xDoc).ConfigureComments(modelBuilder);
         });
 
         // Act

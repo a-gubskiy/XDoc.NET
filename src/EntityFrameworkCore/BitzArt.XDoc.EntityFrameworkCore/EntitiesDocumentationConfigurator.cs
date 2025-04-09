@@ -7,14 +7,14 @@ namespace BitzArt.XDoc;
 /// Configures XML documentation comments for Entity Framework Core entities and their properties.
 /// </summary>
 [PublicAPI]
-public class EntitiesCommentConfigurator
+public class EntitiesDocumentationConfigurator
 {
     private readonly XDoc _xDoc;
 
     /// <summary>
     /// Default constructor.
     /// </summary>
-    public EntitiesCommentConfigurator(XDoc xDoc)
+    public EntitiesDocumentationConfigurator(XDoc xDoc)
     {
         _xDoc = xDoc;
     }
