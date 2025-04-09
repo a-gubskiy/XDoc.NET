@@ -105,7 +105,7 @@ public class PlainTextRendererTests
         var result = plainTextRenderer.Render(memberDocumentation);
 
         // Assert
-        Assert.Equal("Line1 Line2 Line3", result);
+        Assert.Equal("Line1\nLine2\nLine3", result);
     }
 
     [Fact]

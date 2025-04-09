@@ -80,12 +80,9 @@ public class PlainTextRenderer
         var lines = input
             .Split('\n')
             .Select(line => line.Trim())
-            .Where(o => !string.IsNullOrWhiteSpace(o))
             .ToList();
 
-        var separator = _options.RemoveNamespace ? " " : "\n";
-
-        return string.Join(separator, lines);
+        return string.Join("\n", lines).Trim();
     }
 
     private string Render(XmlNode? node, MemberInfo? target) => node switch
