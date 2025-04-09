@@ -128,7 +128,7 @@ public class PlainTextRenderer
 
     private string RenderReference(XmlElement element)
     {
-        MemberIdentifier.TryCreate(element.Attributes["cref"]?.Value, out var cref);
+        MemberIdentifier.TryCreate(element.Attributes["cref"]?.Value!, out var cref);
 
         if (cref is null)
         {

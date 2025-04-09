@@ -8,36 +8,36 @@ internal record MemberIdentifier
     /// <summary>
     /// Initializes a new instance of the <see cref="MemberIdentifier"/> class by parsing the given string.
     /// </summary>
-    /// <param name="cref">The cref string to parse (e.g., "T:Namespace.TypeName" or "M:Namespace.TypeName.MethodName").</param>
+    /// <param name="value">The cref string to parse (e.g., "T:Namespace.TypeName" or "M:Namespace.TypeName.MethodName").</param>
     /// <exception cref="ArgumentException">Thrown when the cref format is invalid.</exception>
-    private MemberIdentifier(string cref)
+    private MemberIdentifier(string value)
     {
-        if (string.IsNullOrEmpty(cref))
+        if (string.IsNullOrEmpty(value))
         {
-            throw new ArgumentException("Cref cannot be null or empty", nameof(cref));
+            throw new ArgumentException("Cref cannot be null or empty", nameof(value));
         }
 
-        if (cref.Length < 2 || cref[1] != ':')
+        if (value.Length < 3 || value[1] != ':')
         {
-            throw new ArgumentException($"Invalid cref format: {cref}", nameof(cref));
+            throw new ArgumentException($"Invalid cref format: {value}", nameof(value));
         }
-        
-        Prefix = cref[..2];
 
-        var lastIndexOf = cref.LastIndexOf('.');
+        Prefix = value[..2];
+
+        var lastIndexOf = value.LastIndexOf('.');
 
         switch (Prefix)
         {
             case "T:":
-                Type = cref.Substring(2, cref.Length - 2);
+                Type = value.Substring(2, value.Length - 2);
                 Member = null;
                 break;
             case "M:" or "P:" or "F:":
-                Type = cref.Substring(2, lastIndexOf - 2);
-                Member = cref.Substring(lastIndexOf + 1, cref.Length - lastIndexOf - 1);
+                Type = value.Substring(2, lastIndexOf - 2);
+                Member = value.Substring(lastIndexOf + 1, value.Length - lastIndexOf - 1);
                 break;
             default:
-                throw new ArgumentException($"Invalid cref: {cref}");
+                throw new ArgumentException($"Invalid value: {value}");
         }
 
         var typeLastIndexOf = Type.LastIndexOf('.');
@@ -89,11 +89,11 @@ internal record MemberIdentifier
     /// <param name="value">The cref string to parse.</param>
     /// <param name="cref">When this method returns, contains the created <see cref="MemberIdentifier"/> if successful; otherwise, null.</param>
     /// <returns>true if the creation was successful; otherwise, false.</returns>
-    public static bool TryCreate(string? value, out MemberIdentifier? cref)
+    public static bool TryCreate(string value, out MemberIdentifier? cref)
     {
         try
         {
-            cref = new MemberIdentifier(value!);
+            cref = new MemberIdentifier(value);
         }
         catch
         {
