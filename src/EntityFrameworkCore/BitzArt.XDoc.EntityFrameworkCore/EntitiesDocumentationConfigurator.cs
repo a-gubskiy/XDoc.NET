@@ -64,7 +64,7 @@ public class EntitiesDocumentationConfigurator
 
                 if (propertyInfo is null)
                 {
-                    return;
+                    continue;
                 }
 
                 var propertyDocumentation = _xDoc.Get(propertyInfo);
