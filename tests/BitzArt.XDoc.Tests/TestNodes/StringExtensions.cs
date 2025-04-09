@@ -11,7 +11,9 @@ public static class StringExtensions
         var offsetString = new string(' ', offset);
 
         for (var i = exceptFirstLine ? 1 : 0; i < lines.Length; i++)
+        {
             lines[i] = $"{offsetString}{lines[i]}";
+        }
 
         return string.Join('\n', lines);
     }

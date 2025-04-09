@@ -51,7 +51,14 @@ public static class EntityTypeBuilderExtensions
         where TEntity : class
         where TCommentTargetEntity : class
     {
-        var comment = xdoc.Get(commentTargetPropertyExpression).ToPlainText();
+        var documentationElement = xdoc.Get(commentTargetPropertyExpression);
+        
+        if (documentationElement is null)
+        {
+            return entityTypeBuilder;
+        }
+        
+        var comment = documentationElement.ToPlainText();
 
         return entityTypeBuilder.HasPropertyComment(propertyExpression, comment);
     }
@@ -96,7 +103,14 @@ public static class EntityTypeBuilderExtensions
             throw new InvalidOperationException("The property name is ambiguous.");
         }
 
-        var comment = xdoc.Get(memberInfo.First()).ToPlainText();
+        var documentationElement = xdoc.Get(memberInfo.First());
+        
+        if (documentationElement is null)
+        {
+            return entityTypeBuilder;
+        }
+        
+        var comment = documentationElement.ToPlainText();
 
         entityTypeBuilder.Property(propertyName).HasComment(comment);
 

@@ -7,14 +7,14 @@ namespace BitzArt.XDoc;
 /// Configures XML documentation comments for Entity Framework Core entities and their properties.
 /// </summary>
 [PublicAPI]
-public class EntitiesCommentConfigurator
+public class EntitiesDocumentationConfigurator
 {
     private readonly XDoc _xDoc;
 
     /// <summary>
     /// Default constructor.
     /// </summary>
-    public EntitiesCommentConfigurator(XDoc xDoc)
+    public EntitiesDocumentationConfigurator(XDoc xDoc)
     {
         _xDoc = xDoc;
     }
@@ -29,7 +29,14 @@ public class EntitiesCommentConfigurator
 
         foreach (var entityType in entityTypes)
         {
-            var entityComment = _xDoc.Get(entityType.ClrType).ToPlainText();
+            var typeDocumentation = _xDoc.Get(entityType.ClrType);
+
+            if (typeDocumentation is null)
+            {
+                continue;
+            }
+
+            var entityComment = typeDocumentation.ToPlainText();
 
             // For owned entities, we don't set the comment on the entity itself
             // But we will set the comment on the properties
@@ -55,12 +62,19 @@ public class EntitiesCommentConfigurator
 
                 var propertyInfo = entityType.ClrType.GetProperty(property.Name);
 
-                if (propertyInfo == null)
+                if (propertyInfo is null)
                 {
-                    return;
+                    continue;
                 }
 
-                var propertyComment = _xDoc.Get(propertyInfo).ToPlainText();
+                var propertyDocumentation = _xDoc.Get(propertyInfo);
+
+                if (propertyDocumentation is null)
+                {
+                    continue;
+                }
+
+                var propertyComment = propertyDocumentation.ToPlainText();
 
                 property.SetComment(propertyComment);
             }

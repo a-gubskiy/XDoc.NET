@@ -1,4 +1,4 @@
-namespace BitzArt.XDoc.Tests;
+namespace BitzArt.XDoc.PlainText.Tests;
 
 class MyClassWithoutInheritance
 {

@@ -1,8 +1,9 @@
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Xml;
 
-namespace BitzArt.XDoc;
+namespace BitzArt.XDoc.PlainText;
 
 /// <summary>
 /// Lightweight renderer that converts XML documentation to plain text.
@@ -29,9 +30,9 @@ public class PlainTextRenderer
     /// </summary>
     /// <param name="documentation"></param>
     /// <returns></returns>
-    public string Render(DocumentationElement? documentation)
+    public string Render(IDocumentationElement? documentation)
     {
-        if (documentation == null)
+        if (documentation is null)
         {
             return string.Empty;
         }
@@ -41,7 +42,7 @@ public class PlainTextRenderer
         return Normalize(Render(documentation.Node, target));
     }
 
-    private MemberInfo? GetTarget(DocumentationElement documentation)
+    private MemberInfo? GetTarget(IDocumentationElement documentation)
     {
         if (documentation is IDocumentationElement<Type> typeDocumentation)
         {
@@ -79,12 +80,9 @@ public class PlainTextRenderer
         var lines = input
             .Split('\n')
             .Select(line => line.Trim())
-            .Where(o => !string.IsNullOrWhiteSpace(o))
             .ToList();
 
-        var separator = _options.Trim ? " " : "\n";
-
-        return string.Join(separator, lines);
+        return string.Join("\n", lines).Trim();
     }
 
     private string Render(XmlNode? node, MemberInfo? target) => node switch
@@ -96,16 +94,6 @@ public class PlainTextRenderer
     };
 
     /// <summary>
-    /// Renders the content of an XML text node to plain text.
-    /// </summary>
-    /// <param name="textNode">The XML text node to render.</param>
-    /// <returns>The plain text representation of the XML text node.</returns>
-    private string RenderTextNode(XmlText textNode)
-    {
-        return textNode.Value ?? string.Empty;
-    }
-
-    /// <summary>
     /// Renders the content of an XML element to plain text, including handling child nodes and references.
     /// </summary>
     /// <param name="element">The XML element to render.</param>
@@ -113,7 +101,7 @@ public class PlainTextRenderer
     /// <returns>The plain text representation of the XML element.</returns>
     private string RenderXmlElement(XmlElement element, MemberInfo? target)
     {
-        if (element.Attributes["cref"] != null)
+        if (element.Attributes["cref"] is not null)
         {
             // Reference
             return RenderReference(element);
@@ -137,44 +125,59 @@ public class PlainTextRenderer
 
     private string RenderReference(XmlElement element)
     {
-        MemberIdentifier.TryCreate(element.Attributes["cref"]?.Value, out var cref);
+        MemberIdentifier.TryCreate(element.Attributes["cref"]?.Value!, out var cref);
 
-        if (cref == null)
+        if (cref is null)
         {
             return string.Empty;
         }
-        
+
         var type = _options.RemoveNamespace ? cref.ShortType : cref.Type;
 
         if (cref.IsMember)
         {
             return $"{type}.{cref.Member}";
         }
+        
+        if (cref.IsType)
+        {
+            return type;
+        }
 
-        return type;
+        throw new UnreachableException("Invalid cref format: the cref should be either a type or a member.");
     }
 
     private string RenderDirectInheritance(MemberInfo? target)
     {
-        if (target == null)
+        if (target is null)
         {
             return string.Empty;
         }
 
         var targetMember = InheritanceResolver.GetTargetMember(target);
 
-        if (targetMember == null)
+        if (targetMember is null)
         {
             return string.Empty;
         }
 
         var documentationElement = _xdoc.Get(targetMember);
 
-        if (documentationElement == null)
+        if (documentationElement is null)
         {
             return RenderDirectInheritance(targetMember);
         }
 
         return Render(documentationElement);
+    }
+
+    /// <summary>
+    /// Renders the content of an XML text node to plain text.
+    /// </summary>
+    /// <param name="textNode">The XML text node to render.</param>
+    /// <returns>The plain text representation of the XML text node.</returns>
+    private static string RenderTextNode(XmlText textNode)
+    {
+        return textNode.Value ?? string.Empty;
     }
 }

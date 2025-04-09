@@ -7,7 +7,7 @@
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
         <TargetFramework>net9.0</TargetFramework>
-		<RootNamespace>BitzArt.XDoc.Tests</RootNamespace>
+		<RootNamespace>BitzArt.XDoc.PlainText.Tests</RootNamespace>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 

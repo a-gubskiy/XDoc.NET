@@ -1,9 +1,9 @@
-namespace BitzArt.XDoc.Tests;
+namespace BitzArt.XDoc.PlainText.Tests;
 
 class MyClass
 {
     /// <summary>
-    /// This is testing property from MyClass.
+    /// This is testing property from <see cref="MyClass"/>.
     /// </summary>
     public virtual int MyProperty { get; set; }
 }
@@ -36,6 +36,7 @@ class MySimpleClass
 public class PlainTextRendererEndToEndTests
 {
     private const string ThisIsTestingPropertyFromMyClass = "This is testing property from MyClass.";
+    private const string ThisIsTestingPropertyFromMyClassWithNamespace = "This is testing property from BitzArt.XDoc.PlainText.Tests.MyClass.";
     private const string ThisIsTestingPropertyFromInheritedClass = "This is testing property from inherited class.";
 
     [Fact]
@@ -46,8 +47,8 @@ public class PlainTextRendererEndToEndTests
         var propertyInfo = typeof(MyInheritedClass).GetProperty(nameof(MyInheritedClass.MyProperty));
 
         // Act
-        var propertyDocumentation = xdoc.Get(propertyInfo);
-        var xmlComment = propertyDocumentation.ToPlainText();
+        var propertyDocumentation = xdoc.Get(propertyInfo!);
+        var xmlComment = propertyDocumentation!.ToPlainText();
 
         // Assert
         Assert.Equal(ThisIsTestingPropertyFromMyClass, xmlComment);
@@ -61,8 +62,8 @@ public class PlainTextRendererEndToEndTests
         var propertyInfo = typeof(MyDoubleInheritedClass).GetProperty(nameof(MyDoubleInheritedClass.MyProperty));
 
         // Act
-        var propertyDocumentation = xdoc.Get(propertyInfo);
-        var xmlComment = propertyDocumentation.ToPlainText();
+        var propertyDocumentation = xdoc.Get(propertyInfo!);
+        var xmlComment = propertyDocumentation!.ToPlainText();
 
         // Assert
         Assert.Equal(ThisIsTestingPropertyFromMyClass, xmlComment);
@@ -76,8 +77,8 @@ public class PlainTextRendererEndToEndTests
         var propertyInfo = typeof(MyInheritedClass).GetProperty(nameof(MyInheritedClass.AnotherProperty));
 
         // Act
-        var propertyDocumentation = xdoc.Get(propertyInfo);
-        var xmlComment = propertyDocumentation.ToPlainText();
+        var propertyDocumentation = xdoc.Get(propertyInfo!);
+        var xmlComment = propertyDocumentation!.ToPlainText();
 
         // Assert
         Assert.Equal(ThisIsTestingPropertyFromInheritedClass, xmlComment);
@@ -92,10 +93,9 @@ public class PlainTextRendererEndToEndTests
 
         // Act
         var methodocumentation = xdoc.Get(methodInfo);
-        var xmlComment = methodocumentation.ToPlainText();
 
         // Assert
-        Assert.Equal(string.Empty, xmlComment);
+        Assert.Null(methodocumentation);
     }
 
     [Fact]
@@ -106,10 +106,28 @@ public class PlainTextRendererEndToEndTests
         var propertyInfo = typeof(MyClass).GetProperty(nameof(MyClass.MyProperty));
 
         // Act
-        var methodocumentation = xdoc.Get(propertyInfo);
-        var xmlComment = methodocumentation.ToPlainText();
+        var methodocumentation = xdoc.Get(propertyInfo!);
+        var xmlComment = methodocumentation!.ToPlainText();
 
         // Assert
         Assert.Equal(ThisIsTestingPropertyFromMyClass, xmlComment);
+    }
+    
+    [Fact]
+    public void ToPlainText_MyPropertyFromMyDoubleInheritedClassWithNamespaces_ReturnsThisIsTestingPropertyFromMyClass()
+    {
+        // Arrange
+        var xdoc = new XDoc();
+        var propertyInfo = typeof(MyDoubleInheritedClass).GetProperty(nameof(MyDoubleInheritedClass.MyProperty));
+
+        // Act
+        var propertyDocumentation = xdoc.Get(propertyInfo!);
+        var xmlComment = propertyDocumentation!.ToPlainText(options =>
+        {
+            options.RemoveNamespace = false;
+        });
+
+        // Assert
+        Assert.Equal(ThisIsTestingPropertyFromMyClassWithNamespace, xmlComment);
     }
 }
