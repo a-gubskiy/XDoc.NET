@@ -29,7 +29,14 @@ public class EntitiesCommentConfigurator
 
         foreach (var entityType in entityTypes)
         {
-            var entityComment = _xDoc.Get(entityType.ClrType).ToPlainText();
+            var typeDocumentation = _xDoc.Get(entityType.ClrType);
+
+            if (typeDocumentation == null)
+            {
+                continue;
+            }
+
+            var entityComment = typeDocumentation.ToPlainText();
 
             // For owned entities, we don't set the comment on the entity itself
             // But we will set the comment on the properties
@@ -60,7 +67,14 @@ public class EntitiesCommentConfigurator
                     return;
                 }
 
-                var propertyComment = _xDoc.Get(propertyInfo).ToPlainText();
+                var propertyDocumentation = _xDoc.Get(propertyInfo);
+
+                if (propertyDocumentation == null)
+                {
+                    continue;
+                }
+
+                var propertyComment = propertyDocumentation.ToPlainText();
 
                 property.SetComment(propertyComment);
             }
