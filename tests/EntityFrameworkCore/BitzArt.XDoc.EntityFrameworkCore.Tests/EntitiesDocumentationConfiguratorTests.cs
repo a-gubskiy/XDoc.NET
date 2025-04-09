@@ -26,7 +26,7 @@ public class EntitiesDocumentationConfiguratorTests
 
         var designTimeModel = testContext.GetService<IDesignTimeModel>();
         var model = designTimeModel.Model;
-        var idComment = model.FindEntityType(typeof(MyFirstClass)).FindProperty(nameof(MyFirstClass.Id)).GetComment();
+        var idComment = model.FindEntityType(typeof(MyFirstClass))!.FindProperty(nameof(MyFirstClass.Id))!.GetComment();
 
         Assert.Equal(MyFirstClass.IdComment, idComment);
     }
