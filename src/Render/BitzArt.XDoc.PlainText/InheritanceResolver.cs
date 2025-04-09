@@ -44,7 +44,7 @@ internal static class InheritanceResolver
             {
                 return found;
             }
-        
+
             var result = FindTargetMember(immediateInterface, sourceMember);
 
             if (result is not null)
@@ -63,7 +63,6 @@ internal static class InheritanceResolver
                 return result;
             }
         }
-            
 
         return null;
     }
