@@ -96,16 +96,6 @@ public class PlainTextRenderer
     };
 
     /// <summary>
-    /// Renders the content of an XML text node to plain text.
-    /// </summary>
-    /// <param name="textNode">The XML text node to render.</param>
-    /// <returns>The plain text representation of the XML text node.</returns>
-    private string RenderTextNode(XmlText textNode)
-    {
-        return textNode.Value ?? string.Empty;
-    }
-
-    /// <summary>
     /// Renders the content of an XML element to plain text, including handling child nodes and references.
     /// </summary>
     /// <param name="element">The XML element to render.</param>
@@ -176,5 +166,15 @@ public class PlainTextRenderer
         }
 
         return Render(documentationElement);
+    }
+    
+    /// <summary>
+    /// Renders the content of an XML text node to plain text.
+    /// </summary>
+    /// <param name="textNode">The XML text node to render.</param>
+    /// <returns>The plain text representation of the XML text node.</returns>
+    private static string RenderTextNode(XmlText textNode)
+    {
+        return textNode.Value ?? string.Empty;
     }
 }
