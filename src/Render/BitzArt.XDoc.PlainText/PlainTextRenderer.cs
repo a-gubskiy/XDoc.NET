@@ -31,7 +31,7 @@ public class PlainTextRenderer
     /// <returns></returns>
     public string Render(IDocumentationElement? documentation)
     {
-        if (documentation == null)
+        if (documentation is null)
         {
             return string.Empty;
         }
@@ -103,7 +103,7 @@ public class PlainTextRenderer
     /// <returns>The plain text representation of the XML element.</returns>
     private string RenderXmlElement(XmlElement element, MemberInfo? target)
     {
-        if (element.Attributes["cref"] != null)
+        if (element.Attributes["cref"] is not null)
         {
             // Reference
             return RenderReference(element);
@@ -129,11 +129,11 @@ public class PlainTextRenderer
     {
         MemberIdentifier.TryCreate(element.Attributes["cref"]?.Value, out var cref);
 
-        if (cref == null)
+        if (cref is null)
         {
             return string.Empty;
         }
-        
+
         var type = _options.RemoveNamespace ? cref.ShortType : cref.Type;
 
         if (cref.IsMember)
@@ -146,28 +146,28 @@ public class PlainTextRenderer
 
     private string RenderDirectInheritance(MemberInfo? target)
     {
-        if (target == null)
+        if (target is null)
         {
             return string.Empty;
         }
 
         var targetMember = InheritanceResolver.GetTargetMember(target);
 
-        if (targetMember == null)
+        if (targetMember is null)
         {
             return string.Empty;
         }
 
         var documentationElement = _xdoc.Get(targetMember);
 
-        if (documentationElement == null)
+        if (documentationElement is null)
         {
             return RenderDirectInheritance(targetMember);
         }
 
         return Render(documentationElement);
     }
-    
+
     /// <summary>
     /// Renders the content of an XML text node to plain text.
     /// </summary>

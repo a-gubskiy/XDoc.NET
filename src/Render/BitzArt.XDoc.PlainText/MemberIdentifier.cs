@@ -81,7 +81,7 @@ internal record MemberIdentifier
     /// Formats the identifier back into a valid cref string.
     /// </summary>
     /// <returns>A string that represents the current object.</returns>
-    public override string ToString() => $"{Prefix}{Type}{(Member != null ? "." + Member : string.Empty)}";
+    public override string ToString() => $"{Prefix}{Type}{(Member is not null ? "." + Member : string.Empty)}";
 
     /// <summary>
     /// Attempts to create a <see cref="MemberIdentifier"/> from a string value.

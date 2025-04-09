@@ -31,7 +31,7 @@ public static class PropertyBuilderExtensions
     {
         var documentationElement = xdoc.Get(commentTargetPropertyExpression);
 
-        if (documentationElement == null)
+        if (documentationElement is null)
         {
             return propertyBuilder;
         }
@@ -60,7 +60,7 @@ public static class PropertyBuilderExtensions
     {
         var documentationElement = xdoc.Get(commentTargetPropertyExpression);
         
-        if (documentationElement == null)
+        if (documentationElement is null)
         {
             return propertyBuilder;
         }

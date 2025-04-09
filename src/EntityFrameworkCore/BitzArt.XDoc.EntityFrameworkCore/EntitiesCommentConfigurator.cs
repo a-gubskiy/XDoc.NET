@@ -31,7 +31,7 @@ public class EntitiesCommentConfigurator
         {
             var typeDocumentation = _xDoc.Get(entityType.ClrType);
 
-            if (typeDocumentation == null)
+            if (typeDocumentation is null)
             {
                 continue;
             }
@@ -62,14 +62,14 @@ public class EntitiesCommentConfigurator
 
                 var propertyInfo = entityType.ClrType.GetProperty(property.Name);
 
-                if (propertyInfo == null)
+                if (propertyInfo is null)
                 {
                     return;
                 }
 
                 var propertyDocumentation = _xDoc.Get(propertyInfo);
 
-                if (propertyDocumentation == null)
+                if (propertyDocumentation is null)
                 {
                     continue;
                 }

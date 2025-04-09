@@ -53,7 +53,7 @@ public static class EntityTypeBuilderExtensions
     {
         var documentationElement = xdoc.Get(commentTargetPropertyExpression);
         
-        if (documentationElement == null)
+        if (documentationElement is null)
         {
             return entityTypeBuilder;
         }
@@ -105,7 +105,7 @@ public static class EntityTypeBuilderExtensions
 
         var documentationElement = xdoc.Get(memberInfo.First());
         
-        if (documentationElement == null)
+        if (documentationElement is null)
         {
             return entityTypeBuilder;
         }
