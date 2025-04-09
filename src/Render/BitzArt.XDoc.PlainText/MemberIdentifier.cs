@@ -1,18 +1,27 @@
 namespace BitzArt.XDoc.PlainText;
 
 /// <summary>
-/// Represents and parses XML documentation references (crefs) for types and members.
-/// Handles type references (T:), method references (M:), property references (P:), and field references (F:).
+/// Represents an identifier for types and members in XML documentation comments.
 /// </summary>
 internal record MemberIdentifier
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MemberIdentifier"/> class by parsing a cref string.
+    /// Initializes a new instance of the <see cref="MemberIdentifier"/> class by parsing the given string.
     /// </summary>
     /// <param name="cref">The cref string to parse (e.g., "T:Namespace.TypeName" or "M:Namespace.TypeName.MethodName").</param>
     /// <exception cref="ArgumentException">Thrown when the cref format is invalid.</exception>
     private MemberIdentifier(string cref)
     {
+        if (string.IsNullOrEmpty(cref))
+        {
+            throw new ArgumentException("Cref cannot be null or empty", nameof(cref));
+        }
+
+        if (cref.Length < 2 || cref[1] != ':')
+        {
+            throw new ArgumentException($"Invalid cref format: {cref}", nameof(cref));
+        }
+        
         Prefix = cref[..2];
 
         var lastIndexOf = cref.LastIndexOf('.');
