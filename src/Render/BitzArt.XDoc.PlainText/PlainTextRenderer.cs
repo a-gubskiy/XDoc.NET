@@ -144,7 +144,7 @@ public class PlainTextRenderer
             return type;
         }
 
-        throw new UnreachableException();
+        throw new UnreachableException("Invalid cref format: the cref should be either a type or a member.");
     }
 
     private string RenderDirectInheritance(MemberInfo? target)
