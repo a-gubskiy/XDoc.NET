@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Xml;
@@ -140,8 +141,13 @@ public class PlainTextRenderer
         {
             return $"{type}.{cref.Member}";
         }
+        
+        if (cref.IsType)
+        {
+            return type;
+        }
 
-        return type;
+        throw new UnreachableException();
     }
 
     private string RenderDirectInheritance(MemberInfo? target)
