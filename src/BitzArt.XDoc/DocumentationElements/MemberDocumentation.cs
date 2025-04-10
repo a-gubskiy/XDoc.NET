@@ -7,13 +7,15 @@ namespace BitzArt.XDoc;
 /// Contains documentation of a specific declared <typeparamref name="TMemberInfo"/>.
 /// </summary>
 /// <typeparam name="TMemberInfo">Type of the member.</typeparam>
-public abstract class MemberDocumentation<TMemberInfo> : DocumentationElement, IDocumentationElement<TMemberInfo>
+public abstract class MemberDocumentation<TMemberInfo> : DocumentationElement, IDocumentationElement<TMemberInfo>, IMemberDocumentation
     where TMemberInfo : MemberInfo
 {
     /// <summary>
     /// The <typeparamref name="TMemberInfo"/> this documentation if provided for.
     /// </summary>
     public TMemberInfo Member { get; private init; }
+
+    MemberInfo IMemberDocumentation.Member => Member;
 
     TMemberInfo IDocumentationElement<TMemberInfo>.Target => Member;
 
