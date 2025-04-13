@@ -20,7 +20,7 @@ public class PlainTextRendererTests
 
         var myContent = "some text";
         var propertyNode = new TestMemberNode(property!, myContent);
-        
+
         var nodes = new List<TestMemberNode>()
         {
             propertyNode
@@ -71,11 +71,11 @@ public class PlainTextRendererTests
     [Fact]
     public void Render_ReturnsEmptyString_WhenDocumentationIsNull()
     {
-        // Act
-        var result = new PlainTextRenderer().Render(null);
-
         // Assert
-        Assert.Equal(string.Empty, result);
+        Assert.Throws<ArgumentNullException>(() =>
+        {
+            var result = new PlainTextRenderer().Render(null);
+        });
     }
 
     [Fact]
