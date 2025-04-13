@@ -11,37 +11,26 @@ namespace BitzArt.XDoc.PlainText;
 /// </summary>
 public class PlainTextRenderer
 {
-    private readonly XDoc _xdoc;
     private readonly RendererOptions _options;
 
-    internal PlainTextRenderer(XDoc xdoc)
-        : this(xdoc, new RendererOptions())
+    internal PlainTextRenderer() : this(new RendererOptions())
     {
     }
 
-    internal PlainTextRenderer(XDoc xdoc, RendererOptions options)
+    internal PlainTextRenderer(RendererOptions options)
     {
-        _xdoc = xdoc;
         _options = options;
     }
 
     /// <summary>
-    /// Renders the provided documentation element to a string.
+    /// Renders the provided documentation element's own XML node content to plain text.
     /// </summary>
-    /// <param name="documentation"></param>
-    /// <returns></returns>
-    public string Render(IDocumentationElement? documentation)
+    /// <returns>A string containing rendered plain text.</returns>
+    public string Render(IMemberDocumentation documentation)
     {
-        if (documentation is null)
-        {
-            return string.Empty;
-        }
+        ArgumentNullException.ThrowIfNull(documentation);
 
-        var target = (documentation is IMemberDocumentation memberDocumentation)
-            ? memberDocumentation.Member
-            : null;
-
-        return Normalize(Render(documentation.Node, target));
+        return Normalize(RenderNode(documentation, documentation.Node, documentation.Member));
     }
 
     /// <summary>
@@ -62,21 +51,22 @@ public class PlainTextRenderer
         return string.Join("\n", lines).Trim();
     }
 
-    private string Render(XmlNode? node, MemberInfo? target) => node switch
+    private string RenderNode(IMemberDocumentation documentation, XmlNode? node, MemberInfo? target) => node switch
     {
         null => string.Empty,
         XmlText textNode => RenderTextNode(textNode),
-        XmlElement element => RenderXmlElement(element, target),
+        XmlElement element => RenderXmlElement(documentation, element, target),
         _ => node.InnerText
     };
 
     /// <summary>
     /// Renders the content of an XML element to plain text, including handling child nodes and references.
     /// </summary>
+    /// <param name="documentation">The documentation element to render.</param>
     /// <param name="element">The XML element to render.</param>
     /// <param name="target"></param>
     /// <returns>The plain text representation of the XML element.</returns>
-    private string RenderXmlElement(XmlElement element, MemberInfo? target)
+    private string RenderXmlElement(IMemberDocumentation documentation, XmlElement element, MemberInfo? target)
     {
         // Reference
         if (element.Attributes["cref"] is not null)
@@ -87,14 +77,14 @@ public class PlainTextRenderer
         // Direct inheritance
         if (element.Name == "inheritdoc")
         {
-            return RenderDirectInheritance(target);
+            return RenderDirectInheritance(documentation);
         }
 
         var builder = new StringBuilder();
 
         foreach (XmlNode child in element.ChildNodes)
         {
-            builder.Append(Render(child, target));
+            builder.Append(RenderNode(documentation, child, target));
         }
 
         return builder.ToString();
@@ -102,7 +92,7 @@ public class PlainTextRenderer
 
     private string RenderReference(XmlElement element)
     {
-        MemberIdentifier.TryCreate(element.Attributes["cref"]?.Value!, out var cref);
+        var cref = MemberReferenceInfo.FromReferenceString(element.Attributes["cref"]?.Value!);
 
         if (cref is null)
         {
@@ -124,28 +114,14 @@ public class PlainTextRenderer
         throw new UnreachableException("Invalid cref format: the cref should be either a type or a member.");
     }
 
-    private string RenderDirectInheritance(MemberInfo? target)
+    private string RenderDirectInheritance(IMemberDocumentation documentation)
     {
-        if (target is null)
+        var targetDocumentation = documentation.GetInheritanceTargetDocumentation();
+        if (targetDocumentation is null)
         {
             return string.Empty;
         }
-
-        var targetMember = InheritanceResolver.GetTargetMember(target);
-
-        if (targetMember is null)
-        {
-            return string.Empty;
-        }
-
-        var documentationElement = _xdoc.Get(targetMember);
-
-        if (documentationElement is null)
-        {
-            return RenderDirectInheritance(targetMember);
-        }
-
-        return Render(documentationElement);
+        return Render(targetDocumentation);
     }
 
     /// <summary>

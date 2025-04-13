@@ -3,11 +3,11 @@ namespace BitzArt.XDoc.PlainText;
 /// <summary>
 /// Represents an identifier for types and members in XML documentation comments.
 /// </summary>
-internal record MemberIdentifier
+internal record MemberReferenceInfo
 {
-    private MemberIdentifier(string prefix, string type, string shortType, string? member)
+    private MemberReferenceInfo(string value, string type, string shortType, string? member)
     {
-        Prefix = prefix;
+        Value = value;
         Type = type;
         ShortType = shortType;
         Member = member;
@@ -16,18 +16,12 @@ internal record MemberIdentifier
     /// <summary>
     /// Determines if the identifier is a type reference (e.g. "T:").
     /// </summary>
-    public bool IsType => Prefix is "T:";
+    public bool IsType { get; set; }
 
     /// <summary>
     /// Determines if the identifier is a member reference (e.g. "M:", "P:", "F:").
     /// </summary>
-    public bool IsMember => Prefix is "M:" or "P:" or "F:";
-
-    /// <summary>
-    /// The prefix of the identifier.
-    /// Can be: "T:", "M:", "P:", "F:".
-    /// </summary>
-    public string Prefix { get; private init; }
+    public bool IsMember { get; set; }
 
     /// <summary>
     /// The type name
@@ -49,7 +43,12 @@ internal record MemberIdentifier
     /// Formats the identifier back into a valid member or type identifier string.
     /// </summary>
     /// <returns>A string that represents the current object.</returns>
-    public override string ToString() => $"{Prefix}{Type}{(Member is not null ? "." + Member : string.Empty)}";
+    public override string ToString() => Value;
+
+    /// <summary>
+    /// The original string value of the identifier.
+    /// </summary>
+    public string Value { get; private init; }
 
     /// <summary>
     /// List if supported member prefixes.
@@ -57,32 +56,27 @@ internal record MemberIdentifier
     private static readonly IReadOnlyCollection<string> AllowedPrefixes = ["T:", "M:", "P:", "F:"];
 
     /// <summary>
-    /// Attempts to create a <see cref="MemberIdentifier"/> from a string value.
+    /// Validates the provided reference string and attempts to create a <see cref="MemberReferenceInfo"/> based on it.
     /// </summary>
     /// <param name="value">The string to parse.</param>
-    /// <param name="result">
-    /// When this method returns, contains the created <see cref="MemberIdentifier"/> if successful; otherwise, null.
-    /// </param>
-    /// <returns>true if the creation was successful; otherwise, false.</returns>
-    public static bool TryCreate(string value, out MemberIdentifier? result)
+    /// <returns>The created <see cref="MemberReferenceInfo"/> if successful; otherwise, null.</returns>
+    public static MemberReferenceInfo? FromReferenceString(string value)
     {
-        result = null;
-
         if (string.IsNullOrWhiteSpace(value))
         {
-            return false;
+            return null;
         }
 
         if (value.Length < 3 || value[1] != ':')
         {
-            return false;
+            return null;
         }
 
         var prefix = value[..2];
 
         if (!AllowedPrefixes.Contains(prefix))
         {
-            return false;
+            return null;
         }
 
         var lastIndexOfDot = value.LastIndexOf('.');
@@ -104,8 +98,6 @@ internal record MemberIdentifier
         var typeLastIndexOfDot = type.LastIndexOf('.');
         var shortType = type.Substring(typeLastIndexOfDot + 1, type.Length - typeLastIndexOfDot - 1);
 
-        result = new MemberIdentifier(prefix, type, shortType, member);
-
-        return true;
+        return new MemberReferenceInfo(value, type, shortType, member);
     }
 }

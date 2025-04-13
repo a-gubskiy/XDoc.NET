@@ -10,6 +10,21 @@ namespace BitzArt.XDoc;
 public abstract class MemberDocumentation<TMemberInfo> : DocumentationElement, IDocumentationElement<TMemberInfo>, IMemberDocumentation
     where TMemberInfo : MemberInfo
 {
+    /// <inheritdoc/>
+    public IMemberDocumentation? GetInheritanceTargetDocumentation()
+    {
+        var target = InheritanceResolver.GetTargetMember(Member);
+        if (target is null)
+        {
+            return null;
+        }
+
+        return Source.Get(target);
+    }
+
+    /// <inheritdoc/>
+    public MemberInfo? GetInheritanceTarget() => InheritanceResolver.GetTargetMember(Member);
+
     /// <summary>
     /// The <typeparamref name="TMemberInfo"/> this documentation if provided for.
     /// </summary>
@@ -19,10 +34,16 @@ public abstract class MemberDocumentation<TMemberInfo> : DocumentationElement, I
 
     TMemberInfo IDocumentationElement<TMemberInfo>.Target => Member;
 
+    /// <summary>
+    /// XML documentation node.
+    /// </summary>
+    public virtual XmlNode? Node { get; private init; }
+
     internal MemberDocumentation(XDoc source, TMemberInfo member, XmlNode? node)
-        : base(source, node)
+        : base(source)
     {
         Member = member;
+        Node = node;
     }
 
     /// <inheritdoc/>
