@@ -2,7 +2,7 @@ using System.Xml;
 
 namespace BitzArt.XDoc.PlainText.Tests;
 
-public class TestDocumentationElement : IDocumentationElement
+public class TestDocumentationElement : IMemberDocumentation
 {
     public TestDocumentationElement(XmlElement element) => Node = element;
 

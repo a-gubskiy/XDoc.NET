@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Xml;
 
 namespace BitzArt.XDoc;
 
@@ -20,7 +21,7 @@ public sealed class AssemblyDocumentation : DocumentationElement, IDocumentation
     internal AssemblyDocumentation(XDoc source, Assembly assembly)
         : this(source, assembly, XmlUtility.Fetch(source, assembly)) { }
 
-    internal AssemblyDocumentation(XDoc source, Assembly assembly, Dictionary<Type, TypeDocumentation> typeData) : base(source, null)
+    internal AssemblyDocumentation(XDoc source, Assembly assembly, Dictionary<Type, TypeDocumentation> typeData) : base(source)
     {
         Assembly = assembly;
         _typeData = typeData;

@@ -6,7 +6,7 @@ namespace BitzArt.XDoc;
 /// <inheritdoc/>
 public sealed class TypeDocumentation : MemberDocumentation<Type>, IDocumentationElement<Type>
 {
-    private readonly Dictionary<MemberInfo, DocumentationElement> _memberData;
+    private readonly Dictionary<MemberInfo, IMemberDocumentation> _memberData;
 
     /// <summary>
     /// The Type this documentation if provided for.
@@ -16,7 +16,7 @@ public sealed class TypeDocumentation : MemberDocumentation<Type>, IDocumentatio
     /// <summary>
     /// List of documentation elements for all members declared within the scope of this <see cref="System.Type"/> that have documentation.
     /// </summary>
-    public IReadOnlyDictionary<MemberInfo, DocumentationElement> MemberData => _memberData.AsReadOnly();
+    public IReadOnlyDictionary<MemberInfo, IMemberDocumentation> MemberData => _memberData.AsReadOnly();
 
     internal TypeDocumentation(XDoc source, Type type, XmlNode? node)
         : base(source, type, node)
@@ -60,7 +60,7 @@ public sealed class TypeDocumentation : MemberDocumentation<Type>, IDocumentatio
         return (TMemberDocumentationResult?)GetDocumentation(member);
     }
     
-    internal DocumentationElement? GetDocumentation(MemberInfo member)
+    internal IMemberDocumentation? GetDocumentation(MemberInfo member)
     {
         var memberInfo = NormalizeMemberInfo(member);
         var memberDocumentation = _memberData.GetValueOrDefault(memberInfo);

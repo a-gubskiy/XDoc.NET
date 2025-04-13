@@ -117,7 +117,7 @@ public class XDoc
     /// </summary>
     /// <param name="memberInfo"></param>
     /// <returns></returns>
-    public DocumentationElement? Get(MemberInfo memberInfo) =>
+    public IMemberDocumentation? Get(MemberInfo memberInfo) =>
         memberInfo switch
         {
             Type type => Get(type),

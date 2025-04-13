@@ -5,34 +5,37 @@ namespace BitzArt.XDoc.PlainText.Tests;
 
 public class TestClass
 {
+    public int MyProperty { get; set; }
 }
 
 public class PlainTextRendererTests
 {
     [Fact]
-    public void Render_ExtractsPropertySummary_FromDocumentation()
+    public void Render_PropertyWithSummary_ShouldRenderSummary()
     {
         // Arrange
         var assembly = GetType().Assembly;
 
-        List<TestMemberNode> nodes =
-        [
-            new TestMemberNode(typeof(TestClass), "none"),
+        var property = typeof(TestClass).GetProperty(nameof(TestClass.MyProperty));
 
-            new TestMemberNode(TestNodeType.Property,
-                "BitzArt.XDoc.Tests.BaseTestClass.Name",
-                "<member name=\"P:BitzArt.XDoc.Tests.TestClass.TestProperty\"><summary>Test property documentation.</summary></member>")
-        ];
+        var myContent = "some text";
+        var propertyNode = new TestMemberNode(property, myContent);
+        var nodes = new List<TestMemberNode>()
+        {
+            propertyNode
+        };
 
         var xml = nodes.GetXml(assembly);
         var xmlDocument = new XmlDocument();
         xmlDocument.LoadXml(xml);
 
+        //var documentation = new PropertyDocumentation()
+
         var node = xmlDocument.SelectSingleNode("//member[@name='P:BitzArt.XDoc.Tests.TestClass.TestProperty']");
 
         var memberDocumentation = new TestDocumentationElement(node);
 
-        var plainTextRenderer = new PlainTextRenderer(new XDoc());
+        var plainTextRenderer = new PlainTextRenderer();
         var comment = plainTextRenderer.Render(memberDocumentation);
 
         Assert.Equal("Test property documentation.", comment);
