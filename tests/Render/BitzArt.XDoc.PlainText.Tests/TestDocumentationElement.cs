@@ -14,13 +14,7 @@ public class TestDocumentationElement : IMemberDocumentation
 
     public XmlNode? Node { get; }
 
-    public IMemberDocumentation? GetInheritanceTargetDocumentation()
-    {
-        throw new NotImplementedException();
-    }
+    public IMemberDocumentation? GetInheritanceTargetDocumentation() => null;
 
-    public MemberInfo? GetInheritanceTarget()
-    {
-        throw new NotImplementedException();
-    }
+    public MemberInfo? GetInheritanceTarget() => null;
 }
