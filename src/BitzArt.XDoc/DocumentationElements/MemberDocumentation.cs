@@ -14,6 +14,7 @@ public abstract class MemberDocumentation<TMemberInfo> : DocumentationElement, I
     public IMemberDocumentation? GetInheritanceTargetDocumentation()
     {
         var target = GetInheritanceTarget();
+        
         if (target is null)
         {
             return null;
