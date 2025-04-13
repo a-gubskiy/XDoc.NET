@@ -19,7 +19,7 @@ public class PlainTextRendererTests
         var property = typeof(TestClass).GetProperty(nameof(TestClass.MyProperty));
 
         var myContent = "some text";
-        var propertyNode = new TestMemberNode(property, myContent);
+        var propertyNode = new TestMemberNode(property!, myContent);
         
         var nodes = new List<TestMemberNode>()
         {
@@ -30,16 +30,14 @@ public class PlainTextRendererTests
         var xmlDocument = new XmlDocument();
         xmlDocument.LoadXml(xml);
 
-        //var documentation = new PropertyDocumentation()
+        var node = xmlDocument.SelectSingleNode("//member[@name='P:BitzArt.XDoc.PlainText.Tests.TestClass.MyProperty']");
 
-        var node = xmlDocument.SelectSingleNode("//member[@name='P:BitzArt.XDoc.Tests.TestClass.TestProperty']");
-
-        var memberDocumentation = new TestDocumentationElement(node);
+        var memberDocumentation = new TestDocumentationElement(node!);
 
         var plainTextRenderer = new PlainTextRenderer();
         var comment = plainTextRenderer.Render(memberDocumentation);
 
-        Assert.Equal("Test property documentation.", comment);
+        Assert.Equal(myContent, comment);
     }
 
     [Fact]
