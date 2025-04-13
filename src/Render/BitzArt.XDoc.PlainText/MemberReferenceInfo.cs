@@ -5,38 +5,44 @@ namespace BitzArt.XDoc.PlainText;
 /// </summary>
 internal record MemberReferenceInfo
 {
-    private MemberReferenceInfo(string value, string type, string shortType, string? member)
+    private MemberReferenceInfo()
     {
-        Value = value;
-        Type = type;
-        ShortType = shortType;
-        Member = member;
     }
 
     /// <summary>
     /// Determines if the identifier is a type reference (e.g. "T:").
     /// </summary>
-    public bool IsType { get; set; }
+    public required bool IsType { get; set; }
 
     /// <summary>
     /// Determines if the identifier is a member reference (e.g. "M:", "P:", "F:").
     /// </summary>
-    public bool IsMember { get; set; }
+    public required bool IsMember { get; set; }
 
     /// <summary>
     /// The type name
     /// </summary>
-    public string Type { get; private init; }
+    public required string Type { get; init; }
 
     /// <summary>
     /// The short type name (without namespace)
     /// </summary>
-    public string ShortType { get; private init; }
+    public required string ShortType { get; init; }
 
     /// <summary>
     /// The member name (e.g. method, property, field).
     /// </summary>
-    public string? Member { get; private init; }
+    public required string? Member { get; init; }
+
+    /// <summary>
+    /// The original string value of the identifier.
+    /// </summary>
+    public required string Value { get; init; }
+
+    /// <summary>
+    /// List if supported member prefixes.
+    /// </summary>
+    private static readonly IReadOnlyCollection<string> AllowedPrefixes = ["T:", "M:", "P:", "F:"];
 
     /// <summary>
     /// Returns a string that represents the current object.
@@ -44,16 +50,6 @@ internal record MemberReferenceInfo
     /// </summary>
     /// <returns>A string that represents the current object.</returns>
     public override string ToString() => Value;
-
-    /// <summary>
-    /// The original string value of the identifier.
-    /// </summary>
-    public string Value { get; private init; }
-
-    /// <summary>
-    /// List if supported member prefixes.
-    /// </summary>
-    private static readonly IReadOnlyCollection<string> AllowedPrefixes = ["T:", "M:", "P:", "F:"];
 
     /// <summary>
     /// Validates the provided reference string and attempts to create a <see cref="MemberReferenceInfo"/> based on it.
@@ -98,6 +94,16 @@ internal record MemberReferenceInfo
         var typeLastIndexOfDot = type.LastIndexOf('.');
         var shortType = type.Substring(typeLastIndexOfDot + 1, type.Length - typeLastIndexOfDot - 1);
 
-        return new MemberReferenceInfo(value, type, shortType, member);
+        var memberPrefixes = new[] { "M:", "P:", "F:" };
+
+        return new MemberReferenceInfo
+        {
+            IsType = prefix == "P:",
+            IsMember = memberPrefixes.Contains(prefix),
+            Type = type,
+            ShortType = shortType,
+            Member = member,
+            Value = value
+        };
     }
 }
