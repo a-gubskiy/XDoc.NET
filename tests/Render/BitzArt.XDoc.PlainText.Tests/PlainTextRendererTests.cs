@@ -20,6 +20,7 @@ public class PlainTextRendererTests
 
         var myContent = "some text";
         var propertyNode = new TestMemberNode(property, myContent);
+        
         var nodes = new List<TestMemberNode>()
         {
             propertyNode
@@ -63,7 +64,7 @@ public class PlainTextRendererTests
 
         var memberDocumentation = new TestDocumentationElement(node);
 
-        var plainTextRenderer = new PlainTextRenderer(new XDoc());
+        var plainTextRenderer = new PlainTextRenderer();
         var comment = plainTextRenderer.Render(memberDocumentation);
 
         Assert.Equal(string.Empty, comment);
@@ -73,7 +74,7 @@ public class PlainTextRendererTests
     public void Render_ReturnsEmptyString_WhenDocumentationIsNull()
     {
         // Act
-        var result = new PlainTextRenderer(new XDoc()).Render(null);
+        var result = new PlainTextRenderer().Render(null);
 
         // Assert
         Assert.Equal(string.Empty, result);
@@ -85,7 +86,7 @@ public class PlainTextRendererTests
         // Arrange
         var textNode = new XmlDocument().CreateTextNode("Hello World");
         var memberDocumentation = new TestDocumentationElement(textNode);
-        var plainTextRenderer = new PlainTextRenderer(new XDoc());
+        var plainTextRenderer = new PlainTextRenderer();
 
         // Act
         var result = plainTextRenderer.Render(memberDocumentation);
@@ -102,7 +103,7 @@ public class PlainTextRendererTests
         element.InnerXml = "Line1\n   Line2\nLine3";
 
         var memberDocumentation = new TestDocumentationElement(element);
-        var plainTextRenderer = new PlainTextRenderer(new XDoc());
+        var plainTextRenderer = new PlainTextRenderer();
 
         // Act
         var result = plainTextRenderer.Render(memberDocumentation);
@@ -125,7 +126,7 @@ public class PlainTextRendererTests
         xmlDocument.AppendChild(xmlNode);
 
         var memberDocumentation = new TestDocumentationElement(xmlNode);
-        var plainTextRenderer = new PlainTextRenderer(new XDoc());
+        var plainTextRenderer = new PlainTextRenderer();
 
         // Act
         var result = plainTextRenderer.Render(memberDocumentation);
@@ -148,7 +149,7 @@ public class PlainTextRendererTests
         xmlDocument.AppendChild(xmlNode);
 
         var memberDocumentation = new TestDocumentationElement(xmlNode);
-        var plainTextRenderer = new PlainTextRenderer(new XDoc());
+        var plainTextRenderer = new PlainTextRenderer();
 
         // Act
         var result = plainTextRenderer.Render(memberDocumentation);
@@ -163,7 +164,7 @@ public class PlainTextRendererTests
         // Arrange
         var element = new XmlDocument().CreateElement("empty");
         var memberDocumentation = new TestDocumentationElement(element);
-        var plainTextRenderer = new PlainTextRenderer(new XDoc());
+        var plainTextRenderer = new PlainTextRenderer();
 
         // Act
         var result = plainTextRenderer.Render(memberDocumentation);
