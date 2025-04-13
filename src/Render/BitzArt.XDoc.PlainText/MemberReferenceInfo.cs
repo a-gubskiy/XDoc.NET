@@ -98,7 +98,7 @@ internal record MemberReferenceInfo
 
         return new MemberReferenceInfo
         {
-            IsType = prefix == "P:",
+            IsType = prefix == "T:",
             IsMember = memberPrefixes.Contains(prefix),
             Type = type,
             ShortType = shortType,
