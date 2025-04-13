@@ -59,7 +59,7 @@ public sealed class TypeDocumentation : MemberDocumentation<Type>, IDocumentatio
     {
         return (TMemberDocumentationResult?)GetDocumentation(member);
     }
-    
+
     internal IMemberDocumentation? GetDocumentation(MemberInfo member)
     {
         var memberInfo = NormalizeMemberInfo(member);

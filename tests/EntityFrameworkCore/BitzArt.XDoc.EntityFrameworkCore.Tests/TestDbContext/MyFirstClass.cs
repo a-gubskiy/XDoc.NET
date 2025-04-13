@@ -1,11 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace BitzArt.XDoc.Tests;
+﻿namespace BitzArt.XDoc.Tests;
 
 public class MyFirstClass
 {
     public const string IdComment = "Id Comment";
-    
+
     public const string NullableIdComment = "Nullable Id Comment";
 
     /// <summary>

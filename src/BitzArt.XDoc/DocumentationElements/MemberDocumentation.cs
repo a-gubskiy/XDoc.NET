@@ -13,7 +13,7 @@ public abstract class MemberDocumentation<TMemberInfo> : DocumentationElement, I
     /// <inheritdoc/>
     public IMemberDocumentation? GetInheritanceTargetDocumentation()
     {
-        var target = InheritanceResolver.GetTargetMember(Member);
+        var target = GetInheritanceTarget();
         if (target is null)
         {
             return null;

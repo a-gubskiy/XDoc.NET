@@ -121,7 +121,7 @@ public class XmlParserTests
         Assert.Single(memberData);
 
         var member = memberData.First();
-        
+
         Assert.Equal(testMember, member.Key);
 
         Assert.NotNull(member.Value);

@@ -37,7 +37,7 @@ public static class PropertyBuilderExtensions
         }
 
         var comment = documentationElement.ToPlainText();
-        
+
         return propertyBuilder.HasComment(comment);
     }
 
@@ -59,12 +59,12 @@ public static class PropertyBuilderExtensions
         where TCommentTargetEntity : class
     {
         var documentationElement = xdoc.Get(commentTargetPropertyExpression);
-        
+
         if (documentationElement is null)
         {
             return propertyBuilder;
         }
-        
+
         var comment = documentationElement.ToPlainText();
 
         return propertyBuilder.HasComment(comment);

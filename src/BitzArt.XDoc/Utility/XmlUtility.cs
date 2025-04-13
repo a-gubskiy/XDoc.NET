@@ -42,7 +42,7 @@ internal static class XmlUtility
         try
         {
             var typesDocumentation = XmlParser.Parse(source, assembly, xmlDocument);
-            
+
             return typesDocumentation;
         }
         catch (Exception ex)
