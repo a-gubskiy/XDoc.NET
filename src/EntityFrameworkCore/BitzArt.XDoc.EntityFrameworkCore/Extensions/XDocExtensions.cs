@@ -19,7 +19,7 @@ internal static class XDocExtensions
         where TCommentTargetEntity : class
     {
         var operand = commentTargetPropertyExpression.Body as MemberExpression;
-        
+
         return xdoc.Get(operand!.Member);
     }
 }

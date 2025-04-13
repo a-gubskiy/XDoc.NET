@@ -105,7 +105,7 @@ public class PlainTextRenderer
         {
             return $"{type}.{cref.Member}";
         }
-        
+
         if (cref.IsType)
         {
             return type;

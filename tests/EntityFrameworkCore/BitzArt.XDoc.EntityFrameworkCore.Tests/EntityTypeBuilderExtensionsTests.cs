@@ -171,7 +171,7 @@ public class EntityTypeBuilderExtensionsTests
             .FindProperty(propertyName)!
             .GetComment());
     }
-    
+
     [Fact]
     public void HasPropertyComment_WithPropertyExpressoin_ShouldSetComment()
     {
@@ -202,17 +202,17 @@ public class EntityTypeBuilderExtensionsTests
             .FindProperty(propertyName)!
             .GetComment());
     }
-    
+
     [Fact]
     public void ConfigureShadowPropertyWithPropertyBuilder_WithColumnNameAndType_ShouldConfigureProperly()
     {
         // Arrange
         const string shadowPropertyName = "BonusOfferAmount";
-    
+
         var testContext = new TestDbContext8((context, modelBuilder) =>
         {
             var xdoc = new XDoc();
-            
+
             modelBuilder.Entity<MyFirstClass>(builder =>
             {
                 builder
@@ -223,10 +223,10 @@ public class EntityTypeBuilderExtensionsTests
                     .HasColumnType("int");
             });
         });
-    
+
         // Act
         _ = testContext.Model;
-   
+
         // Assert
         var actualPropertyComment = testContext
             .GetService<IDesignTimeModel>()
@@ -234,10 +234,10 @@ public class EntityTypeBuilderExtensionsTests
             .FindEntityType(typeof(MyFirstClass))!
             .FindProperty(shadowPropertyName)!
             .GetComment();
-        
+
         Assert.Equal(MySecondClass.NullableValueComment, actualPropertyComment);
     }
-    
+
     [Fact]
     public void HasPropertyComment_WithFieldNullableDouble_ShouldSetComment()
     {
@@ -267,7 +267,7 @@ public class EntityTypeBuilderExtensionsTests
             .FindEntityType(typeof(MyFirstClass))!
             .FindProperty(propertyName)!
             .GetComment();
-        
+
         Assert.Equal(MySecondClass.NullableDoubleComment, actualComment);
     }
 }

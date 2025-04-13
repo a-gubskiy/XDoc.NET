@@ -78,7 +78,7 @@ public class InheritanceResolverTests
         // Assert
         Assert.Null(targetMember);
     }
-    
+
     [Fact]
     public void GetTargetMember_MyClassA_ShouldReturnMyBaseClass()
     {

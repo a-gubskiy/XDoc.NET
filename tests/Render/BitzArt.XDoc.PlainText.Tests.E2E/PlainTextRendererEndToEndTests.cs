@@ -55,7 +55,7 @@ public class PlainTextRendererEndToEndTests
         Assert.Equal(ThisIsTestingPropertyFromMyClass, xmlComment);
     }
 
-    
+
     [Fact]
     public void ToPlainText_MyPropertyFromMyDoubleInheritedClass_ReturnsThisIsTestingPropertyFromMyClass()
     {
@@ -114,7 +114,7 @@ public class PlainTextRendererEndToEndTests
         // Assert
         Assert.Equal(ThisIsTestingPropertyFromMyClass, xmlComment);
     }
-    
+
     [Fact]
     public void ToPlainText_MyPropertyFromMyDoubleInheritedClassWithNamespaces_ReturnsThisIsTestingPropertyFromMyClass()
     {
