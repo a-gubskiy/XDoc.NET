@@ -23,14 +23,10 @@ public class MemberDocumentationTests
     [Fact]
     public void GetInheritanceTarget_PropertyHasParent_ShouldReturnParentProperty()
     {
-        var property = typeof(DemoClass).GetProperty(nameof(DemoClass.MyProperty));
-        var xmlDocument = new XmlDocument();
-        var textNode = xmlDocument.CreateTextNode("This is a test property.");
-
         MemberDocumentation<PropertyInfo> memberDocumentation = new PropertyDocumentation(
             source: new XDoc(),
-            property: property!,
-            node: textNode);
+            property: typeof(DemoClass).GetProperty(nameof(DemoClass.MyProperty))!,
+            node: null);
 
         var inheritanceTarget = memberDocumentation.GetInheritanceTarget();
 
@@ -40,14 +36,10 @@ public class MemberDocumentationTests
     [Fact]
     public void GetInheritanceTarget_PropertyHasNoParent_ShouldReturnNull()
     {
-        var property = typeof(DemoClass).GetProperty(nameof(DemoClass.MyOtherProperty));
-        var xmlDocument = new XmlDocument();
-        var textNode = xmlDocument.CreateTextNode("This is a test property.");
-
         MemberDocumentation<PropertyInfo> memberDocumentation = new PropertyDocumentation(
             source: new XDoc(),
-            property: property!,
-            node: textNode);
+            property: typeof(DemoClass).GetProperty(nameof(DemoClass.MyOtherProperty))!,
+            node: null);
 
         var inheritanceTarget = memberDocumentation.GetInheritanceTarget();
 
