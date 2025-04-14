@@ -75,20 +75,18 @@ internal class XmlParser
 
     private PropertyDocumentation ParsePropertyNode(XmlNode node, string name)
         => ParseMemberNode(name,
-            (type, memberName) => type.GetProperty(memberName),
+            (type, memberName, paramaters) => type.GetProperty(memberName),
             member => new PropertyDocumentation(_source, member, node));
 
     private FieldDocumentation ParseFieldNode(XmlNode node, string name)
         => ParseMemberNode(name,
-            (type, memberName) => type.GetField(memberName),
+            (type, memberName, parameters) => type.GetField(memberName),
             member => new FieldDocumentation(_source, member, node));
 
     private MethodDocumentation? ParseMethodNode(XmlNode node, string name)
         => ParseMemberNode(name,
-            (type, memberName) =>
+            (type, memberName, parameters) =>
             {
-                var parameters = GetMethodParameters(memberName);
-
                 return type.GetMethods()
                     .Where(method => method.Name == memberName)
                     .Where(method =>
@@ -114,13 +112,14 @@ internal class XmlParser
             },
             member => new MethodDocumentation(_source, member, node));
 
-    private TDocumentation ParseMemberNode<TMember, TDocumentation>(string name, Func<Type, string, TMember?> getMember, Func<TMember, TDocumentation> getDocumentation)
+    private TDocumentation ParseMemberNode<TMember, TDocumentation>(string name, Func<Type, string, IReadOnlyCollection<string>, TMember?> getMember, Func<TMember, TDocumentation> getDocumentation)
         where TMember : MemberInfo
         where TDocumentation : MemberDocumentation<TMember>
     {
         var (type, memberName) = ResolveTypeAndMemberName(name);
+        var parameters = ResolveMethodParameters(name);
 
-        var memberInfo = getMember.Invoke(type, memberName)
+        var memberInfo = getMember.Invoke(type, memberName, parameters)
             ?? throw new InvalidOperationException(
                 $"Member '{memberName}' not found in type '{type.Name}'.");
 
@@ -131,6 +130,39 @@ internal class XmlParser
         typeDocumentation.AddMemberData(memberInfo, memberDocumentation);
 
         return memberDocumentation;
+    }
+
+    private static IReadOnlyCollection<string> ResolveMethodParameters(string name)
+    {
+        var startIndex = name.IndexOf('(');
+        
+        if (startIndex == -1)
+        {
+            return Array.Empty<string>();
+        }
+    
+        var endIndex = name.LastIndexOf(')');
+
+        if (endIndex <= startIndex)
+        {
+            return Array.Empty<string>();
+        }
+    
+        var parametersString = name.Substring(startIndex + 1, endIndex - startIndex - 1);
+        
+        if (string.IsNullOrWhiteSpace(parametersString))
+        {
+            return Array.Empty<string>();
+        }
+
+        var result = parametersString
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(p => p.Trim())
+            .Select(p => p.Replace("`0", ""))
+            .Select(p => p.Replace("`", ""))
+            .ToList();
+        
+        return result;
     }
 
     /// <summary>
@@ -164,35 +196,6 @@ internal class XmlParser
         var friendlyName = $"{typeName}{{{genericArgs}}}";
 
         return friendlyName;
-    }
-
-    // Fetches the parameter type names of a method from the XML documentation.
-    private static List<string> GetMethodParameters(string xmlMember)
-    {
-        var start = xmlMember.IndexOf('(');
-        var end = xmlMember.LastIndexOf(')');
-
-        if (start == -1 || end == -1 || end <= start)
-        {
-            return [];
-        }
-
-        // Extract the substring that contains the parameters.
-        var paramList = xmlMember.Substring(start + 1, end - start - 1);
-
-        if (string.IsNullOrWhiteSpace(paramList))
-        {
-            return [];
-        }
-
-        // Split the parameter list by commas and trim each parameter.
-        var methodParameters = paramList.Split([','], StringSplitOptions.RemoveEmptyEntries)
-            .Select(p => p.Trim())
-            .Select(p => p.Replace("`0", ""))
-            .Select(p => p.Replace("`", ""))
-            .ToList();
-
-        return methodParameters;
     }
 
     private (Type type, string memberName) ResolveTypeAndMemberName(string name)

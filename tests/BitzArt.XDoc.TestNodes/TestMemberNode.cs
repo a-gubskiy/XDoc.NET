@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace BitzArt.XDoc.Tests;
@@ -8,6 +9,7 @@ public class TestMemberNode
     private readonly TestNodeType _type;
     private readonly string _name;
     private readonly string _content;
+    private readonly IReadOnlyCollection<ParameterInfo> _parameters;
 
     public TestMemberNode(Type type, string content)
         : this(TestNodeType.Type, type.FullName!, content) { }
@@ -19,21 +21,53 @@ public class TestMemberNode
         : this(TestNodeType.Property, GetMemberName(property), content) { }
 
     public TestMemberNode(MethodInfo method, string content)
-        : this(TestNodeType.Method, GetMemberName(method), content) { }
+        : this(TestNodeType.Method, GetMemberName(method), content) => 
+        _parameters = method.GetParameters();
 
     public TestMemberNode(TestNodeType type, string name, string content)
     {
         _type = type;
         _name = name;
         _content = content;
+        _parameters = ImmutableList<ParameterInfo>.Empty;
     }
 
-    public string GetXml() =>
-        $"""
-        <member name="{XmlNodeTypeChar}:{_name}">
-            {_content.Offset(4, exceptFirstLine: true)}
-        </member>
-        """;
+    public string GetXml()
+    {
+        var xml = "";
+
+        if (_type == TestNodeType.Method)
+        {
+            var parameters = string.Join(", ", _parameters.Select(Render));
+
+            xml = $"""
+                   <member name="{XmlNodeTypeChar}:{_name}({parameters})">
+                       {_content.Offset(4, exceptFirstLine: true)}
+                   </member>
+                   """;
+
+        }
+        else
+        {
+            xml = $"""
+                   <member name="{XmlNodeTypeChar}:{_name}">
+                       {_content.Offset(4, exceptFirstLine: true)}
+                   </member>
+                   """;
+        }
+
+        return xml;
+    }
+
+    private string Render(ParameterInfo p)
+    {
+        var type = p.ParameterType;
+        var typeName = type.FullName ?? type.Name;
+        
+        // Remove the generic parameter count indicators from the type name
+        // (e.g., List`1 becomes List)
+        return typeName.Replace("`0", "").Replace("`", "");
+    }
 
     private static string GetMemberName(MemberInfo member)
         => $"{member.DeclaringType!.FullName}.{member.Name}";
