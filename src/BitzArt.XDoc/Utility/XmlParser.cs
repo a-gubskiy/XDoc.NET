@@ -75,42 +75,44 @@ internal class XmlParser
 
     private PropertyDocumentation ParsePropertyNode(XmlNode node, string name)
         => ParseMemberNode(name,
-            (type, memberName, paramaters) => type.GetProperty(memberName),
+            (type, memberName, _) => type.GetProperty(memberName),
             member => new PropertyDocumentation(_source, member, node));
 
     private FieldDocumentation ParseFieldNode(XmlNode node, string name)
         => ParseMemberNode(name,
-            (type, memberName, parameters) => type.GetField(memberName),
+            (type, memberName, _) => type.GetField(memberName),
             member => new FieldDocumentation(_source, member, node));
 
     private MethodDocumentation? ParseMethodNode(XmlNode node, string name)
         => ParseMemberNode(name,
-            (type, memberName, parameters) =>
-            {
-                return type.GetMethods()
-                    .Where(method => method.Name == memberName)
-                    .Where(method =>
-                    {
-                        var methodParameters = method
-                            .GetParameters()
-                            .Select(o => GetTypeFriendlyName(o.ParameterType))
-                            .ToList();
-
-                        if (methodParameters.Count != parameters.Count)
-                        {
-                            return false;
-                        }
-
-                        if (methodParameters.All(mp => parameters.Contains(mp)))
-                        {
-                            return true;
-                        }
-
-                        return false;
-                    })
-                    .SingleOrDefault();
-            },
+            (type, memberName, parameters) =>  GetMethod(type, memberName, parameters),
             member => new MethodDocumentation(_source, member, node));
+
+    private static MethodInfo? GetMethod(Type type, string name, IReadOnlyCollection<string> parameters)
+    {
+        return type.GetMethods()
+            .Where(method => method.Name == name)
+            .Where(method =>
+            {
+                var methodParameters = method
+                    .GetParameters()
+                    .Select(o => GetTypeFriendlyName(o.ParameterType))
+                    .ToList();
+
+                if (methodParameters.Count != parameters.Count)
+                {
+                    return false;
+                }
+
+                if (methodParameters.All(parameters.Contains))
+                {
+                    return true;
+                }
+
+                return false;
+            })
+            .SingleOrDefault();
+    }
 
     private TDocumentation ParseMemberNode<TMember, TDocumentation>(string name, Func<Type, string, IReadOnlyCollection<string>, TMember?> getMember, Func<TMember, TDocumentation> getDocumentation)
         where TMember : MemberInfo
