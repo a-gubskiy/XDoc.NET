@@ -18,7 +18,7 @@ public class EntitiesDocumentationConfiguratorTests
         {
             modelBuilder.Entity<MyFirstClass>();
 
-            new EntitiesDocumentationConfigurator(xDoc).ConfigureComments(modelBuilder);
+            modelBuilder.ConfigureComments(xDoc);
         });
 
         // Act

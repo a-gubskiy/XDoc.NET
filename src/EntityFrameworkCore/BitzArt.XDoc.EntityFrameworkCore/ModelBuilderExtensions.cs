@@ -1,35 +1,24 @@
-using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace BitzArt.XDoc;
 
 /// <summary>
-/// Configures XML documentation comments for Entity Framework Core entities and their properties.
+/// Extensions for configuring XML documentation comments for Entity Framework Core entities.
 /// </summary>
-[PublicAPI]
-public class EntitiesDocumentationConfigurator
+public static class ModelBuilderExtensions
 {
-    private readonly XDoc _xDoc;
-
     /// <summary>
-    /// Default constructor.
-    /// </summary>
-    public EntitiesDocumentationConfigurator(XDoc xDoc)
-    {
-        _xDoc = xDoc;
-    }
-
-    /// <summary>
-    /// Configure comments for entities and properties.
+    /// Configures XML documentation comments for Entity Framework Core entities and their properties.
     /// </summary>
     /// <param name="modelBuilder"></param>
-    public void ConfigureComments(ModelBuilder modelBuilder)
+    /// <param name="xDoc"></param>
+    public static void ConfigureComments(this ModelBuilder modelBuilder, XDoc xDoc)
     {
         var entityTypes = modelBuilder.Model.GetEntityTypes();
 
         foreach (var entityType in entityTypes)
         {
-            var typeDocumentation = _xDoc.Get(entityType.ClrType);
+            var typeDocumentation = xDoc.Get(entityType.ClrType);
 
             if (typeDocumentation is null)
             {
@@ -67,7 +56,7 @@ public class EntitiesDocumentationConfigurator
                     continue;
                 }
 
-                var propertyDocumentation = _xDoc.Get(propertyInfo);
+                var propertyDocumentation = xDoc.Get(propertyInfo);
 
                 if (propertyDocumentation is null)
                 {

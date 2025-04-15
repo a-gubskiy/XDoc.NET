@@ -48,7 +48,7 @@ public class TestMemberNode
                 """;
     }
 
-    private string Render(ParameterInfo p)
+    private static string Render(ParameterInfo p)
     {
         var type = p.ParameterType;
         var typeName = type.FullName ?? type.Name;
