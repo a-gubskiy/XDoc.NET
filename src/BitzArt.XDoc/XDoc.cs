@@ -23,7 +23,7 @@ namespace BitzArt.XDoc;
 /// Disposing of an <see cref="XDoc"/> object will lead to a loss of all said data.
 /// </para>
 /// </summary>
-public class XDoc
+public class XDoc : IDisposable
 {
     private readonly ConcurrentDictionary<Assembly, AssemblyDocumentation> _fetchedAssemblies;
 
@@ -123,4 +123,53 @@ public class XDoc
             Type type => Get(type),
             _ => Get(memberInfo.DeclaringType!)?.GetDocumentation(memberInfo)
         };
+
+    /// <summary>
+    /// <inheritdoc cref="IDisposable"/>
+    /// </summary>
+    public void Dispose()
+    {
+        _fetchedAssemblies.Clear();
+    }
+
+    private static readonly ConcurrentDictionary<string, XDoc> Instances = new();
+
+    /// <summary>
+    /// Creates a new instance of <see cref="XDoc"/> or returns an existing one
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public static XDoc GetOrCreate(string name = "")
+    {
+        if (Instances.TryGetValue(name, out var doc))
+        {
+            return doc;
+        }
+
+        var xdoc = new XDoc();
+
+        if (Instances.TryAdd(name, xdoc))
+        {
+            return xdoc;
+        }
+
+        return Instances[name];
+    }
+
+    /// <summary>
+    /// Removes the <see cref="XDoc"/> instance with the specified name
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public static bool Remove(string name)
+    {
+        if (Instances.TryRemove(name, out var xdoc))
+        {
+            xdoc.Dispose();
+
+            return true;
+        }
+
+        return false;
+    }
 }
