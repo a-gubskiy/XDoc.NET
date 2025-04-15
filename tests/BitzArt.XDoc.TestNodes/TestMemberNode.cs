@@ -21,7 +21,7 @@ public class TestMemberNode
         : this(TestNodeType.Property, GetMemberName(property), content) { }
 
     public TestMemberNode(MethodInfo method, string content)
-        : this(TestNodeType.Method, GetMemberName(method), content) => 
+        : this(TestNodeType.Method, GetMemberName(method), content) =>
         _parameters = method.GetParameters();
 
     public TestMemberNode(TestNodeType type, string name, string content)
@@ -34,36 +34,25 @@ public class TestMemberNode
 
     public string GetXml()
     {
-        var xml = "";
+        var parameters = "";
 
         if (_type == TestNodeType.Method)
         {
-            var parameters = string.Join(", ", _parameters.Select(Render));
-
-            xml = $"""
-                   <member name="{XmlNodeTypeChar}:{_name}({parameters})">
-                       {_content.Offset(4, exceptFirstLine: true)}
-                   </member>
-                   """;
-
-        }
-        else
-        {
-            xml = $"""
-                   <member name="{XmlNodeTypeChar}:{_name}">
-                       {_content.Offset(4, exceptFirstLine: true)}
-                   </member>
-                   """;
+            parameters = $"({string.Join(", ", _parameters.Select(Render))})";
         }
 
-        return xml;
+        return $"""
+                <member name="{XmlNodeTypeChar}:{_name}{parameters}">
+                    {_content.Offset(4, exceptFirstLine: true)}
+                </member>
+                """;
     }
 
     private string Render(ParameterInfo p)
     {
         var type = p.ParameterType;
         var typeName = type.FullName ?? type.Name;
-        
+
         // Remove the generic parameter count indicators from the type name
         // (e.g., List`1 becomes List)
         return typeName.Replace("`0", "").Replace("`", "");
