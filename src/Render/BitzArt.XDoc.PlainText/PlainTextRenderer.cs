@@ -7,7 +7,7 @@ namespace BitzArt.XDoc.PlainText;
 
 /// <summary>
 /// Lightweight renderer that converts XML documentation to plain text.
-/// This implementation, can only render the text content of the XML nodes, but not resolve and render references.
+/// This implementation can only render the text content of the XML nodes but not resolve and render references.
 /// </summary>
 public class PlainTextRenderer
 {
@@ -117,10 +117,12 @@ public class PlainTextRenderer
     private string RenderDirectInheritance(IMemberDocumentation documentation)
     {
         var targetDocumentation = documentation.GetInheritanceTargetDocumentation();
+        
         if (targetDocumentation is null)
         {
             return string.Empty;
         }
+        
         return Render(targetDocumentation);
     }
 
