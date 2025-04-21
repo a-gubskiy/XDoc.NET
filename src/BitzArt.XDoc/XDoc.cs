@@ -26,6 +26,8 @@ namespace BitzArt.XDoc;
 public class XDoc : IDisposable
 {
     private readonly ConcurrentDictionary<Assembly, AssemblyDocumentation> _fetchedAssemblies;
+    
+    private bool _disposed = false;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="XDoc"/> class.
@@ -45,9 +47,13 @@ public class XDoc : IDisposable
     /// <param name="assembly">The <see cref="Assembly"/> to retrieve documentation for.</param>"/>
     /// <returns><see cref="AssemblyDocumentation"/> for the specified <see cref="Assembly"/>.</returns>
     public AssemblyDocumentation Get(Assembly assembly)
-        => _fetchedAssemblies.TryGetValue(assembly, out var result)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        
+        return _fetchedAssemblies.TryGetValue(assembly, out var result)
             ? result
             : Fetch(assembly);
+    }
 
     private AssemblyDocumentation Fetch(Assembly assembly)
     {
@@ -113,7 +119,7 @@ public class XDoc : IDisposable
         => Get(fieldInfo.DeclaringType!)?.GetDocumentation(fieldInfo);
 
     /// <summary>
-    /// 
+    /// Retrieves documentation for the specified <see cref="MemberInfo"/>.
     /// </summary>
     /// <param name="memberInfo"></param>
     /// <returns></returns>
@@ -130,5 +136,6 @@ public class XDoc : IDisposable
     public void Dispose()
     {
         _fetchedAssemblies.Clear();
+        _disposed = true;
     }
 }
