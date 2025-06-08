@@ -90,18 +90,14 @@ internal class XmlParser
 
     private static MethodBase? GetMethod(Type type, string name, IReadOnlyCollection<string> parameters)
     {
+        name = name.Replace("#ctor", ".ctor");
+        
         var methods = new List<MethodBase>();
         methods.AddRange(type.GetMethods());
         methods.AddRange(type.GetConstructors());
 
-
-        name = name.Replace("#ctor", ".ctor");
-
-        var filterred = methods
+        var method = methods
             .Where(method => method.Name == name)
-            .ToList();
-
-        var result = filterred
             .Where(method =>
             {
                 var methodParameters = method
@@ -123,7 +119,7 @@ internal class XmlParser
             })
             .SingleOrDefault();
 
-        return result;
+        return method;
     }
 
     private TDocumentation ParseMemberNode<TMember, TDocumentation>(string name, Func<Type, string, IReadOnlyCollection<string>, TMember?> getMember, Func<TMember, TDocumentation> getDocumentation)
