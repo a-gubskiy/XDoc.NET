@@ -214,9 +214,11 @@ internal class XmlParser
         {
             if (!name.Contains('('))
             {
+                // Generic type with property
                 return SplitTypeAndMemberName(name);
             }
 
+            // Generic member with parameters
             name = name[..name.IndexOf('`')];
         }
 
