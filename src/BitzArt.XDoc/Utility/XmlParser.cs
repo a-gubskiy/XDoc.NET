@@ -30,7 +30,7 @@ internal class XmlParser
     internal Dictionary<Type, TypeDocumentation> Parse()
     {
         var nodeList = _xml.SelectNodes("/doc/members/member")
-            ?? throw new InvalidOperationException("Invalid XML.");
+                       ?? throw new InvalidOperationException("Invalid XML.");
 
         foreach (XmlNode node in nodeList) Parse(node);
 
@@ -43,7 +43,7 @@ internal class XmlParser
             throw new InvalidOperationException("Invalid XML node.");
 
         var name = (node.Attributes["name"]?.Value)
-            ?? throw new InvalidOperationException($"No 'name' attribute found in XML node '{node.Value}'.");
+                   ?? throw new InvalidOperationException($"No 'name' attribute found in XML node '{node.Value}'.");
 
         switch (name[0])
         {
@@ -57,7 +57,7 @@ internal class XmlParser
     private TypeDocumentation ParseTypeNode(XmlNode node, string name)
     {
         var type = _assembly.GetType(name)
-            ?? throw new InvalidOperationException($"Type '{name}' not found.");
+                   ?? throw new InvalidOperationException($"Type '{name}' not found.");
 
         // We could handle this case by finding and updating the existing object,
         // but I don't see a reason why this would be necessary.
@@ -85,7 +85,7 @@ internal class XmlParser
 
     private MethodDocumentation? ParseMethodNode(XmlNode node, string name)
         => ParseMemberNode(name,
-            (type, memberName, parameters) =>  GetMethod(type, memberName, parameters),
+            (type, memberName, parameters) => GetMethod(type, memberName, parameters),
             member => new MethodDocumentation(_source, member, node));
 
     private static MethodBase? GetMethod(Type type, string name, IReadOnlyCollection<string> parameters)
@@ -96,7 +96,7 @@ internal class XmlParser
 
 
         name = name.Replace("#ctor", ".ctor");
-        
+
         var filterred = methods
             .Where(method => method.Name == name)
             .ToList();
@@ -122,7 +122,7 @@ internal class XmlParser
                 return false;
             })
             .SingleOrDefault();
-        
+
         return result;
     }
 
@@ -149,21 +149,21 @@ internal class XmlParser
     private static IReadOnlyCollection<string> ResolveMethodParameters(string name)
     {
         var startIndex = name.IndexOf('(');
-        
+
         if (startIndex == -1)
         {
             return Array.Empty<string>();
         }
-    
+
         var endIndex = name.LastIndexOf(')');
 
         if (endIndex <= startIndex)
         {
             return Array.Empty<string>();
         }
-    
+
         var parametersString = name.Substring(startIndex + 1, endIndex - startIndex - 1);
-        
+
         if (string.IsNullOrWhiteSpace(parametersString))
         {
             return Array.Empty<string>();
@@ -175,7 +175,7 @@ internal class XmlParser
             .Select(p => p.Replace("`0", ""))
             .Select(p => p.Replace("`", ""))
             .ToList();
-        
+
         return result;
     }
 
@@ -218,9 +218,9 @@ internal class XmlParser
         {
             if (!name.Contains('('))
             {
-                return ResolveGenericTypeAndMember(name);
+                return SplitTypeAndMemberName(name);
             }
-            
+
             name = name[..name.IndexOf('`')];
         }
 
@@ -229,6 +229,11 @@ internal class XmlParser
             name = name[..name.IndexOf('(')];
         }
 
+        return SplitTypeAndMemberName(name);
+    }
+
+    private (Type type, string memberName) SplitTypeAndMemberName(string name)
+    {
         var index = name.LastIndexOf('.');
 
         if (index == -1)
@@ -241,18 +246,6 @@ internal class XmlParser
         var type = _assembly.GetType(typeName)
                    ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
 
-        return (type, memberName);
-    }
-
-    private (Type type, string memberName) ResolveGenericTypeAndMember(string name)
-    {
-        var index = name.LastIndexOf('.');
-      
-        var (typeName, memberName) = (name[..index], name[(index + 1)..]);
-        
-        var type = _assembly.GetType(typeName)
-                   ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
-        
         return (type, memberName);
     }
 
