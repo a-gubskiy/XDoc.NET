@@ -246,13 +246,12 @@ internal class XmlParser
 
     private (Type type, string memberName) ResolveGenericTypeAndMember(string name)
     {
-        var typeName = name[..name.LastIndexOf('.')];
+        var index = name.LastIndexOf('.');
+      
+        var (typeName, memberName) = (name[..index], name[(index + 1)..]);
         
         var type = _assembly.GetType(typeName)
                    ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
-
-        var i = name.LastIndexOf('.') + 1;
-        var memberName = name[i..];
         
         return (type, memberName);
     }
