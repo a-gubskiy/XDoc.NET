@@ -216,6 +216,11 @@ internal class XmlParser
     {
         if (name.Contains('`'))
         {
+            if (!name.Contains('('))
+            {
+                return ResolveGenericTypeAndMember(name);
+            }
+            
             name = name[..name.IndexOf('`')];
         }
 
@@ -236,6 +241,19 @@ internal class XmlParser
         var type = _assembly.GetType(typeName)
                    ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
 
+        return (type, memberName);
+    }
+
+    private (Type type, string memberName) ResolveGenericTypeAndMember(string name)
+    {
+        var typeName = name[..name.LastIndexOf('.')];
+        
+        var type = _assembly.GetType(typeName)
+                   ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
+
+        var i = name.LastIndexOf('.') + 1;
+        var memberName = name[i..];
+        
         return (type, memberName);
     }
 
