@@ -10,6 +10,13 @@ internal class XmlParser
     private readonly XmlDocument _xml;
     private readonly Dictionary<Type, TypeDocumentation> _results;
 
+    /// <summary>
+    /// Parses an XML documentation file and creates a dictionary mapping types to their documentation.
+    /// </summary>
+    /// <param name="source">The XDoc instance that initiated the parsing</param>
+    /// <param name="assembly">The assembly containing the types to be documented</param>
+    /// <param name="xml">The XML file containing the auto-generated documentation</param>
+    /// <returns>A dictionary mapping types to their TypeDocumentation objects</returns>
     public static Dictionary<Type, TypeDocumentation> Parse(XDoc source, Assembly assembly, XmlDocument xml)
     {
         var parser = new XmlParser(source, assembly, xml);
@@ -208,6 +215,16 @@ internal class XmlParser
         return friendlyName;
     }
 
+    
+    /// <summary>
+    /// Resolves a qualified member name into its associated type and member name.
+    /// Handles special cases like generic types and methods with parameters.
+    /// </summary>
+    /// <param name="name">The fully qualified member name (e.g. "Namespace.TypeName.MemberName")</param>
+    /// <returns>A tuple containing the resolved Type and the simple member name</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the name doesn't contain a type/member separator or when the type cannot be found
+    /// </exception>
     private (Type type, string memberName) ResolveTypeAndMemberName(string name)
     {
         if (name.Contains('`'))
@@ -230,6 +247,15 @@ internal class XmlParser
         return SplitTypeAndMemberName(name);
     }
 
+    /// <summary>
+    /// Splits a fully qualified member name into type name and member name.
+    /// </summary>
+    /// <param name="name">The fully qualified name in the format "Namespace.TypeName.MemberName"</param>
+    /// <returns>A tuple containing the resolved Type object and the simple member name</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the name doesn't contain a type/member separator (period) 
+    /// or when the type cannot be found in the assembly
+    /// </exception>
     private (Type type, string memberName) SplitTypeAndMemberName(string name)
     {
         var index = name.LastIndexOf('.');
@@ -247,8 +273,10 @@ internal class XmlParser
         return (type, memberName);
     }
 
-    // finds the type documentation for the given type if already exists;
-    // otherwise, creates a new one and adds it to the results.
+    /// <summary>
+    /// Finds the type documentation for the given type if already exists;
+    /// otherwise, creates a new one and adds it to the results.
+    /// </summary>
     private TypeDocumentation ResolveTypeDocumentation(Type type)
     {
         if (_results.TryGetValue(type, out var result))
