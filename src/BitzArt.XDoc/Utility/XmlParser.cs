@@ -124,17 +124,7 @@ internal class XmlParser
                     .Select(o => GetTypeFriendlyName(o.ParameterType))
                     .ToList();
 
-                if (methodParameters.Count != parameters.Count)
-                {
-                    return false;
-                }
-
-                if (methodParameters.All(parameters.Contains))
-                {
-                    return true;
-                }
-
-                return false;
+                return MemberSignatureParser.CompareParameters(methodParameters, parameters);
             })
             .SingleOrDefault();
 
@@ -146,16 +136,15 @@ internal class XmlParser
         where TMember : MemberInfo
         where TDocumentation : MemberDocumentation<TMember>
     {
-        var (typeName, memberName) = QualifiedMemberNameParser.ResolveTypeAndMemberName(name);
+        var (typeName, memberName) = MemberSignatureParser.ResolveTypeAndMemberName(name);
         
         var type = _assembly.GetType(typeName)
                    ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
 
-        var parameters = QualifiedMemberNameParser.ResolveMethodParameters(name);
+        var parameters = MemberSignatureParser.ResolveMethodParameters(name);
 
         var memberInfo = getMember.Invoke(type, memberName, parameters)
-            ?? throw new InvalidOperationException(
-                $"Member '{memberName}' not found in type '{type.Name}'.");
+            ?? throw new InvalidOperationException($"Member '{memberName}' not found in type '{type.Name}'.");
 
         var typeDocumentation = ResolveTypeDocumentation(type);
 

@@ -1,6 +1,6 @@
 namespace BitzArt.XDoc.Tests;
 
-public class QualifiedMemberNameParserTests
+public class MemberSignatureParserTests
 {
     [Fact]
     public void ResolveTypeAndMemberName_Generic_ShouldParse()
@@ -9,7 +9,7 @@ public class QualifiedMemberNameParserTests
 
         // Act
         var value = "BitzArt.CA.IRepository`1.Add(`0)";
-        var (type, memberName) = QualifiedMemberNameParser.ResolveTypeAndMemberName(value);
+        var (type, memberName) = MemberSignatureParser.ResolveTypeAndMemberName(value);
 
         // Assert
         Assert.Equal("BitzArt.CA.IRepository`1", type);
@@ -23,7 +23,7 @@ public class QualifiedMemberNameParserTests
 
         // Act
         var value = "MediaMars.Management.IsNewerExtension.IsNewer``1(``0,``0)";
-        var (type, memberName) = QualifiedMemberNameParser.ResolveTypeAndMemberName(value);
+        var (type, memberName) = MemberSignatureParser.ResolveTypeAndMemberName(value);
 
         // Assert
         Assert.Equal("MediaMars.Management.IsNewerExtension", type);
@@ -37,7 +37,7 @@ public class QualifiedMemberNameParserTests
 
         // Act
         var value = "MediaMars.Management.SiteOwnedQueryExtensions.WithSiteId``1(System.Linq.IQueryable{``0},System.Int32)";
-        var (type, memberName) = QualifiedMemberNameParser.ResolveTypeAndMemberName(value);
+        var (type, memberName) = MemberSignatureParser.ResolveTypeAndMemberName(value);
 
         // Assert
         Assert.Equal("MediaMars.Management.SiteOwnedQueryExtensions", type);
@@ -48,9 +48,30 @@ public class QualifiedMemberNameParserTests
     public void ResolveMethodParameters_Generic_ShouldReturnCorrectCount()
     {
         var value = "BitzArt.CA.IRepository`1.GetAllAsync``1(System.Func{System.Linq.IQueryable{`0},System.Linq.IQueryable{``0}},System.Threading.CancellationToken)";
-        var parameters = QualifiedMemberNameParser.ResolveMethodParameters(value);
+        var parameters = MemberSignatureParser.ResolveMethodParameters(value);
 
         // Assert
         Assert.Equal(2, parameters.Count);
+    }
+    
+    [Fact]
+    public void CompareParameters_Generic_ShouldReturnCorrectCount()
+    {
+        IReadOnlyCollection<string> methodParameters =
+        [
+            "System.Func{System.Linq.IQueryable{}, System.Linq.IQueryable{}}",
+            "System.Threading.CancellationToken"
+        ];
+        
+        IReadOnlyCollection<string> parameters =
+        [
+            "System.Func{System.Linq.IQueryable{},System.Linq.IQueryable{}}",
+            "System.Threading.CancellationToken"
+        ];
+        
+        var result = MemberSignatureParser.CompareParameters(methodParameters, parameters);
+
+        // Assert
+        Assert.True(result);
     }
 }
