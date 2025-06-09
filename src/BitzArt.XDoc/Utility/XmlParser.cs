@@ -84,12 +84,29 @@ internal class XmlParser
             member => new FieldDocumentation(_source, member, node));
 
     private MethodDocumentation? ParseMethodNode(XmlNode node, string name)
-        => ParseMemberNode(name,
-            (type, memberName, parameters) =>  GetMethod(type, memberName, parameters),
-            member => new MethodDocumentation(_source, member, node));
+    {
+        try
+        {
+            return ParseMemberNode(name,
+                (type, memberName, parameters) => GetMethod(type, memberName, parameters),
+                member => new MethodDocumentation(_source, member, node));
+        }
+        catch
+        {
+            // temporary workaround
+            return null;
+        }
+    }
 
     private static MethodInfo? GetMethod(Type type, string name, IReadOnlyCollection<string> parameters)
     {
+        // temporary workaround for ctors and generic type nodes,
+        // until proper handling is implemented
+        if (IsCtor(name) || IsGeneric(name))
+        {
+            return null;
+        }
+        
         return type.GetMethods()
             .Where(method => method.Name == name)
             .Where(method =>
@@ -114,6 +131,16 @@ internal class XmlParser
             .SingleOrDefault();
     }
 
+    private static bool IsGeneric(string value)
+    {
+        return value.Contains('`');
+    }
+    
+    private static bool IsCtor(string value)
+    {
+        return value.EndsWith("#ctor", StringComparison.Ordinal);
+    }
+
     private TDocumentation ParseMemberNode<TMember, TDocumentation>(string name, Func<Type, string, IReadOnlyCollection<string>, TMember?> getMember, Func<TMember, TDocumentation> getDocumentation)
         where TMember : MemberInfo
         where TDocumentation : MemberDocumentation<TMember>
@@ -122,8 +149,7 @@ internal class XmlParser
         var parameters = ResolveMethodParameters(name);
 
         var memberInfo = getMember.Invoke(type, memberName, parameters)
-            ?? throw new InvalidOperationException(
-                $"Member '{memberName}' not found in type '{type.Name}'.");
+            ?? throw new InvalidOperationException($"Member '{memberName}' not found in type '{type.Name}'.");
 
         var typeDocumentation = ResolveTypeDocumentation(type);
 
@@ -140,21 +166,21 @@ internal class XmlParser
         
         if (startIndex == -1)
         {
-            return Array.Empty<string>();
+            return [];
         }
     
         var endIndex = name.LastIndexOf(')');
 
         if (endIndex <= startIndex)
         {
-            return Array.Empty<string>();
+            return [];
         }
     
         var parametersString = name.Substring(startIndex + 1, endIndex - startIndex - 1);
         
         if (string.IsNullOrWhiteSpace(parametersString))
         {
-            return Array.Empty<string>();
+            return [];
         }
 
         var result = parametersString
