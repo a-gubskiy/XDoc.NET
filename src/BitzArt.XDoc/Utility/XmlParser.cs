@@ -162,8 +162,6 @@ internal class XmlParser
     /// <summary>
     /// Get the friendly name of a type
     /// </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
     private static string GetTypeFriendlyName(Type type)
     {
         if (!type.IsGenericType)
@@ -187,9 +185,7 @@ internal class XmlParser
         // Get the generic arguments and format them recursively
         var genericArgs = string.Join(",", type.GetGenericArguments().Select(GetTypeFriendlyName));
 
-        var friendlyName = $"{typeName}{{{genericArgs}}}";
-
-        return friendlyName;
+        return $"{typeName}{{{genericArgs}}}";
     }
 
     /// <summary>
