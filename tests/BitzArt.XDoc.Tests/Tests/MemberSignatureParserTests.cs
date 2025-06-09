@@ -3,51 +3,54 @@ namespace BitzArt.XDoc.Tests;
 public class MemberSignatureParserTests
 {
     [Fact]
-    public void ResolveTypeAndMemberName_Generic_ShouldParse()
+    public void ResolveTypeAndMemberName_GenericMethod_ShouldParse()
     {
         // Arrange
+        var value = "RootNameSpace.ChildNameSpace.MyClass`1.MyMethod(`0)";
 
         // Act
-        var value = "BitzArt.CA.IRepository`1.Add(`0)";
         var (type, memberName) = MemberSignatureParser.ResolveTypeAndMemberName(value);
 
         // Assert
-        Assert.Equal("BitzArt.CA.IRepository`1", type);
-        Assert.Equal("Add", memberName);
+        Assert.Equal("RootNameSpace.ChildNameSpace.MyClass`1", type);
+        Assert.Equal("MyMethod", memberName);
     }
     
     [Fact]
-    public void ResolveTypeAndMemberName2_Generic_ShouldParse()
+    public void ResolveTypeAndMemberName_GenericMethodWithFewParameters_ShouldParse()
     {
         // Arrange
+        var value = "RootNameSpace.ChildNameSpace.MyExtension.SomeMethod``1(``0,``0)";
 
         // Act
-        var value = "MediaMars.Management.IsNewerExtension.IsNewer``1(``0,``0)";
         var (type, memberName) = MemberSignatureParser.ResolveTypeAndMemberName(value);
 
         // Assert
-        Assert.Equal("MediaMars.Management.IsNewerExtension", type);
-        Assert.Equal("IsNewer", memberName);
+        Assert.Equal("RootNameSpace.ChildNameSpace.MyExtension", type);
+        Assert.Equal("SomeMethod", memberName);
     }
     
     [Fact]
-    public void ResolveTypeAndMemberName3_Generic_ShouldParse()
+    public void ResolveTypeAndMemberName_GenericMethodWithComplexParameter_ShouldParse()
     {
         // Arrange
+        var value = "RootNameSpace.ChildNameSpace.MyExtension.MyProperty``1(System.Linq.IQueryable{``0},System.Int32)";
 
         // Act
-        var value = "MediaMars.Management.SiteOwnedQueryExtensions.WithSiteId``1(System.Linq.IQueryable{``0},System.Int32)";
         var (type, memberName) = MemberSignatureParser.ResolveTypeAndMemberName(value);
 
         // Assert
-        Assert.Equal("MediaMars.Management.SiteOwnedQueryExtensions", type);
-        Assert.Equal("WithSiteId", memberName);
+        Assert.Equal("RootNameSpace.ChildNameSpace.MyExtension", type);
+        Assert.Equal("MyProperty", memberName);
     } 
     
     [Fact]
-    public void ResolveMethodParameters_Generic_ShouldReturnCorrectCount()
+    public void ResolveTypeAndMemberName_GenericMethodWithComplexParameters_ShouldParse()
     {
-        var value = "BitzArt.CA.IRepository`1.GetAllAsync``1(System.Func{System.Linq.IQueryable{`0},System.Linq.IQueryable{``0}},System.Threading.CancellationToken)";
+        // Arrange
+        var value = "RootNameSpace.ChildNameSpace.SomeClass`1.SomeMethod``1(System.Func{System.Linq.IQueryable{`0},System.Linq.IQueryable{``0}},System.Threading.CancellationToken)";
+        
+        // Act
         var parameters = MemberSignatureParser.ResolveMethodParameters(value);
 
         // Assert
