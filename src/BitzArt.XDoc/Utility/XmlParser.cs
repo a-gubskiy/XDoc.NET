@@ -37,7 +37,7 @@ internal class XmlParser
     internal Dictionary<Type, TypeDocumentation> Parse()
     {
         var nodeList = _xml.SelectNodes("/doc/members/member")
-                       ?? throw new InvalidOperationException("Invalid XML.");
+            ?? throw new InvalidOperationException("Invalid XML.");
 
         foreach (XmlNode node in nodeList) Parse(node);
 
@@ -50,9 +50,8 @@ internal class XmlParser
             throw new InvalidOperationException("Invalid XML node.");
 
         var name = (node.Attributes["name"]?.Value)
-                   ?? throw new InvalidOperationException($"No 'name' attribute found in XML node '{node.Value}'.");
+            ?? throw new InvalidOperationException($"No 'name' attribute found in XML node '{node.Value}'.");
 
-        Console.WriteLine("Node name: " + name);
         switch (name[0])
         {
             case 'T': ParseTypeNode(node, name[2..]); break;
@@ -65,7 +64,7 @@ internal class XmlParser
     private TypeDocumentation ParseTypeNode(XmlNode node, string name)
     {
         var type = _assembly.GetType(name)
-                   ?? throw new InvalidOperationException($"Type '{name}' not found.");
+            ?? throw new InvalidOperationException($"Type '{name}' not found.");
 
         // We could handle this case by finding and updating the existing object,
         // but I don't see a reason why this would be necessary.
@@ -92,24 +91,13 @@ internal class XmlParser
             member => new FieldDocumentation(_source, member, node));
 
     private MethodDocumentation? ParseMethodNode(XmlNode node, string name)
-    {
-        Console.WriteLine("Parsing method node: " + name);
-        
-        return ParseMemberNode(name,
-            (type, memberName, parameters) =>
-            {
-                Console.WriteLine("Resolving method: " + memberName);
-                
-                return GetMethod(type, memberName, parameters);
-            },
+        => ParseMemberNode(name,
+            (type, memberName, parameters) =>  GetMethod(type, memberName, parameters),
             member => new MethodDocumentation(_source, member, node));
-    }
 
     private static MethodBase? GetMethod(Type type, string name, IReadOnlyCollection<string> parameters)
     {
         name = name.Replace("#ctor", ".ctor");
-        
-        Console.WriteLine("Method: " + name);
         
         var methods = new List<MethodBase>();
         methods.AddRange(type.GetMethods());
@@ -124,11 +112,20 @@ internal class XmlParser
                     .Select(o => GetTypeFriendlyName(o.ParameterType))
                     .ToList();
 
-                return MemberSignatureParser.CompareParameters(methodParameters, parameters);
+                if (methodParameters.Count != parameters.Count)
+                {
+                    return false;
+                }
+
+                if (methodParameters.All(parameters.Contains))
+                {
+                    return true;
+                }
+
+                return false;
             })
             .SingleOrDefault();
 
-        Console.WriteLine("Returned method: " + (method?.Name ?? "null"));
         return method;
     }
 
@@ -181,13 +178,13 @@ internal class XmlParser
         }
 
         // Get the generic arguments and format them recursively
-        var genericArgs = string.Join(", ", type.GetGenericArguments().Select(GetTypeFriendlyName));
+        var genericArgs = string.Join(",", type.GetGenericArguments().Select(GetTypeFriendlyName));
 
         var friendlyName = $"{typeName}{{{genericArgs}}}";
 
         return friendlyName;
     }
-   
+
     /// <summary>
     /// Finds the type documentation for the given type if already exists;
     /// otherwise, creates a new one and adds it to the results.

@@ -53,25 +53,4 @@ public class MemberSignatureParserTests
         // Assert
         Assert.Equal(2, parameters.Count);
     }
-    
-    [Fact]
-    public void CompareParameters_Generic_ShouldReturnCorrectCount()
-    {
-        IReadOnlyCollection<string> methodParameters =
-        [
-            "System.Func{System.Linq.IQueryable{}, System.Linq.IQueryable{}}",
-            "System.Threading.CancellationToken"
-        ];
-        
-        IReadOnlyCollection<string> parameters =
-        [
-            "System.Func{System.Linq.IQueryable{},System.Linq.IQueryable{}}",
-            "System.Threading.CancellationToken"
-        ];
-        
-        var result = MemberSignatureParser.CompareParameters(methodParameters, parameters);
-
-        // Assert
-        Assert.True(result);
-    }
 }

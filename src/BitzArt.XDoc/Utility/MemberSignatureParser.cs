@@ -149,24 +149,4 @@ public class MemberSignatureParser
 
         return result;
     }
-
-    public static bool CompareParameters(
-        IReadOnlyCollection<string> methodParameters,
-        IReadOnlyCollection<string> parameters)
-    {
-        if (methodParameters.Count != parameters.Count)
-        {
-            return false;
-        }
-
-        methodParameters = methodParameters.Select(o => o.Replace(" ", "")).ToList();
-        parameters = parameters.Select(o => o.Replace(" ", "")).ToList();
-
-        if (methodParameters.All(parameters.Contains))
-        {
-            return true;
-        }
-
-        return false;
-    }
 }
