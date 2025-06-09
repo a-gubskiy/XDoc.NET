@@ -3,7 +3,7 @@ namespace BitzArt.XDoc.Tests;
 public class MemberSignatureParserTests
 {
     [Fact]
-    public void ResolveTypeAndMemberName_GenericMethod_ShouldParse()
+    public void ResolveTypeAndMemberName_GenericMethod_ShouldResolve()
     {
         // Arrange
         var value = "RootNameSpace.ChildNameSpace.MyClass`1.MyMethod(`0)";
@@ -17,7 +17,7 @@ public class MemberSignatureParserTests
     }
     
     [Fact]
-    public void ResolveTypeAndMemberName_GenericMethodWithFewParameters_ShouldParse()
+    public void ResolveTypeAndMemberName_GenericMethodWithFewParameters_ShouldResolve()
     {
         // Arrange
         var value = "RootNameSpace.ChildNameSpace.MyExtension.SomeMethod``1(``0,``0)";
@@ -31,7 +31,7 @@ public class MemberSignatureParserTests
     }
     
     [Fact]
-    public void ResolveTypeAndMemberName_GenericMethodWithComplexParameter_ShouldParse()
+    public void ResolveTypeAndMemberName_GenericMethodWithComplexParameter_ShouldResolve()
     {
         // Arrange
         var value = "RootNameSpace.ChildNameSpace.MyExtension.MyProperty``1(System.Linq.IQueryable{``0},System.Int32)";
@@ -45,7 +45,7 @@ public class MemberSignatureParserTests
     } 
     
     [Fact]
-    public void ResolveTypeAndMemberName_GenericMethodWithComplexParameters_ShouldParse()
+    public void ResolveMethodParameters_GenericMethodWithComplexParameters_ShouldResolve()
     {
         // Arrange
         var value = "RootNameSpace.ChildNameSpace.SomeClass`1.SomeMethod``1(System.Func{System.Linq.IQueryable{`0},System.Linq.IQueryable{``0}},System.Threading.CancellationToken)";
