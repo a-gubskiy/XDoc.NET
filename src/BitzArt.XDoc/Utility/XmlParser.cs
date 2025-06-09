@@ -148,7 +148,7 @@ internal class XmlParser
         var parameters = MemberSignatureParser.ResolveMethodParameters(name);
 
         var memberInfo = getMember.Invoke(type, memberName, parameters)
-                    ?? throw new InvalidOperationException($"Member '{memberName}' not found in type '{type.Name}'.");
+            ?? throw new InvalidOperationException($"Member '{memberName}' not found in type '{type.Name}'.");
 
         var typeDocumentation = ResolveTypeDocumentation(type);
 
