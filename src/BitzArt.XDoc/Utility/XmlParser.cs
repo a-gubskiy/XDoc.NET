@@ -47,17 +47,23 @@ internal class XmlParser
     private void Parse(XmlNode node)
     {
         if (node.Attributes is null || node.Attributes.Count == 0)
+        {
             throw new InvalidOperationException("Invalid XML node.");
+        }
 
-        var name = (node.Attributes["name"]?.Value)
-            ?? throw new InvalidOperationException($"No 'name' attribute found in XML node '{node.Value}'.");
+        var name = (node.Attributes["name"]?.Value);
+        
+        if (name == null)
+        {
+            throw new InvalidOperationException($"No 'name' attribute found in XML node '{node.Value}'.");
+        }
 
         switch (name[0])
         {
-            case 'T': ParseTypeNode(node, name[2..]); break;
-            case 'P': ParsePropertyNode(node, name[2..]); break;
-            case 'F': ParseFieldNode(node, name[2..]); break;
-            case 'M': ParseMethodNode(node, name[2..]); break;
+            case 'T': ParseTypeNode(node, name[2..]); break; //Types start with 'T'
+            case 'P': ParsePropertyNode(node, name[2..]); break; //Properties start with 'P'
+            case 'F': ParseFieldNode(node, name[2..]); break; //Fields start with 'F'
+            case 'M': ParseMethodNode(node, name[2..]); break; //Methods and ctors start with 'M'
         }
     }
 
@@ -97,6 +103,7 @@ internal class XmlParser
 
     private static MethodBase? GetMethod(Type type, string name, IReadOnlyCollection<string> parameters)
     {
+        // Replace the special constructor and static constructor names with the standard ones
         name = name.Replace("#ctor", ".ctor").Replace("#cctor", ".cctor");
         
         var methods = new List<MethodBase>();
