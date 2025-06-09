@@ -91,19 +91,9 @@ internal class XmlParser
             member => new FieldDocumentation(_source, member, node));
 
     private MethodDocumentation? ParseMethodNode(XmlNode node, string name)
-    {
-        try
-        {
-            return ParseMemberNode(name,
-                (type, memberName, parameters) => GetMethod(type, memberName, parameters),
-                member => new MethodDocumentation(_source, member, node));
-        }
-        catch
-        {
-            // temporary workaround
-            return null;
-        }
-    }
+        => ParseMemberNode(name,
+            (type, memberName, parameters) =>  GetMethod(type, memberName, parameters),
+            member => new MethodDocumentation(_source, member, node));
 
     private static MethodInfo? GetMethod(Type type, string name, IReadOnlyCollection<string> parameters)
     {
