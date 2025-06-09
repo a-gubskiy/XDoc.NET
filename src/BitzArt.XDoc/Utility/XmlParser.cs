@@ -39,18 +39,25 @@ internal class XmlParser
 
     private void Parse(XmlNode node)
     {
-        if (node.Attributes is null || node.Attributes.Count == 0)
-            throw new InvalidOperationException("Invalid XML node.");
-
-        var name = (node.Attributes["name"]?.Value)
-            ?? throw new InvalidOperationException($"No 'name' attribute found in XML node '{node.Value}'.");
-
-        switch (name[0])
+        try
         {
-            case 'T': ParseTypeNode(node, name[2..]); break;
-            case 'P': ParsePropertyNode(node, name[2..]); break;
-            case 'F': ParseFieldNode(node, name[2..]); break;
-            case 'M': ParseMethodNode(node, name[2..]); break;
+            if (node.Attributes is null || node.Attributes.Count == 0)
+                throw new InvalidOperationException("Invalid XML node.");
+
+            var name = (node.Attributes["name"]?.Value)
+                       ?? throw new InvalidOperationException($"No 'name' attribute found in XML node '{node.Value}'.");
+
+            switch (name[0])
+            {
+                case 'T': ParseTypeNode(node, name[2..]); break;
+                case 'P': ParsePropertyNode(node, name[2..]); break;
+                case 'F': ParseFieldNode(node, name[2..]); break;
+                case 'M': ParseMethodNode(node, name[2..]); break;
+            }
+        }
+        catch (Exception ex)
+        {
+          // temporary workaround
         }
     }
 
@@ -90,6 +97,13 @@ internal class XmlParser
 
     private static MethodInfo? GetMethod(Type type, string name, IReadOnlyCollection<string> parameters)
     {
+        // temporary workaround for ctors and generic type nodes,
+        // until proper handling is implemented
+        if (IsCtor(name) || IsGeneric(name))
+        {
+            return null;
+        }
+        
         return type.GetMethods()
             .Where(method => method.Name == name)
             .Where(method =>
@@ -114,6 +128,16 @@ internal class XmlParser
             .SingleOrDefault();
     }
 
+    private static bool IsGeneric(string value)
+    {
+        return value.Contains('`');
+    }
+    
+    private static bool IsCtor(string value)
+    {
+        return value.EndsWith("#ctor", StringComparison.Ordinal);
+    }
+
     private TDocumentation ParseMemberNode<TMember, TDocumentation>(string name, Func<Type, string, IReadOnlyCollection<string>, TMember?> getMember, Func<TMember, TDocumentation> getDocumentation)
         where TMember : MemberInfo
         where TDocumentation : MemberDocumentation<TMember>
@@ -122,8 +146,7 @@ internal class XmlParser
         var parameters = ResolveMethodParameters(name);
 
         var memberInfo = getMember.Invoke(type, memberName, parameters)
-            ?? throw new InvalidOperationException(
-                $"Member '{memberName}' not found in type '{type.Name}'.");
+            ?? throw new InvalidOperationException($"Member '{memberName}' not found in type '{type.Name}'.");
 
         var typeDocumentation = ResolveTypeDocumentation(type);
 
@@ -140,21 +163,21 @@ internal class XmlParser
         
         if (startIndex == -1)
         {
-            return Array.Empty<string>();
+            return [];
         }
     
         var endIndex = name.LastIndexOf(')');
 
         if (endIndex <= startIndex)
         {
-            return Array.Empty<string>();
+            return [];
         }
     
         var parametersString = name.Substring(startIndex + 1, endIndex - startIndex - 1);
         
         if (string.IsNullOrWhiteSpace(parametersString))
         {
-            return Array.Empty<string>();
+            return [];
         }
 
         var result = parametersString
