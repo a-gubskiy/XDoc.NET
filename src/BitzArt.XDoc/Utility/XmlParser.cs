@@ -97,7 +97,7 @@ internal class XmlParser
 
     private static MethodBase? GetMethod(Type type, string name, IReadOnlyCollection<string> parameters)
     {
-        name = name.Replace("#ctor", ".ctor");
+        name = name.Replace("#ctor", ".ctor").Replace("#cctor", ".cctor");
         
         var methods = new List<MethodBase>();
         methods.AddRange(type.GetMethods());
