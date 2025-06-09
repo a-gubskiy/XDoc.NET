@@ -39,18 +39,25 @@ internal class XmlParser
 
     private void Parse(XmlNode node)
     {
-        if (node.Attributes is null || node.Attributes.Count == 0)
-            throw new InvalidOperationException("Invalid XML node.");
-
-        var name = (node.Attributes["name"]?.Value)
-            ?? throw new InvalidOperationException($"No 'name' attribute found in XML node '{node.Value}'.");
-
-        switch (name[0])
+        try
         {
-            case 'T': ParseTypeNode(node, name[2..]); break;
-            case 'P': ParsePropertyNode(node, name[2..]); break;
-            case 'F': ParseFieldNode(node, name[2..]); break;
-            case 'M': ParseMethodNode(node, name[2..]); break;
+            if (node.Attributes is null || node.Attributes.Count == 0)
+                throw new InvalidOperationException("Invalid XML node.");
+
+            var name = (node.Attributes["name"]?.Value)
+                       ?? throw new InvalidOperationException($"No 'name' attribute found in XML node '{node.Value}'.");
+
+            switch (name[0])
+            {
+                case 'T': ParseTypeNode(node, name[2..]); break;
+                case 'P': ParsePropertyNode(node, name[2..]); break;
+                case 'F': ParseFieldNode(node, name[2..]); break;
+                case 'M': ParseMethodNode(node, name[2..]); break;
+            }
+        }
+        catch (Exception ex)
+        {
+          // temporary workaround
         }
     }
 
