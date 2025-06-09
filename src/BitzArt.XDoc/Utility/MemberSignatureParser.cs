@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace BitzArt.XDoc;
 
 /// <summary>
@@ -5,7 +7,7 @@ namespace BitzArt.XDoc;
 /// such as extracting type names, member names, and method parameter types. 
 /// Handles special cases including generic types and nested generic parameters.
 /// </summary>
-public static class MemberSignatureParser
+internal static class MemberSignatureParser
 {
     /// <summary>
     /// Resolves a qualified member name into its associated type and member name.
@@ -154,17 +156,13 @@ public static class MemberSignatureParser
         return parameters;
     }
 
-    private static string CleanTypeParameter(string parameter)
+    /// <summary>
+    /// Remove generic markers like `0, `1, etc. and any standalone backticks
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    private static string CleanTypeParameter(string value)
     {
-        // Remove generic markers like `0, `1, etc.
-        var result = parameter;
-
-        // Use regex to replace all occurrences of `N
-        result = System.Text.RegularExpressions.Regex.Replace(result, @"`\d+", "");
-
-        // Remove any standalone backticks
-        result = result.Replace("`", "");
-
-        return result;
+        return Regex.Replace(value, @"`\d+", "").Replace("`", "");;
     }
 }
