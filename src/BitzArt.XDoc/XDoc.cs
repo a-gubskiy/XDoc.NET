@@ -49,10 +49,11 @@ public class XDoc : IDisposable
     public AssemblyDocumentation Get(Assembly assembly)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
-        
-        return _fetchedAssemblies.TryGetValue(assembly, out var result)
-            ? result
-            : Fetch(assembly);
+
+        if (_fetchedAssemblies.TryGetValue(assembly, out var result))
+            return result;
+        else
+            return Fetch(assembly);
     }
 
     private AssemblyDocumentation Fetch(Assembly assembly)

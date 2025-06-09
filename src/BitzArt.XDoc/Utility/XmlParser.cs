@@ -52,6 +52,7 @@ internal class XmlParser
         var name = (node.Attributes["name"]?.Value)
                    ?? throw new InvalidOperationException($"No 'name' attribute found in XML node '{node.Value}'.");
 
+        Console.WriteLine("Node name: " + name);
         switch (name[0])
         {
             case 'T': ParseTypeNode(node, name[2..]); break;
@@ -91,13 +92,24 @@ internal class XmlParser
             member => new FieldDocumentation(_source, member, node));
 
     private MethodDocumentation? ParseMethodNode(XmlNode node, string name)
-        => ParseMemberNode(name,
-            (type, memberName, parameters) => GetMethod(type, memberName, parameters),
+    {
+        Console.WriteLine("Parsing method node: " + name);
+        
+        return ParseMemberNode(name,
+            (type, memberName, parameters) =>
+            {
+                Console.WriteLine("Resolving method: " + memberName);
+                
+                return GetMethod(type, memberName, parameters);
+            },
             member => new MethodDocumentation(_source, member, node));
+    }
 
     private static MethodBase? GetMethod(Type type, string name, IReadOnlyCollection<string> parameters)
     {
         name = name.Replace("#ctor", ".ctor");
+        
+        Console.WriteLine("Method: " + name);
         
         var methods = new List<MethodBase>();
         methods.AddRange(type.GetMethods());
@@ -126,6 +138,7 @@ internal class XmlParser
             })
             .SingleOrDefault();
 
+        Console.WriteLine("Returned method: " + (method?.Name ?? "null"));
         return method;
     }
 
@@ -133,8 +146,12 @@ internal class XmlParser
         where TMember : MemberInfo
         where TDocumentation : MemberDocumentation<TMember>
     {
-        var (type, memberName) = ResolveTypeAndMemberName(name);
-        var parameters = ResolveMethodParameters(name);
+        var (typeName, memberName) = QualifiedMemberNameParser.ResolveTypeAndMemberName(name);
+        
+        var type = _assembly.GetType(typeName)
+                   ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
+
+        var parameters = QualifiedMemberNameParser.ResolveMethodParameters(name);
 
         var memberInfo = getMember.Invoke(type, memberName, parameters)
             ?? throw new InvalidOperationException(
@@ -147,39 +164,6 @@ internal class XmlParser
         typeDocumentation.AddMemberData(memberInfo, memberDocumentation);
 
         return memberDocumentation;
-    }
-
-    private static IReadOnlyCollection<string> ResolveMethodParameters(string name)
-    {
-        var startIndex = name.IndexOf('(');
-
-        if (startIndex == -1)
-        {
-            return Array.Empty<string>();
-        }
-
-        var endIndex = name.LastIndexOf(')');
-
-        if (endIndex <= startIndex)
-        {
-            return Array.Empty<string>();
-        }
-
-        var parametersString = name.Substring(startIndex + 1, endIndex - startIndex - 1);
-
-        if (string.IsNullOrWhiteSpace(parametersString))
-        {
-            return Array.Empty<string>();
-        }
-
-        var result = parametersString
-            .Split(',', StringSplitOptions.RemoveEmptyEntries)
-            .Select(p => p.Trim())
-            .Select(p => p.Replace("`0", ""))
-            .Select(p => p.Replace("`", ""))
-            .ToList();
-
-        return result;
     }
 
     /// <summary>
@@ -214,65 +198,7 @@ internal class XmlParser
 
         return friendlyName;
     }
-
-    
-    /// <summary>
-    /// Resolves a qualified member name into its associated type and member name.
-    /// Handles special cases like generic types and methods with parameters.
-    /// </summary>
-    /// <param name="name">The fully qualified member name (e.g. "Namespace.TypeName.MemberName")</param>
-    /// <returns>A tuple containing the resolved Type and the simple member name</returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when the name doesn't contain a type/member separator or when the type cannot be found
-    /// </exception>
-    private (Type type, string memberName) ResolveTypeAndMemberName(string name)
-    {
-        if (name.Contains('`'))
-        {
-            if (!name.Contains('('))
-            {
-                // Generic type with property
-                return SplitTypeAndMemberName(name);
-            }
-
-            // Generic member with parameters
-            name = name[..name.IndexOf('`')];
-        }
-
-        if (name.Contains('('))
-        {
-            name = name[..name.IndexOf('(')];
-        }
-
-        return SplitTypeAndMemberName(name);
-    }
-
-    /// <summary>
-    /// Splits a fully qualified member name into type name and member name.
-    /// </summary>
-    /// <param name="name">The fully qualified name in the format "Namespace.TypeName.MemberName"</param>
-    /// <returns>A tuple containing the resolved Type object and the simple member name</returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when the name doesn't contain a type/member separator (period) 
-    /// or when the type cannot be found in the assembly
-    /// </exception>
-    private (Type type, string memberName) SplitTypeAndMemberName(string name)
-    {
-        var index = name.LastIndexOf('.');
-
-        if (index == -1)
-        {
-            throw new InvalidOperationException("Encountered invalid XML node.");
-        }
-
-        var (typeName, memberName) = (name[..index], name[(index + 1)..]);
-
-        var type = _assembly.GetType(typeName)
-                   ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
-
-        return (type, memberName);
-    }
-
+   
     /// <summary>
     /// Finds the type documentation for the given type if already exists;
     /// otherwise, creates a new one and adds it to the results.

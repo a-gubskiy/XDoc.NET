@@ -41,12 +41,16 @@ internal static class XmlUtility
     {
         try
         {
+            Console.WriteLine("Fetching XML documentation for assembly: " + assembly.GetName().Name);
+            
             var typesDocumentation = XmlParser.Parse(source, assembly, xmlDocument);
 
             return typesDocumentation;
         }
         catch (Exception ex)
         {
+            Console.WriteLine(ex.Message);
+            
             throw new AggregateException("Something went wrong while trying to parse the XML documentation file. " +
                                     "See inner exception for details.", ex);
         }
