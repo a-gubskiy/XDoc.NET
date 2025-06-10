@@ -20,11 +20,6 @@ internal static class MemberSignatureParser
     /// </exception>
     public static (string typeName, string memberName) ResolveTypeAndMemberName(string value)
     {
-        if (value.Contains('`'))
-        {
-            return ResolveGenericTypeAndMemberName(value);
-        }
-
         if (value.Contains('('))
         {
             value = value[..value.IndexOf('(')];
@@ -37,51 +32,21 @@ internal static class MemberSignatureParser
             throw new InvalidOperationException("Encountered invalid XML node.");
         }
 
-        var (typeName, memberName) = (value[..index], value[(index + 1)..]);
+        var typeName = value[..index];
+        var memberName = value[(index + 1)..];
 
-
-        return (typeName, memberName);
-    }
-
-    /// <summary>
-    /// Resolves the type and member name from a generic type member signature.
-    /// Handles cases where the member name includes generic type parameters or method parameters,
-    /// and removes generic markers from the member name.
-    /// </summary>
-    /// <param name="value">
-    /// The fully qualified member signature, passed by reference. The method may modify this string to remove parameter lists.
-    /// </param>
-    /// <returns>
-    /// A tuple containing the resolved type name and the cleaned member name.
-    /// </returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when the input string does not contain a valid type/member separator.
-    /// </exception>
-    private static (string typeName, string memberName) ResolveGenericTypeAndMemberName(string value)
-    {
-        if (value.Contains("("))
+        if (value.Contains('`'))
         {
-            value = value[..value.IndexOf('(')];
-        }
+            if (memberName.Contains("("))
+            {
+                memberName = memberName[..memberName.IndexOf('(')];
+            }
 
-        var index = value.LastIndexOf('.');
-
-        if (index == -1)
-        {
-            throw new InvalidOperationException("Encountered invalid XML node.");
-        }
-
-        var (typeName, memberName) = (value[..index], value[(index + 1)..]);
-
-        if (memberName.Contains("("))
-        {
-            memberName = memberName[..memberName.IndexOf('(')];
-        }
-
-        if (memberName.Contains("`"))
-        {
-            // Remove generic type parameters from the member name
-            memberName = memberName[..memberName.IndexOf('`')];
+            if (memberName.Contains("`"))
+            {
+                // Remove generic type parameters from the member name
+                memberName = memberName[..memberName.IndexOf('`')];
+            }
         }
 
         return (typeName, memberName);

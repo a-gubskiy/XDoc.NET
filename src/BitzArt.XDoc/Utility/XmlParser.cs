@@ -103,7 +103,6 @@ internal class XmlParser
 
     private static MethodBase? GetMethod(Type type, string name, IReadOnlyCollection<string> parameters)
     {
-       
         var methods = new List<MethodBase>();
         methods.AddRange(type.GetMethods());
         methods.AddRange(type.GetConstructors());
