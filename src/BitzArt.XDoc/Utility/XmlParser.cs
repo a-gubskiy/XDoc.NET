@@ -103,15 +103,22 @@ internal class XmlParser
 
     private static MethodBase? GetMethod(Type type, string name, IReadOnlyCollection<string> parameters)
     {
-        // Replace the special constructor and static constructor names with the standard ones
-        name = name.Replace("#ctor", ".ctor").Replace("#cctor", ".cctor");
-        
+       
         var methods = new List<MethodBase>();
         methods.AddRange(type.GetMethods());
         methods.AddRange(type.GetConstructors());
 
         var method = methods
-            .Where(method => method.Name == name)
+            .Where(method =>
+            {
+                if ((method.Name == ".ctor" && name == "#ctor") // Check for instance constructors
+                    || (method.Name == ".cctor" && name == "#cctor")) // Check for static constructors
+                {
+                    return true;
+                }
+                
+                return method.Name == name;
+            })
             .Where(method =>
             {
                 var methodParameters = method
