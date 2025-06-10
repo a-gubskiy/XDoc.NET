@@ -163,6 +163,6 @@ internal static class MemberSignatureParser
     /// <returns></returns>
     private static string CleanTypeParameter(string value)
     {
-        return Regex.Replace(value, @"`\d+", "").Replace("`", "");;
+        return Regex.Replace(value, @"`\d+", "").Replace("`", "");
     }
 }
