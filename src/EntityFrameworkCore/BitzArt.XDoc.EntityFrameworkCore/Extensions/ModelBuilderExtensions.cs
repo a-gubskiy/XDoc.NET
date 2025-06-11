@@ -22,22 +22,20 @@ public static class ModelBuilderExtensions
         {
             var typeDocumentation = xDoc.Get(entityType.ClrType);
 
-            if (typeDocumentation is null)
+            if (typeDocumentation is not null)
             {
-                continue;
-            }
+                var entityComment = typeDocumentation.ToPlainText();
 
-            var entityComment = typeDocumentation.ToPlainText();
+                // For owned entities, we don't set the comment on the entity itself
+                // But we will set the comment on the properties
 
-            // For owned entities, we don't set the comment on the entity itself
-            // But we will set the comment on the properties
+                var isOwned = entityType.IsOwned();
+                var tableName = entityType.GetTableName();
 
-            var isOwned = entityType.IsOwned();
-            var tableName = entityType.GetTableName();
-
-            if (!isOwned && tableName is not null)
-            {
-                entityType.SetComment(entityComment);
+                if (!isOwned && tableName is not null)
+                {
+                    entityType.SetComment(entityComment);
+                }
             }
 
             var properties = entityType.GetProperties();
