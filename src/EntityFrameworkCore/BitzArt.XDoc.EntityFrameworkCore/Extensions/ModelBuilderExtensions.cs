@@ -14,7 +14,7 @@ public static class ModelBuilderExtensions
     /// </summary>
     /// <param name="modelBuilder"></param>
     /// <param name="xDoc"></param>
-    public static void ConfigureComments(this ModelBuilder modelBuilder, XDoc xDoc)
+    public static ModelBuilder ConfigureComments(this ModelBuilder modelBuilder, XDoc xDoc)
     {
         var entityTypes = modelBuilder.Model.GetEntityTypes();
 
@@ -68,5 +68,7 @@ public static class ModelBuilderExtensions
                 property.SetComment(propertyComment);
             }
         }
+
+        return modelBuilder;
     }
 }
