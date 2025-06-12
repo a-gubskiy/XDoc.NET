@@ -7,7 +7,7 @@ namespace BitzArt.XDoc;
 /// such as extracting type names, member names, and method parameter types. 
 /// Handles special cases including generic types and nested generic parameters.
 /// </summary>
-internal static class MemberSignatureParser
+internal static class MemberSignatureResolver
 {
     /// <summary>
     /// Resolves a qualified member name into its associated type and member name.

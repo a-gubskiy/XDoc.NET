@@ -1,6 +1,6 @@
 namespace BitzArt.XDoc.Tests;
 
-public class MemberSignatureParserTests
+public class MemberSignatureResolverTests
 {
     [Fact]
     public void ResolveTypeAndMemberName_GenericMethod_ShouldResolve()
@@ -9,7 +9,7 @@ public class MemberSignatureParserTests
         var value = "RootNameSpace.ChildNameSpace.MyClass`1.MyMethod(`0)";
 
         // Act
-        var (type, memberName) = MemberSignatureParser.ResolveTypeAndMemberName(value);
+        var (type, memberName) = MemberSignatureResolver.ResolveTypeAndMemberName(value);
 
         // Assert
         Assert.Equal("RootNameSpace.ChildNameSpace.MyClass`1", type);
@@ -23,7 +23,7 @@ public class MemberSignatureParserTests
         var value = "RootNameSpace.ChildNameSpace.MyExtension.SomeMethod``1(``0,``0)";
 
         // Act
-        var (type, memberName) = MemberSignatureParser.ResolveTypeAndMemberName(value);
+        var (type, memberName) = MemberSignatureResolver.ResolveTypeAndMemberName(value);
 
         // Assert
         Assert.Equal("RootNameSpace.ChildNameSpace.MyExtension", type);
@@ -37,7 +37,7 @@ public class MemberSignatureParserTests
         var value = "RootNameSpace.ChildNameSpace.MyExtension.MyProperty``1(System.Linq.IQueryable{``0},System.Int32)";
 
         // Act
-        var (type, memberName) = MemberSignatureParser.ResolveTypeAndMemberName(value);
+        var (type, memberName) = MemberSignatureResolver.ResolveTypeAndMemberName(value);
 
         // Assert
         Assert.Equal("RootNameSpace.ChildNameSpace.MyExtension", type);
@@ -51,7 +51,7 @@ public class MemberSignatureParserTests
         var value = "RootNameSpace.ChildNameSpace.SomeClass`1.SomeMethod``1(System.Func{System.Linq.IQueryable{`0},System.Linq.IQueryable{``0}},System.Threading.CancellationToken)";
         
         // Act
-        var parameters = MemberSignatureParser.ResolveMethodParameters(value);
+        var parameters = MemberSignatureResolver.ResolveMethodParameters(value);
 
         // Assert
         Assert.Equal(2, parameters.Count);
