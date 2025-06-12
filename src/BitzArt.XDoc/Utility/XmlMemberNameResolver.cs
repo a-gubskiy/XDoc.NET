@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 
 namespace BitzArt.XDoc;
@@ -146,47 +147,56 @@ internal static class XmlMemberNameResolver
 
         if (parameterListStartIndex == -1)
         {
-            return [];
+            // No parameters found, return an empty collection
+            return ImmutableArray<string>.Empty;
         }
 
         var parameterListEndIndex = xmlDocumentationMemberName.LastIndexOf(')');
 
         if (parameterListEndIndex <= parameterListStartIndex)
         {
-            return [];
+            // No valid parameter list found, return an empty collection
+            return ImmutableArray<string>.Empty;
         }
 
-        var parametersString = xmlDocumentationMemberName.Substring(parameterListStartIndex + 1, parameterListEndIndex - parameterListStartIndex - 1);
+        var parametersString = xmlDocumentationMemberName.Substring(
+            parameterListStartIndex + 1,
+            parameterListEndIndex - parameterListStartIndex - 1);
 
         if (string.IsNullOrWhiteSpace(parametersString))
         {
-            return [];
+            // No parameters found, return an empty collection
+            return ImmutableArray<string>.Empty;
         }
 
         // Handle nested generic parameters by tracking depth
+        return ParseParameterList(parametersString);
+    }
+
+    /// <summary>
+    /// Parses a parameter list string into individual parameter type names.
+    /// Handles nested generic arguments by tracking bracket depth.
+    /// </summary>
+    /// <param name="parametersString">String containing comma-separated parameter type names.</param>
+    /// <returns>A collection of parsed and cleaned parameter type names.</returns>
+    private static IReadOnlyCollection<string> ParseParameterList(string parametersString)
+    {
         var parameters = new List<string>();
-        var currentParam = "";
+        var currentParam = string.Empty;
         var angleBracketDepth = 0;
 
         foreach (var c in parametersString)
         {
             if (IsParameterSeparator(c, angleBracketDepth))
             {
-                parameters.Add(CleanTypeParameter(currentParam.Trim()));
-                currentParam = "";
+                parameters.Add(RemoveGenericMarkers(currentParam.Trim()));
+                currentParam = string.Empty;
 
                 continue;
             }
 
             // Track bracket depth to handle nested generics
-            if (IsOpeningBracket(c))
-            {
-                angleBracketDepth++;
-            }
-            else if (IsClosingBracket(c))
-            {
-                angleBracketDepth--;
-            }
+            angleBracketDepth = TrackBracketDepth(c, angleBracketDepth);
 
             currentParam += c;
         }
@@ -194,10 +204,24 @@ internal static class XmlMemberNameResolver
         // Add the last parameter
         if (!string.IsNullOrWhiteSpace(currentParam))
         {
-            parameters.Add(CleanTypeParameter(currentParam.Trim()));
+            parameters.Add(RemoveGenericMarkers(currentParam.Trim()));
         }
 
         return parameters;
+    }
+
+    private static int TrackBracketDepth(char c, int currentBracketDepth)
+    {
+        if (IsOpeningBracket(c))
+        {
+            currentBracketDepth++;
+        }
+        else if (IsClosingBracket(c))
+        {
+            currentBracketDepth--;
+        }
+
+        return currentBracketDepth;
     }
 
     /// <summary>
@@ -210,10 +234,7 @@ internal static class XmlMemberNameResolver
     /// <c>true</c> if the character is a comma and not inside any nested structure;
     /// otherwise, <c>false</c>.
     /// </returns>
-    private static bool IsParameterSeparator(char c, int bracketDepth)
-    {
-        return c == ',' && bracketDepth == 0;
-    }
+    private static bool IsParameterSeparator(char c, int bracketDepth) => c is ',' && bracketDepth == 0;
 
     /// <summary>
     /// Determines whether the specified character is an opening bracket used in generic type parameters
@@ -224,10 +245,7 @@ internal static class XmlMemberNameResolver
     /// <c>true</c> if the character is an opening angle bracket '<' or curly brace '{';
     /// otherwise, <c>false</c>.
     /// </returns>
-    private static bool IsOpeningBracket(char c)
-    {
-        return c == '<' || c == '{';
-    }
+    private static bool IsOpeningBracket(char c) => c is '<' or '{';
 
     /// <summary>
     /// Determines whether the specified character is a closing bracket used in generic type parameters
@@ -238,18 +256,12 @@ internal static class XmlMemberNameResolver
     /// <c>true</c> if the character is a closing angle bracket '>' or curly brace '}';
     /// otherwise, <c>false</c>.
     /// </returns>
-    private static bool IsClosingBracket(char c)
-    {
-        return c == '>' || c == '}';
-    }
+    private static bool IsClosingBracket(char c) => c is '>' or '}';
 
     /// <summary>
     /// Remove generic markers like `0, `1, etc. and any standalone backticks
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    private static string CleanTypeParameter(string value)
-    {
-        return Regex.Replace(value, @"`\d+", "").Replace("`", "");
-    }
+    private static string RemoveGenericMarkers(string value) => Regex.Replace(value, @"`\d+", "").Replace("`", "");
 }
