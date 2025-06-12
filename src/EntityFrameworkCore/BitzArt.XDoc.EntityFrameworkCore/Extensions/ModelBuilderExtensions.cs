@@ -21,41 +21,45 @@ public static class ModelBuilderExtensions
 
         foreach (var entityType in entityTypes)
         {
-            var typeDocumentation = xDoc.Get(entityType.ClrType);
-
-            if (typeDocumentation is not null)
-            {
-                ConfigureEntityTypeComment(typeDocumentation, entityType);
-            }
+            ConfigureEntityTypeComment(xDoc, entityType);
 
             var properties = entityType.GetProperties();
 
             foreach (var property in properties)
             {
-                ConfigurePropertyComment(xDoc, property, entityType);
+                ConfigurePropertyComment(xDoc, entityType, property);
             }
         }
 
         return modelBuilder;
     }
 
-    private static void ConfigureEntityTypeComment(TypeDocumentation typeDocumentation, IMutableEntityType entityType)
+    private static void ConfigureEntityTypeComment(XDoc xDoc, IMutableEntityType entityType)
     {
-        var entityComment = typeDocumentation.ToPlainText();
+        var typeDocumentation = xDoc.Get(entityType.ClrType);
 
-        // For owned entities, we don't set the comment on the entity itself
-        // But we will set the comment on the properties
-
+        if (typeDocumentation is  null)
+        {
+            return;
+        }
+        
         var isOwned = entityType.IsOwned();
         var tableName = entityType.GetTableName();
 
-        if (!isOwned && tableName is not null)
+        if (isOwned || tableName is null)
         {
-            entityType.SetComment(entityComment);
+            // For owned entities, we don't set the comment on the entity itself
+            // But we will set the comment on the properties
+            
+            return;
         }
+        
+        var entityComment = typeDocumentation.ToPlainText();
+            
+        entityType.SetComment(entityComment);
     }
     
-    private static void ConfigurePropertyComment(XDoc xDoc, IMutableProperty property, IMutableEntityType entityType)
+    private static void ConfigurePropertyComment(XDoc xDoc, IMutableEntityType entityType, IMutableProperty property)
     {
         var isShadowProperty = property.IsShadowProperty();
 
