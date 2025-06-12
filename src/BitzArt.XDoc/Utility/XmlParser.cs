@@ -37,7 +37,7 @@ internal class XmlParser
     internal Dictionary<Type, TypeDocumentation> Parse()
     {
         var nodeList = _xml.SelectNodes("/doc/members/member");
-        
+
         if (nodeList == null)
         {
             throw new InvalidOperationException("Invalid XML.");
@@ -116,9 +116,9 @@ internal class XmlParser
         return GetMethod(type, name, parameters);
     }
 
-    private static MethodInfo? GetMethod(Type type, string name, IReadOnlyCollection<string> parameters)
+    private static MethodInfo? GetMethod(Type ownerType, string name, IReadOnlyCollection<string> parameters)
     {
-        var methods = type.GetMethods();
+        var methods = ownerType.GetMethods();
 
         var method = methods
             .Where(method => method.Name == name)
@@ -132,9 +132,9 @@ internal class XmlParser
         return method;
     }
 
-    private static ConstructorInfo? GetConstructor(Type type, IReadOnlyCollection<string> parameters)
+    private static ConstructorInfo? GetConstructor(Type ownerType, IReadOnlyCollection<string> parameters)
     {
-        var constructors = type.GetConstructors();
+        var constructors = ownerType.GetConstructors();
 
         var constructor = constructors.SingleOrDefault(ctor =>
         {
@@ -175,7 +175,8 @@ internal class XmlParser
         return parameters.All(expectedParameters.Contains);
     }
 
-    private TDocumentation ParseMemberNode<TMember, TDocumentation>(string name,
+    private TDocumentation ParseMemberNode<TMember, TDocumentation>(
+        string name,
         Func<Type, string, IReadOnlyCollection<string>, TMember?> getMember,
         Func<TMember, TDocumentation> getDocumentation)
         where TMember : MemberInfo
