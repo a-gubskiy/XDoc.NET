@@ -128,8 +128,8 @@ internal class XmlParser
     private static ConstructorInfo? GetConstructor(Type ownerType, IReadOnlyCollection<string> parameters, bool isStatic = false)
     {
         var bindingFlags = isStatic
-            ? BindingFlags.Static | BindingFlags.Public
-            : BindingFlags.Instance | BindingFlags.Public;
+            ? BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic
+            : BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
         var constructors = ownerType.GetConstructors(bindingFlags);
 
