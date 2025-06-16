@@ -230,7 +230,7 @@ internal class XmlParser
         // Get the generic arguments and format them recursively
         var genericArgs = string.Join(",", type.GetGenericArguments().Select(GetTypeFriendlyName));
 
-        return $"{typeName}{{{genericArgs}}}";
+        return typeName + '{' + genericArgs + '}';
     }
 
     private static bool IsGeneric(string? typeName) => !string.IsNullOrWhiteSpace(typeName) && typeName.Contains('`');
