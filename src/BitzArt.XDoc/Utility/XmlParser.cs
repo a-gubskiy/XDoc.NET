@@ -36,12 +36,8 @@ internal class XmlParser
 
     internal Dictionary<Type, TypeDocumentation> Parse()
     {
-        var nodeList = _xml.SelectNodes("/doc/members/member");
-
-        if (nodeList == null)
-        {
-            throw new InvalidOperationException("Invalid XML.");
-        }
+        var nodeList = _xml.SelectNodes("/doc/members/member")
+            ?? throw new InvalidOperationException("Invalid XML.");
 
         foreach (XmlNode node in nodeList) Parse(node);
 
@@ -106,15 +102,12 @@ internal class XmlParser
             member => new MethodDocumentation(_source, member, node));
 
     private static MethodBase? GetMethodOrConstructor(Type type, string name, IReadOnlyCollection<string> parameters)
-    {
-        // Check for instance constructors or static constructors
-        if (name is "#ctor" or "#cctor")
+        => name switch
         {
-            return GetConstructor(type, parameters);
-        }
-
-        return GetMethod(type, name, parameters);
-    }
+            "#ctor" => GetConstructor(type, parameters),
+            "#cctor" => GetConstructor(type, parameters, isStatic: true),
+            _ => GetMethod(type, name, parameters)
+        };
 
     private static MethodInfo? GetMethod(Type ownerType, string name, IReadOnlyCollection<string> parameters)
     {
@@ -132,9 +125,13 @@ internal class XmlParser
         return method;
     }
 
-    private static ConstructorInfo? GetConstructor(Type ownerType, IReadOnlyCollection<string> parameters)
+    private static ConstructorInfo? GetConstructor(Type ownerType, IReadOnlyCollection<string> parameters, bool isStatic = false)
     {
-        var constructors = ownerType.GetConstructors();
+        var bindingFlags = isStatic
+            ? BindingFlags.Static | BindingFlags.Public
+            : BindingFlags.Instance | BindingFlags.Public;
+
+        var constructors = ownerType.GetConstructors(bindingFlags);
 
         var constructor = constructors.SingleOrDefault(ctor =>
         {
@@ -184,21 +181,13 @@ internal class XmlParser
     {
         var (typeName, memberName) = XmlMemberNameResolver.ResolveTypeAndMemberName(name);
 
-        var type = _assembly.GetType(typeName);
-
-        if (type == null)
-        {
-            throw new InvalidOperationException($"Type '{typeName}' not found.");
-        }
+        var type = _assembly.GetType(typeName)
+            ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
 
         var parameters = XmlMemberNameResolver.ResolveMethodParameters(name);
 
-        var memberInfo = getMember.Invoke(type, memberName, parameters);
-
-        if (memberInfo is null)
-        {
-            throw new InvalidOperationException($"Member '{memberName}' not found in type '{type.Name}'.");
-        }
+        var memberInfo = getMember.Invoke(type, memberName, parameters)
+            ?? throw new InvalidOperationException($"Member '{memberName}' not found in type '{type.Name}'.");
 
         var typeDocumentation = ResolveTypeDocumentation(type);
 

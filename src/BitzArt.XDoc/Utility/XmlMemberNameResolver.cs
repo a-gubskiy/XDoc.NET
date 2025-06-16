@@ -23,7 +23,8 @@ internal static class XmlMemberNameResolver
     /// </exception>
     public static (string typeName, string memberName) ResolveTypeAndMemberName(string xmlDocumentationMemberName)
     {
-        if (IsMethod(xmlDocumentationMemberName))
+        // A member name containing an opening parenthesis indicates a method.
+        if (xmlDocumentationMemberName.Contains('('))
         {
             // Remove method parameter information from the XML documentation member name by 
             // truncating the string at the opening parenthesis, keeping only the method name part.
@@ -40,14 +41,20 @@ internal static class XmlMemberNameResolver
         var typeName = xmlDocumentationMemberName[..indexOfLastDot];
         var memberName = xmlDocumentationMemberName[(indexOfLastDot + 1)..];
 
-        if (IsGeneric(xmlDocumentationMemberName))
+        // If the member name contains a backtick (`),
+        // it indicates a generic type or method.
+        if (xmlDocumentationMemberName.Contains('`'))
         {
-            if (HasMethodParameters(memberName))
+            // If member name contains an opening parenthesis,
+            // it indicates a method with parameters.
+            if (memberName.Contains('('))
             {
                 memberName = memberName[..memberName.IndexOf('(')];
             }
 
-            if (HasGenericTypeParameters(memberName))
+            // A backtick (`) in the member name
+            // indicates generic type parameters.
+            if (memberName.Contains('`'))
             {
                 // Remove generic type parameters from the member name
                 memberName = memberName[..memberName.IndexOf('`')];
@@ -76,62 +83,6 @@ internal static class XmlMemberNameResolver
     }
 
     /// <summary>
-    /// Determines whether the specified member name indicates it contains generic type parameters.
-    /// </summary>
-    /// <param name="memberName">The member name to check for generic type parameter indicators.</param>
-    /// <returns>
-    /// <c>true</c> if the member name contains a backtick character (`) indicating generic type parameters;
-    /// otherwise, <c>false</c>.
-    /// </returns>
-    private static bool HasGenericTypeParameters(string memberName)
-    {
-        return memberName.Contains('`');
-    }
-
-    /// <summary>
-    /// Determines whether the specified XML documentation member name represents a generic type or method.
-    /// </summary>
-    /// <param name="xmlDocumentationMemberName">
-    /// The fully qualified XML documentation member name to check.
-    /// </param>
-    /// <returns>
-    /// <c>true</c> if the member name contains a backtick character (`) indicating generic type parameters;
-    /// otherwise, <c>false</c>.
-    /// </returns>
-    private static bool IsGeneric(string xmlDocumentationMemberName)
-    {
-        return xmlDocumentationMemberName.Contains('`');
-    }
-
-    /// <summary>
-    /// Determines whether the specified XML documentation member name represents a method.
-    /// </summary>
-    /// <param name="xmlDocumentationMemberName">
-    /// The fully qualified XML documentation member name to check.
-    /// </param>
-    /// <returns>
-    /// <c>true</c> if the member name contains an opening parenthesis indicating method parameters;
-    /// otherwise, <c>false</c>.
-    /// </returns>
-    private static bool IsMethod(string xmlDocumentationMemberName)
-    {
-        return xmlDocumentationMemberName.Contains('(');
-    }
-
-    /// <summary>
-    /// Determines whether the specified member name contains method parameters.
-    /// </summary>
-    /// <param name="memberName">The member name to check for method parameter indicators.</param>
-    /// <returns>
-    /// <c>true</c> if the member name contains an opening parenthesis indicating method parameters;
-    /// otherwise, <c>false</c>.
-    /// </returns>
-    private static bool HasMethodParameters(string memberName)
-    {
-        return memberName.Contains('(');
-    }
-
-    /// <summary>
     /// Extracts the method parameter type names from a fully qualified member signature.
     /// Handles nested generic parameters and returns a collection of cleaned parameter type names.
     /// </summary>
@@ -147,16 +98,16 @@ internal static class XmlMemberNameResolver
 
         if (parameterListStartIndex == -1)
         {
-            // No parameters found, return an empty collection
-            return ImmutableArray<string>.Empty;
+            // No parameters found
+            return [];
         }
 
         var parameterListEndIndex = xmlDocumentationMemberName.LastIndexOf(')');
 
         if (parameterListEndIndex <= parameterListStartIndex)
         {
-            // No valid parameter list found, return an empty collection
-            return ImmutableArray<string>.Empty;
+            // No valid parameter list found
+            return [];
         }
 
         var parametersString = xmlDocumentationMemberName.Substring(
@@ -165,11 +116,11 @@ internal static class XmlMemberNameResolver
 
         if (string.IsNullOrWhiteSpace(parametersString))
         {
-            // No parameters found, return an empty collection
-            return ImmutableArray<string>.Empty;
+            // No parameters found
+            return [];
         }
 
-        // Handle nested generic parameters by tracking depth
+        // Handle nested generic parameters while tracking nesting depth
         return ParseParameterList(parametersString);
     }
 
@@ -187,7 +138,9 @@ internal static class XmlMemberNameResolver
 
         foreach (var c in parametersString)
         {
-            if (IsParameterSeparator(c, angleBracketDepth))
+            // If the character is a comma and we are not inside any nested generic type,
+            // we consider it a separator for parameters.
+            if (c is ',' && angleBracketDepth == 0)
             {
                 parameters.Add(RemoveGenericMarkers(currentParam.Trim()));
                 currentParam = string.Empty;
@@ -212,51 +165,21 @@ internal static class XmlMemberNameResolver
 
     private static int TrackBracketDepth(char c, int currentBracketDepth)
     {
-        if (IsOpeningBracket(c))
+        // Opening brackets increase the depth
+        if (c is '<' or '{')
         {
-            currentBracketDepth++;
-        }
-        else if (IsClosingBracket(c))
-        {
-            currentBracketDepth--;
+            return ++currentBracketDepth;
         }
 
+        // Closing brackets decrease the depth
+        if (c is '>' or '}')
+        {
+            return --currentBracketDepth;
+        }
+
+        // No change in depth for other characters
         return currentBracketDepth;
     }
-
-    /// <summary>
-    /// Determines whether the current character is a comma that separates parameters at the root level
-    /// (not within any generic type arguments or nested structures).
-    /// </summary>
-    /// <param name="c">The character to check.</param>
-    /// <param name="bracketDepth">The current nesting depth of angle brackets or braces.</param>
-    /// <returns>
-    /// <c>true</c> if the character is a comma and not inside any nested structure;
-    /// otherwise, <c>false</c>.
-    /// </returns>
-    private static bool IsParameterSeparator(char c, int bracketDepth) => c is ',' && bracketDepth == 0;
-
-    /// <summary>
-    /// Determines whether the specified character is an opening bracket used in generic type parameters
-    /// or collection initializers.
-    /// </summary>
-    /// <param name="c">The character to check.</param>
-    /// <returns>
-    /// <c>true</c> if the character is an opening angle bracket '<' or curly brace '{';
-    /// otherwise, <c>false</c>.
-    /// </returns>
-    private static bool IsOpeningBracket(char c) => c is '<' or '{';
-
-    /// <summary>
-    /// Determines whether the specified character is a closing bracket used in generic type parameters
-    /// or collection initializers.
-    /// </summary>
-    /// <param name="c">The character to check.</param>
-    /// <returns>
-    /// <c>true</c> if the character is a closing angle bracket '>' or curly brace '}';
-    /// otherwise, <c>false</c>.
-    /// </returns>
-    private static bool IsClosingBracket(char c) => c is '>' or '}';
 
     /// <summary>
     /// Remove generic markers like `0, `1, etc. and any standalone backticks
