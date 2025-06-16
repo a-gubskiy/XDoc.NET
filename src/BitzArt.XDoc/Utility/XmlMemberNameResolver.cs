@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 
 namespace BitzArt.XDoc;
@@ -165,20 +164,12 @@ internal static class XmlMemberNameResolver
 
     private static int TrackBracketDepth(char c, int currentBracketDepth)
     {
-        // Opening brackets increase the depth
-        if (c is '<' or '{')
+        return c switch
         {
-            return ++currentBracketDepth;
-        }
-
-        // Closing brackets decrease the depth
-        if (c is '>' or '}')
-        {
-            return --currentBracketDepth;
-        }
-
-        // No change in depth for other characters
-        return currentBracketDepth;
+            '<' or '{' => ++currentBracketDepth, // Opening brackets increase the depth
+            '>' or '}' => --currentBracketDepth, // Closing brackets decrease the depth
+            _ => currentBracketDepth // No change in depth for other characters
+        };
     }
 
     /// <summary>
