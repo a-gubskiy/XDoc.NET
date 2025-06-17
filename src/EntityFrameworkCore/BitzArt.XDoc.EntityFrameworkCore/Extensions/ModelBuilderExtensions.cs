@@ -43,8 +43,9 @@ public static class ModelBuilderExtensions
     {
         var typeDocumentation = xDoc.Get(entityType.ClrType);
 
-        if (typeDocumentation is  null)
+        if (typeDocumentation is null) 
         {
+            // No own xml-documentation
             return;
         }
         
