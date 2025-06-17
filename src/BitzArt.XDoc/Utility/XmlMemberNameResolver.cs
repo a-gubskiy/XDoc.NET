@@ -38,10 +38,8 @@ internal static class XmlMemberNameResolver
     /// </exception>
     internal static (string typeName, string memberName) ResolveTypeAndMemberName(string xmlDocumentationMemberName)
     {
-        var parameterListStartIndex = xmlDocumentationMemberName.IndexOf('(');
-
         // A member name containing an opening parenthesis indicates a method.
-        if (parameterListStartIndex != -1)
+        if (xmlDocumentationMemberName.Contains('('))
         {
             // Remove method parameter information from the XML documentation member name by 
             // truncating the string at the opening parenthesis, keeping only the method name part.
