@@ -21,17 +21,22 @@ public static class ModelBuilderExtensions
 
         foreach (var entityType in entityTypes)
         {
-            ConfigureEntityTypeComment(xDoc, entityType);
-
-            var properties = entityType.GetProperties();
-
-            foreach (var property in properties)
-            {
-                ConfigurePropertyComment(xDoc, entityType, property);
-            }
+            ConfigureEntity(xDoc, entityType);
         }
 
         return modelBuilder;
+    }
+
+    private static void ConfigureEntity(XDoc xDoc, IMutableEntityType entityType)
+    {
+        ConfigureEntityTypeComment(xDoc, entityType);
+
+        var properties = entityType.GetProperties();
+
+        foreach (var property in properties)
+        {
+            ConfigureEntityPropertyComment(xDoc, entityType, property);
+        }
     }
 
     private static void ConfigureEntityTypeComment(XDoc xDoc, IMutableEntityType entityType)
@@ -59,7 +64,7 @@ public static class ModelBuilderExtensions
         entityType.SetComment(entityComment);
     }
     
-    private static void ConfigurePropertyComment(XDoc xDoc, IMutableEntityType entityType, IMutableProperty property)
+    private static void ConfigureEntityPropertyComment(XDoc xDoc, IMutableEntityType entityType, IMutableProperty property)
     {
         var isShadowProperty = property.IsShadowProperty();
 
