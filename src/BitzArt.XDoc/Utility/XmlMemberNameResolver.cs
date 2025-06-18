@@ -16,7 +16,7 @@ internal static class XmlMemberNameResolver
     /// <returns>
     /// A tuple containing the resolved type name, member name, and a read-only collection of parameter type names.
     /// </returns>
-    public static (string typeName, string memberNamem, IReadOnlyCollection<string> parameters)
+    public static (string typeName, string memberName, IReadOnlyCollection<string> parameters)
         ResolveMemberSignature(string xmlDocumentationMemberName)
     {
         var (typeName, memberName) = ResolveTypeAndMemberName(xmlDocumentationMemberName);
