@@ -101,7 +101,7 @@ internal class XmlParser
             (type, memberName, parameters) => GetMethodOrConstructor(type, memberName, parameters),
             member => new MethodDocumentation(_source, member, node));
 
-    private static MethodBase? GetMethodOrConstructor(Type type, string name, IReadOnlyCollection<string>? parameters)
+    private static MethodBase? GetMethodOrConstructor(Type type, string name, IReadOnlyCollection<string> parameters)
         => name switch
         {
             "#ctor" => GetConstructor(type, parameters),
@@ -109,7 +109,7 @@ internal class XmlParser
             _ => GetMethod(type, name, parameters)
         };
 
-    private static MethodInfo? GetMethod(Type ownerType, string name, IReadOnlyCollection<string>? parameters)
+    private static MethodInfo? GetMethod(Type ownerType, string name, IReadOnlyCollection<string> parameters)
     {
         var methods = ownerType.GetMethods();
 
@@ -125,7 +125,7 @@ internal class XmlParser
         return method;
     }
 
-    private static ConstructorInfo? GetConstructor(Type ownerType, IReadOnlyCollection<string>? parameters, bool isStatic = false)
+    private static ConstructorInfo? GetConstructor(Type ownerType, IReadOnlyCollection<string> parameters, bool isStatic = false)
     {
         var bindingFlags = isStatic
             ? BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic
@@ -153,11 +153,11 @@ internal class XmlParser
     /// <returns>True if the parameter signatures match; otherwise, false.</returns>
     private static bool HasMatchingParameterTypes(
         ParameterInfo[] actualParameters,
-        IReadOnlyCollection<string>? expectedParameters)
+        IReadOnlyCollection<string> expectedParameters)
     {
-        if (expectedParameters is null)
+        if (actualParameters.Length == 0 && expectedParameters.Count == 0)
         {
-            return actualParameters.Length == 0;
+            return true;
         }
 
         if (actualParameters.Length != expectedParameters.Count)
@@ -174,7 +174,7 @@ internal class XmlParser
 
     private TDocumentation ParseMemberNode<TMember, TDocumentation>(
         string name,
-        Func<Type, string, IReadOnlyCollection<string>?, TMember?> getMember,
+        Func<Type, string, IReadOnlyCollection<string>, TMember?> getMember,
         Func<TMember, TDocumentation> getDocumentation)
         where TMember : MemberInfo
         where TDocumentation : MemberDocumentation<TMember>
