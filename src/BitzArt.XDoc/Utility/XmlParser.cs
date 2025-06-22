@@ -69,8 +69,20 @@ internal class XmlParser
 
     private TypeDocumentation ParseTypeNode(XmlNode node, string name)
     {
-        var type = _assembly.GetType(name)
-                   ?? throw new InvalidOperationException($"Type '{name}' not found.");
+        var type = _assembly.GetType(name);
+
+        if (type is null)
+        {
+            // Try resolve nested type
+            // Dirty hack to handle nested types. Works only for types that are nested in the same assembly 
+            // and have one level of nesting.
+            type = _assembly.GetType(GetNestedTypeName(name));
+        }
+
+        if (type is null)
+        {
+            throw new InvalidOperationException($"Type '{name}' not found.");
+        }
 
         // We could handle this case by finding and updating the existing object,
         // but I don't see a reason why this would be necessary.
@@ -84,6 +96,21 @@ internal class XmlParser
         _results[type] = typeDocumentation;
 
         return typeDocumentation;
+    }
+
+    private string GetNestedTypeName(string name)
+    {
+        //Replace the last dot with a plus sign to get the nested type name
+        
+        //Replace the last dot with a plus sign to get the nested type name
+        int lastDotIndex = name.LastIndexOf('.');
+        if (lastDotIndex == -1)
+        {
+            return name;
+        }
+    
+        return name[..lastDotIndex] + "+" + name[(lastDotIndex + 1)..];
+
     }
 
     private PropertyDocumentation ParsePropertyNode(XmlNode node, string name)
