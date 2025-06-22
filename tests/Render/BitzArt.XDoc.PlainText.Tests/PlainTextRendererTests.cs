@@ -58,7 +58,7 @@ public class PlainTextRendererTests
         var xmlDocument = new XmlDocument();
         xmlDocument.LoadXml(xml);
 
-        var node = xmlDocument.SelectSingleNode("//inheritdoc");
+        var node = xmlDocument.SelectSingleNode("//inheritdoc")!;
 
         var memberDocumentation = new TestDocumentationElement(node);
 
