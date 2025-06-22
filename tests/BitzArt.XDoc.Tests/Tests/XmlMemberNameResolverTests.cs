@@ -2,6 +2,22 @@ namespace BitzArt.XDoc.Tests;
 
 public class XmlMemberNameResolverTests
 {
+    [Theory]
+    [InlineData("", "")]
+    [InlineData("`", "")]
+    [InlineData("NameSpace.MyClass`", "NameSpace.MyClass")]
+    [InlineData("NameSpace.MyClass`1", "NameSpace.MyClass")]
+    [InlineData("NameSpace.MyClass`.MyMethod", "NameSpace.MyClass.MyMethod")]
+    [InlineData("NameSpace.MyClass`1.MyMethod", "NameSpace.MyClass.MyMethod")]
+    public void RemoveGenericMarkers_OnValidInput_ShouldReplace(string input, string expected)
+    {
+        // Act
+        var result = XmlMemberNameResolver.RemoveGenericMarkers(input);
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
     [Fact]
     public void ResolveTypeAndMemberName_GenericMethod_ShouldResolve()
     {
