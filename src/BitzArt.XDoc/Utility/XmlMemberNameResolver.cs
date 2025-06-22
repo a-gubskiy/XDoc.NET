@@ -77,14 +77,14 @@ internal static partial class XmlMemberNameResolver
     /// <returns>
     /// A read-only collection of parameter type names as strings. Returns an empty collection if no parameters are found.
     /// </returns>
-    public static IReadOnlyCollection<string>? ResolveMethodParameters(string xmlDocumentationMemberName)
+    public static IReadOnlyCollection<string> ResolveMethodParameters(string xmlDocumentationMemberName)
     {
         var parameterListStartIndex = xmlDocumentationMemberName.IndexOf('(');
 
         if (parameterListStartIndex == -1)
         {
             // No parameter list found
-            return null;
+            return [];
         }
 
         var parameterListEndIndex = xmlDocumentationMemberName.LastIndexOf(')');
@@ -102,7 +102,7 @@ internal static partial class XmlMemberNameResolver
         if (string.IsNullOrWhiteSpace(parametersString))
         {
             // No parameters found
-            return null;
+            return [];
         }
 
         // Handle nested generic parameters while tracking nesting depth
