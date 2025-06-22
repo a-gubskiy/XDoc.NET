@@ -60,6 +60,12 @@ public static class ModelBuilderExtensions
             return;
         }
         
+        if (entityType.BaseType != null && entityType.BaseType.GetTableName() == tableName)
+        {
+            // Base type already defined comment
+            return;
+        }
+        
         var entityComment = typeDocumentation.ToPlainText();
             
         entityType.SetComment(entityComment);
