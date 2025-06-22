@@ -8,6 +8,7 @@
         <IsTestProject>true</IsTestProject>
         <TargetFramework>net9.0</TargetFramework>
 		<RootNamespace>BitzArt.XDoc.PlainText.Tests</RootNamespace>
+        <NoWarn>8618,8625</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
