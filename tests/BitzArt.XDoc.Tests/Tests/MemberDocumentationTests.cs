@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Xml;
 
-namespace BitzArt.XDoc.PlainText.Tests;
+namespace BitzArt.XDoc.Tests;
 
 abstract class BaseClass
 {

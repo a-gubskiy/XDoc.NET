@@ -7,23 +7,9 @@ namespace BitzArt.XDoc;
 /// such as extracting type names, member names, and method parameter types. 
 /// Handles special cases including generic types and nested generic parameters.
 /// </summary>
-internal static class XmlMemberNameResolver
+internal static partial class XmlMemberNameResolver
 {
-    /// <summary>
-    /// Resolves a fully qualified member signature into its type name, member name, and method parameters.
-    /// </summary>
-    /// <param name="xmlDocumentationMemberName"></param>
-    /// <returns>
-    /// A tuple containing the resolved type name, member name, and a read-only collection of parameter type names.
-    /// </returns>
-    public static (string typeName, string memberName, IReadOnlyCollection<string> parameters)
-        ResolveMemberSignature(string xmlDocumentationMemberName)
-    {
-        var (typeName, memberName) = ResolveTypeAndMemberName(xmlDocumentationMemberName);
-        var parameters = ResolveMethodParameters(xmlDocumentationMemberName);
-        
-        return (typeName, memberName, parameters);
-    }
+    public record TypeAndMemberName(string TypeName, string MemberName);
 
     /// <summary>
     /// Resolves a qualified member name into its associated type and member name.
@@ -36,7 +22,7 @@ internal static class XmlMemberNameResolver
     /// <exception cref="InvalidOperationException">
     /// Thrown when the name doesn't contain a type/member separator or when the type cannot be found
     /// </exception>
-    internal static (string typeName, string memberName) ResolveTypeAndMemberName(string xmlDocumentationMemberName)
+    public static TypeAndMemberName ResolveTypeAndMemberName(string xmlDocumentationMemberName)
     {
         // A member name containing an opening parenthesis indicates a method.
         if (xmlDocumentationMemberName.Contains('('))
@@ -47,26 +33,23 @@ internal static class XmlMemberNameResolver
             xmlDocumentationMemberName = xmlDocumentationMemberName[..xmlDocumentationMemberName.IndexOf('(')];
         }
 
-        // Find the position of the last dot in the member name, which separates
-        // the type name from the member name (e.g., "Namespace.TypeName.MemberName" -> position of last dot)
-        var indexOfLastDot = xmlDocumentationMemberName.LastIndexOf('.');
-
-        // Ensures the XML documentation member name contains a type separator (dot).
-        if (indexOfLastDot == -1)
+        if (!xmlDocumentationMemberName.Contains('.'))
         {
             throw new InvalidOperationException(
                 $"XML documentation member name '{xmlDocumentationMemberName}' does not contain a type separator.");
         }
 
+        // Find the position of the last dot in the member name, which separates
+        // the type name from the member name (e.g., "Namespace.TypeName.MemberName" -> position of last dot)
+        var indexOfLastDot = xmlDocumentationMemberName.LastIndexOf('.');
+
         var typeName = xmlDocumentationMemberName[..indexOfLastDot];
         var memberName = xmlDocumentationMemberName[(indexOfLastDot + 1)..];
 
-        // If the member name contains a backtick (`),
-        // it indicates a generic type or method.
+        // Backtick (`) => generic type or method.
         if (xmlDocumentationMemberName.Contains('`'))
         {
-            // If member name contains an opening parenthesis,
-            // it indicates a method with parameters.
+            // Opening parenthesis indicates a method with parameters.
             if (memberName.Contains('('))
             {
                 memberName = memberName[..memberName.IndexOf('(')];
@@ -81,7 +64,7 @@ internal static class XmlMemberNameResolver
             }
         }
 
-        return (typeName, memberName);
+        return new(typeName, memberName);
     }
 
     /// <summary>
@@ -94,13 +77,13 @@ internal static class XmlMemberNameResolver
     /// <returns>
     /// A read-only collection of parameter type names as strings. Returns an empty collection if no parameters are found.
     /// </returns>
-    internal static IReadOnlyCollection<string> ResolveMethodParameters(string xmlDocumentationMemberName)
+    public static IReadOnlyCollection<string> ResolveMethodParameters(string xmlDocumentationMemberName)
     {
         var parameterListStartIndex = xmlDocumentationMemberName.IndexOf('(');
 
         if (parameterListStartIndex == -1)
         {
-            // No parameters found
+            // No parameter list found
             return [];
         }
 
@@ -108,8 +91,8 @@ internal static class XmlMemberNameResolver
 
         if (parameterListEndIndex <= parameterListStartIndex)
         {
-            // No valid parameter list found
-            return [];
+            throw new InvalidOperationException(
+                $"XML documentation member '{xmlDocumentationMemberName}' parameter list is invalid.");
         }
 
         var parametersString = xmlDocumentationMemberName.Substring(
@@ -132,26 +115,36 @@ internal static class XmlMemberNameResolver
     /// </summary>
     /// <param name="parametersString">String containing comma-separated parameter type names.</param>
     /// <returns>A collection of parsed and cleaned parameter type names.</returns>
-    private static IReadOnlyCollection<string> ParseParameterList(string parametersString)
+    private static List<string> ParseParameterList(string parametersString)
     {
-        var parameters = new List<string>();
+        var result = new List<string>();
         var currentParam = string.Empty;
-        var angleBracketDepth = 0;
+        var nestingDepth = 0;
 
         foreach (var c in parametersString)
         {
-            // If the character is a comma and we are not inside any nested generic type,
-            // we consider it a separator for parameters.
-            if (c is ',' && angleBracketDepth == 0)
+            switch (c)
             {
-                parameters.Add(RemoveGenericMarkers(currentParam.Trim()));
-                currentParam = string.Empty;
+                case '<' or '{':
+                    nestingDepth++;
+                    break;
 
-                continue;
+                case '>' or '}':
+                    nestingDepth--;
+                    break;
+
+                case ',' when nestingDepth == 0:
+                    {
+                        currentParam = currentParam.Trim();
+                        currentParam = RemoveGenericMarkers(currentParam);
+
+                        result.Add(RemoveGenericMarkers(currentParam));
+
+                        currentParam = string.Empty;
+
+                        continue;
+                    }
             }
-
-            // Track bracket depth to handle nested generics
-            angleBracketDepth = TrackBracketDepth(c, angleBracketDepth);
 
             currentParam += c;
         }
@@ -159,26 +152,18 @@ internal static class XmlMemberNameResolver
         // Add the last parameter
         if (!string.IsNullOrWhiteSpace(currentParam))
         {
-            parameters.Add(RemoveGenericMarkers(currentParam.Trim()));
+            result.Add(RemoveGenericMarkers(currentParam.Trim()));
         }
 
-        return parameters;
-    }
-
-    private static int TrackBracketDepth(char c, int currentBracketDepth)
-    {
-        return c switch
-        {
-            '<' or '{' => ++currentBracketDepth, // Opening brackets increase the depth
-            '>' or '}' => --currentBracketDepth, // Closing brackets decrease the depth
-            _ => currentBracketDepth // No change in depth for other characters
-        };
+        return result;
     }
 
     /// <summary>
-    /// Remove generic markers like `0, `1, etc. and any standalone backticks
+    /// Matches generic markers like `0, `1, etc. and any standalone backticks
     /// </summary>
-    /// <param name="value"></param>
     /// <returns></returns>
-    private static string RemoveGenericMarkers(string value) => Regex.Replace(value, @"`\d+", "").Replace("`", "");
+    [GeneratedRegex(@"\`\d+|\`")]
+    private static partial Regex GetGenericMarkerRegex();
+
+    internal static string RemoveGenericMarkers(string value) => GetGenericMarkerRegex().Replace(value, string.Empty);
 }
