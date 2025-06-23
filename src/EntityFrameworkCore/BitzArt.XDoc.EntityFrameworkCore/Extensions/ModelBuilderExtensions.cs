@@ -10,6 +10,8 @@ namespace BitzArt.XDoc;
 [PublicAPI]
 public static class ModelBuilderExtensions
 {
+    private static List<string> _processedColumns = new List<string>();
+    
     /// <summary>
     /// Configures XML documentation comments for Entity Framework Core entities and their properties.
     /// </summary>
@@ -77,6 +79,16 @@ public static class ModelBuilderExtensions
         IMutableEntityType entityType,
         IMutableProperty property)
     {
+        var columnName = property.GetColumnName();
+        var tableName = entityType.GetTableName();
+
+        if (_processedColumns.Contains($"{tableName}.{columnName}"))
+        {
+            return;
+        }
+        
+        _processedColumns.Add($"{tableName}.{columnName}");
+        
         var isShadowProperty = property.IsShadowProperty();
 
         if (isShadowProperty)
