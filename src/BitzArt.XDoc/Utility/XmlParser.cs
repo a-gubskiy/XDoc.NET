@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Frozen;
+using System.Reflection;
 using System.Xml;
 
 namespace BitzArt.XDoc;
@@ -6,9 +7,9 @@ namespace BitzArt.XDoc;
 internal class XmlParser
 {
     private readonly XDoc _source;
-    private readonly Assembly _assembly;
     private readonly XmlDocument _xml;
     private readonly Dictionary<Type, TypeDocumentation> _results;
+    private readonly IDictionary<string, Type> _types;
 
     /// <summary>
     /// Parses an XML documentation file and creates a dictionary mapping types to their documentation.
@@ -28,8 +29,16 @@ internal class XmlParser
     internal XmlParser(XDoc source, Assembly assembly, XmlDocument xml)
     {
         _source = source;
-        _assembly = assembly;
         _xml = xml;
+
+        _types = assembly
+            .GetTypes()
+            .Where(t => t.IsPublic || t.IsNestedPublic)
+            .Where(t => !string.IsNullOrWhiteSpace(t.FullName))
+            .ToFrozenDictionary(
+                t => t.FullName!.Replace('+', '.'), // Replace nested type '+' with '.'
+                t => t
+            );
 
         _results = [];
     }
@@ -69,15 +78,7 @@ internal class XmlParser
 
     private TypeDocumentation ParseTypeNode(XmlNode node, string name)
     {
-        var type = _assembly.GetType(name);
-
-        if (type is null)
-        {
-            // Try resolve nested type
-            // Dirty hack to handle nested types. Works only for types that are nested in the same assembly 
-            // and have one level of nesting.
-            type = _assembly.GetType(GetNestedTypeName(name));
-        }
+        var type = GetTypeFromAssembly(name);
 
         if (type is null)
         {
@@ -98,19 +99,14 @@ internal class XmlParser
         return typeDocumentation;
     }
 
-    private string GetNestedTypeName(string name)
+    private Type? GetTypeFromAssembly(string name)
     {
-        //Replace the last dot with a plus sign to get the nested type name
-        
-        //Replace the last dot with a plus sign to get the nested type name
-        int lastDotIndex = name.LastIndexOf('.');
-        if (lastDotIndex == -1)
+        if (_types.TryGetValue(name, out var type))
         {
-            return name;
+            return type;
         }
-    
-        return name[..lastDotIndex] + "+" + name[(lastDotIndex + 1)..];
-
+        
+        return null;
     }
 
     private PropertyDocumentation ParsePropertyNode(XmlNode node, string name)
@@ -208,7 +204,7 @@ internal class XmlParser
     {
         var (typeName, memberName) = XmlMemberNameResolver.ResolveTypeAndMemberName(name);
 
-        var type = _assembly.GetType(typeName)
+        var type = GetTypeFromAssembly(typeName)
             ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
 
         var parameters = XmlMemberNameResolver.ResolveMethodParameters(name);
