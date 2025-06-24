@@ -106,55 +106,63 @@ internal static partial class XmlMemberNameResolver
         }
 
         // Handle nested generic parameters while tracking nesting depth
-        return ParseParameterList(parametersString);
+        return GetParameters(parametersString);
+    }
+    
+    /// <summary>
+    /// Recursively splits a comma-delimited parameter string at top-level commas.
+    /// </summary>
+    private static List<string> GetParameters(string value)
+    {
+        // Base case: nothing left?
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return [];
+        }
+
+        // Find the position of the first top-level comma
+        var commaPosition = FindCommaPosition(value, 0, 0);
+        
+        if (commaPosition < 0)
+        {
+            // This is a single parameter
+            return [value.Trim()];
+        }
+
+        // Split off the first parameter, then recurse on the rest
+        var first = value[..commaPosition].Trim();
+        
+        var result = new List<string> { first };
+
+        var parameters = GetParameters(value[(commaPosition + 1)..]);
+        result.AddRange(parameters);
+        
+        return result;
     }
 
     /// <summary>
-    /// Parses a parameter list string into individual parameter type names.
-    /// Handles nested generic arguments by tracking bracket depth.
+    /// Recursively scans for a comma at depth==0 (i.e. not inside any {} pairs).
+    /// Returns its index, or -1 if none.
     /// </summary>
-    /// <param name="parametersString">String containing comma-separated parameter type names.</param>
-    /// <returns>A collection of parsed and cleaned parameter type names.</returns>
-    private static List<string> ParseParameterList(string parametersString)
+    private static int FindCommaPosition(string value, int index, int depth)
     {
-        var result = new List<string>();
-        var currentParam = string.Empty;
-        var nestingDepth = 0;
-
-        foreach (var c in parametersString)
+        if (index >= value.Length)
         {
-            switch (c)
-            {
-                case '<' or '{':
-                    nestingDepth++;
-                    break;
-
-                case '>' or '}':
-                    nestingDepth--;
-                    break;
-
-                case ',' when nestingDepth == 0:
-                    {
-                        currentParam = currentParam.Trim();
-                        currentParam = RemoveGenericMarkers(currentParam);
-
-                        result.Add(RemoveGenericMarkers(currentParam));
-
-                        currentParam = string.Empty;
-
-                        continue;
-                    }
-            }
-
-            currentParam += c;
+            // End of string reached without finding a top-level comma
+            return -1;
         }
 
-        if (!string.IsNullOrWhiteSpace(currentParam))
-        {
-            result.Add(RemoveGenericMarkers(currentParam.Trim()));
-        }
+        var c = value[index];
 
-        return result;
+        var topLevelCommaPosition = c switch
+        {
+            '{' or '<' => FindCommaPosition(value, index + 1, depth + 1),
+            '}' or '>' => FindCommaPosition(value, index + 1, depth - 1),
+            ',' when depth == 0 => index,
+            _ => FindCommaPosition(value, index + 1, depth)
+        };
+        
+        return topLevelCommaPosition;
     }
 
     /// <summary>
