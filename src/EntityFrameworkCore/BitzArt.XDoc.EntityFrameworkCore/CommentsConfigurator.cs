@@ -16,7 +16,7 @@ public class CommentsConfigurator
     /// <summary>
     /// List of processed database columns to prevent comments conflicts.
     /// </summary>
-    private readonly List<string> _processedColumns = [];
+    private readonly HashSet<string> _processedColumns = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CommentsConfigurator"/> class.
@@ -108,16 +108,14 @@ public class CommentsConfigurator
     /// </remarks>
     private void SetEntityPropertyComment(IMutableEntityType entityType, IMutableProperty property)
     {
-        var columnName = property.GetColumnName();
-        var tableName = entityType.GetTableName();
-
-        if (_processedColumns.Contains($"{tableName}.{columnName}"))
+        var columnName = $"{entityType.GetTableName()}.{property.GetColumnName()}";
+        
+        
+        if (!_processedColumns.Add(columnName))
         {
             // Column already processed, skip to avoid conflicts
             return;
         }
-
-        _processedColumns.Add($"{tableName}.{columnName}");
 
         var isShadowProperty = property.IsShadowProperty();
 
