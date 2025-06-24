@@ -77,7 +77,7 @@ public class XmlMemberNameResolverTests
     public void ResolveMethodParameters_GenericMethodWithNineComplexParameters_ShouldResolve()
     {
         // Arrange
-        var value = "M:MediaMars.Management.ProfileQueryExtensions.Apply(System.Linq.IQueryable{MediaMars.Management.Profile},System.Nullable{System.Int64},System.Nullable{System.Int32},System.Boolean,System.String,System.Collections.Generic.IEnumerable{System.String},System.String,System.String,System.Boolean)";
+        var value = "M:RootNameSpace.ChildNameSpace.SomeClass`1.Method(System.Linq.IQueryable{System.String},System.Nullable{System.Int64},System.Nullable{System.Int32},System.Boolean,System.String,System.Collections.Generic.IEnumerable{System.String},System.String,System.String,System.Boolean)";
         
         // Act
         var parameters = XmlMemberNameResolver.ResolveMethodParameters(value);
