@@ -33,7 +33,6 @@ internal class XmlParser
 
         _types = assembly
             .GetTypes()
-            .Where(t => t.IsPublic || t.IsNestedPublic)
             .Where(t => !string.IsNullOrWhiteSpace(t.FullName))
             .ToFrozenDictionary(
                 t => t.FullName!.Replace('+', '.'), // Replace nested type '+' with '.'
