@@ -3,9 +3,18 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace BitzArt.XDoc;
 
-public static class IMutableEntityTypeExtensions
+/// <summary>
+/// Extension methods for <see cref="IMutableEntityType"/> that add XML documentation as comments
+/// to database entities and their properties.
+/// </summary>
+public static class MutableEntityTypeExtensions
 {
-    public static void ConfigureEntity(this IMutableEntityType entityType, XDoc xDoc)
+    /// <summary>
+    /// Configures an entity and all its properties with comments from XML documentation.
+    /// </summary>
+    /// <param name="entityType">The entity type to configure.</param>
+    /// <param name="xDoc">The XDoc instance containing XML documentation.</param>
+    public static void ConfigureEntityComments(this IMutableEntityType entityType, XDoc xDoc)
     {
         entityType.ConfigureEntityTypeComment(xDoc);
 
@@ -17,6 +26,14 @@ public static class IMutableEntityTypeExtensions
         }
     }
 
+    /// <summary>
+    /// Configures an entity type with a comment from its XML documentation.
+    /// </summary>
+    /// <param name="entityType">The entity type to configure.</param>
+    /// <param name="xDoc">The XDoc instance containing XML documentation.</param>
+    /// <remarks>
+    /// Comments are not applied to owned entities or entities without a table name.
+    /// </remarks>
     public static void ConfigureEntityTypeComment(this IMutableEntityType entityType, XDoc xDoc)
     {
         var typeDocumentation = xDoc.Get(entityType.ClrType);
@@ -43,6 +60,15 @@ public static class IMutableEntityTypeExtensions
         entityType.SetComment(entityComment);
     }
 
+    /// <summary>
+    /// Configures an entity property with a comment from its XML documentation.
+    /// </summary>
+    /// <param name="entityType">The entity type containing the property.</param>
+    /// <param name="xDoc">The XDoc instance containing XML documentation.</param>
+    /// <param name="property">The property to configure.</param>
+    /// <remarks>
+    /// Comments are not applied to shadow properties or properties without documentation.
+    /// </remarks>
     public static void ConfigureEntityPropertyComment(this IMutableEntityType entityType, XDoc xDoc, IMutableProperty property)
     {
         var isShadowProperty = property.IsShadowProperty();
