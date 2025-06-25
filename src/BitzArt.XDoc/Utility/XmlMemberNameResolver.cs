@@ -106,63 +106,55 @@ internal static partial class XmlMemberNameResolver
         }
 
         // Handle nested generic parameters while tracking nesting depth
-        return GetParameters(parametersString);
+        return ParseParameterList(parametersString);
     }
-    
+
     /// <summary>
-    /// Recursively splits a comma-delimited parameter string at top-level commas.
+    /// Parses a parameter list string into individual parameter type names.
+    /// Handles nested generic arguments by tracking bracket depth.
     /// </summary>
-    private static List<string> GetParameters(string value)
+    /// <param name="parametersString">String containing comma-separated parameter type names.</param>
+    /// <returns>A collection of parsed and cleaned parameter type names.</returns>
+    private static List<string> ParseParameterList(string parametersString)
     {
-        // Base case: nothing left?
-        if (string.IsNullOrWhiteSpace(value))
+        var result = new List<string>();
+        var currentParam = string.Empty;
+        var nestingDepth = 0;
+
+        foreach (var c in parametersString)
         {
-            return [];
+            switch (c)
+            {
+                case '<' or '{':
+                    nestingDepth++;
+                    break;
+
+                case '>' or '}':
+                    nestingDepth--;
+                    break;
+
+                case ',' when nestingDepth == 0:
+                    {
+                        currentParam = currentParam.Trim();
+                        currentParam = RemoveGenericMarkers(currentParam);
+
+                        result.Add(RemoveGenericMarkers(currentParam));
+
+                        currentParam = string.Empty;
+
+                        continue;
+                    }
+            }
+
+            currentParam += c;
         }
 
-        // Find the position of the first top-level comma
-        var commaPosition = FindCommaPosition(value, 0, 0);
-        
-        if (commaPosition < 0)
+        if (!string.IsNullOrWhiteSpace(currentParam))
         {
-            // This is a single parameter
-            return [value.Trim()];
+            result.Add(RemoveGenericMarkers(currentParam.Trim()));
         }
 
-        // Split off the first parameter, then recurse on the rest
-        var first = value[..commaPosition].Trim();
-        
-        var result = new List<string> { first };
-
-        var parameters = GetParameters(value[(commaPosition + 1)..]);
-        result.AddRange(parameters);
-        
         return result;
-    }
-
-    /// <summary>
-    /// Recursively scans for a comma at depth==0 (i.e. not inside any {} pairs).
-    /// Returns its index, or -1 if none.
-    /// </summary>
-    private static int FindCommaPosition(string value, int index, int depth)
-    {
-        if (index >= value.Length)
-        {
-            // End of string reached without finding a top-level comma
-            return -1;
-        }
-
-        var c = value[index];
-
-        var topLevelCommaPosition = c switch
-        {
-            '{' or '<' => FindCommaPosition(value, index + 1, depth + 1),
-            '}' or '>' => FindCommaPosition(value, index + 1, depth - 1),
-            ',' when depth == 0 => index,
-            _ => FindCommaPosition(value, index + 1, depth)
-        };
-        
-        return topLevelCommaPosition;
     }
 
     /// <summary>
