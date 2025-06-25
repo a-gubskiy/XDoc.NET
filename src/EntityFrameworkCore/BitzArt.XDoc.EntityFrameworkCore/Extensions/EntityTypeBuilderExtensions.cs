@@ -137,13 +137,30 @@ public static class EntityTypeBuilderExtensions
         return entityTypeBuilder;
     }
 
+    /// <summary>
+    /// Adds comments to the entity type and all its properties using documentation from XDoc.
+    /// This method automatically maps XML comments from the entity class documentation to the database objects.
+    /// </summary>
+    /// <typeparam name="TEntity">The entity type being configured</typeparam>
+    /// <param name="builder">The builder for the entity type</param>
+    /// <param name="xdoc">The XDoc instance used to extract documentation</param>
+    /// <returns>The same entity type builder instance so that multiple calls can be chained</returns>
     public static EntityTypeBuilder<TEntity> MapXmlComments<TEntity>(
-        this EntityTypeBuilder<TEntity> entityTypeBuilder,
+        this EntityTypeBuilder<TEntity> builder,
         XDoc xdoc)
         where TEntity : class
     {
-        // TODO: Implement the logic to map XML comments to the entity type and its properties.
-        
-        return entityTypeBuilder;
+        var entityType = builder.Metadata;
+
+        entityType.ConfigureEntityTypeComment(xdoc);
+
+        var properties = entityType.GetProperties();
+
+        foreach (var property in properties)
+        {
+            entityType.ConfigureEntityPropertyComment(xdoc, property);
+        }
+
+        return builder;
     }
 }
