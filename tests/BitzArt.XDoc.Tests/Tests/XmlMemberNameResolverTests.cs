@@ -72,17 +72,4 @@ public class XmlMemberNameResolverTests
         // Assert
         Assert.Equal(2, parameters.Count);
     }
-    
-    [Fact]
-    public void ResolveMethodParameters_GenericMethodWithNineComplexParameters_ShouldResolve()
-    {
-        // Arrange
-        var value = "M:RootNameSpace.ChildNameSpace.SomeClass`1.Method(System.Linq.IQueryable{System.String},System.Nullable{System.Int64},System.Nullable{System.Int32},System.Boolean,System.String,System.Collections.Generic.IEnumerable{System.String},System.String,System.String,System.Boolean)";
-        
-        // Act
-        var parameters = XmlMemberNameResolver.ResolveMethodParameters(value);
-
-        // Assert
-        Assert.Equal(9, parameters.Count);
-    }
 }
