@@ -136,4 +136,14 @@ public static class EntityTypeBuilderExtensions
 
         return entityTypeBuilder;
     }
+
+    public static EntityTypeBuilder<TEntity> MapXmlComments<TEntity>(
+        this EntityTypeBuilder<TEntity> entityTypeBuilder,
+        XDoc xdoc)
+        where TEntity : class
+    {
+        // TODO: Implement the logic to map XML comments to the entity type and its properties.
+        
+        return entityTypeBuilder;
+    }
 }
