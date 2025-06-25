@@ -13,22 +13,22 @@ public static class OwnedNavigationBuilderExtensions
     /// <typeparam name="TOwnerEntity">The type of the owner entity.</typeparam>
     /// <typeparam name="TDependentEntity">The type of the dependent entity.</typeparam>
     /// <param name="builder">The owned navigation builder to extend.</param>
-    /// <param name="xDoc">The XDoc instance containing XML comments to be mapped.</param>
+    /// <param name="xdoc">The XDoc instance containing XML comments to be mapped.</param>
     /// <returns>The same builder instance so that multiple calls can be chained.</returns>
     public static OwnedNavigationBuilder<TOwnerEntity, TDependentEntity> MapXmlComments<TOwnerEntity, TDependentEntity>(
-        this OwnedNavigationBuilder<TOwnerEntity, TDependentEntity> builder, XDoc xDoc)
+        this OwnedNavigationBuilder<TOwnerEntity, TDependentEntity> builder, XDoc xdoc)
         where TOwnerEntity : class
         where TDependentEntity : class
     {
         var entityType = builder.Metadata.DeclaringEntityType;
 
-        entityType.ConfigureEntityTypeComment(xDoc);
+        entityType.ConfigureEntityTypeComment(xdoc);
 
         var properties = entityType.GetProperties();
 
         foreach (var property in properties)
         {
-            entityType.ConfigureEntityPropertyComment(xDoc, property);
+            entityType.ConfigureEntityPropertyComment(xdoc, property);
         }
 
         return builder;
