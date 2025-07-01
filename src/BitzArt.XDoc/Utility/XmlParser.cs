@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Frozen;
+using System.Reflection;
 using System.Xml;
 
 namespace BitzArt.XDoc;
@@ -6,9 +7,9 @@ namespace BitzArt.XDoc;
 internal class XmlParser
 {
     private readonly XDoc _source;
-    private readonly Assembly _assembly;
     private readonly XmlDocument _xml;
     private readonly Dictionary<Type, TypeDocumentation> _results;
+    private readonly IDictionary<string, Type> _types;
 
     /// <summary>
     /// Parses an XML documentation file and creates a dictionary mapping types to their documentation.
@@ -28,8 +29,15 @@ internal class XmlParser
     internal XmlParser(XDoc source, Assembly assembly, XmlDocument xml)
     {
         _source = source;
-        _assembly = assembly;
         _xml = xml;
+
+        _types = assembly
+            .GetTypes()
+            .Where(t => !string.IsNullOrWhiteSpace(t.FullName))
+            .ToFrozenDictionary(
+                t => t.FullName!.Replace('+', '.'), // Replace nested type '+' with '.'
+                t => t
+            );
 
         _results = [];
     }
@@ -69,7 +77,7 @@ internal class XmlParser
 
     private TypeDocumentation ParseTypeNode(XmlNode node, string name)
     {
-        var type = _assembly.GetType(name)
+        var type = GetTypeFromAssembly(name)
                    ?? throw new InvalidOperationException($"Type '{name}' not found.");
 
         // We could handle this case by finding and updating the existing object,
@@ -84,6 +92,11 @@ internal class XmlParser
         _results[type] = typeDocumentation;
 
         return typeDocumentation;
+    }
+
+    private Type? GetTypeFromAssembly(string name)
+    {
+        return _types.TryGetValue(name, out var type) ? type : null;
     }
 
     private PropertyDocumentation ParsePropertyNode(XmlNode node, string name)
@@ -181,7 +194,7 @@ internal class XmlParser
     {
         var (typeName, memberName) = XmlMemberNameResolver.ResolveTypeAndMemberName(name);
 
-        var type = _assembly.GetType(typeName)
+        var type = GetTypeFromAssembly(typeName)
             ?? throw new InvalidOperationException($"Type '{typeName}' not found.");
 
         var parameters = XmlMemberNameResolver.ResolveMethodParameters(name);
