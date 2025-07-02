@@ -280,7 +280,9 @@ internal class XmlParser
     /// </remarks>
     private static string ConvertNestedClassNameToXmlNotation(string className)
     {
-        // Replace nested type '+' with '.'
-        return className.Replace('+', '.');
+        // Replace nested type '+' with '.' if needed
+        return className.Contains('+')
+            ? className.Replace('+', '.')
+            : className;
     }
 }
