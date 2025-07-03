@@ -35,7 +35,7 @@ internal class XmlParser
             .GetTypes()
             .Where(t => !string.IsNullOrWhiteSpace(t.FullName))
             .ToFrozenDictionary(
-                t => t.FullName!.Replace('+', '.'), // Replace nested type '+' with '.'
+                t => ConvertToXmlDocTypeFormat(t.FullName!),
                 t => t
             );
 
@@ -225,17 +225,17 @@ internal class XmlParser
     {
         if (!type.IsGenericType)
         {
-            return type.FullName ?? "";
+            return ConvertToXmlDocTypeFormat(type.FullName);
         }
 
         // Get the name of the generic type definition (e.g. System.Nullable`1)
         var genericTypeDefinition = type.GetGenericTypeDefinition();
-        var typeName = genericTypeDefinition.FullName;
+        var typeName = ConvertToXmlDocTypeFormat(genericTypeDefinition.FullName);
 
         // Remove the `1 from the generic type name
         if (IsGeneric(typeName))
         {
-            var indexOfStartGenericParameter = typeName!.IndexOf('`');
+            var indexOfStartGenericParameter = typeName.IndexOf('`');
 
             typeName = typeName[..indexOfStartGenericParameter];
         }
@@ -264,5 +264,29 @@ internal class XmlParser
         _results.Add(type, result);
 
         return result;
+    }
+
+    /// <summary>
+    /// Converts a nested class name to XML documentation notation format.
+    /// </summary>
+    /// <param name="className">The full name of the class, potentially containing nested class notation.</param>
+    /// <returns>
+    /// A string with '+' characters (used for nested classes in .NET) replaced
+    /// with '.' characters (used in XML documentation).
+    /// </returns>
+    /// <remarks>
+    /// In .NET, nested classes are represented in reflection with '+' characters,
+    /// but in XML documentation, they use '.' notation.
+    /// </remarks>
+    private static string ConvertToXmlDocTypeFormat(string? className)
+    {
+        if (string.IsNullOrWhiteSpace(className))
+        {
+            //Generic types has no FullName value
+            return string.Empty;
+        }
+        
+        // Replace nested type '+' with '.' if needed
+        return className.Replace('+', '.');
     }
 }
