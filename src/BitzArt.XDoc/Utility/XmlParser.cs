@@ -35,7 +35,7 @@ internal class XmlParser
             .GetTypes()
             .Where(t => !string.IsNullOrWhiteSpace(t.FullName))
             .ToFrozenDictionary(
-                t => ConvertNestedClassNameToXmlNotation(t.FullName!),
+                t => ConvertToXmlDocTypeFormat(t.FullName!),
                 t => t
             );
 
@@ -225,12 +225,12 @@ internal class XmlParser
     {
         if (!type.IsGenericType)
         {
-            return ConvertNestedClassNameToXmlNotation(type.FullName);
+            return ConvertToXmlDocTypeFormat(type.FullName);
         }
 
         // Get the name of the generic type definition (e.g. System.Nullable`1)
         var genericTypeDefinition = type.GetGenericTypeDefinition();
-        var typeName = ConvertNestedClassNameToXmlNotation(genericTypeDefinition.FullName);
+        var typeName = ConvertToXmlDocTypeFormat(genericTypeDefinition.FullName);
 
         // Remove the `1 from the generic type name
         if (IsGeneric(typeName))
@@ -278,12 +278,12 @@ internal class XmlParser
     /// In .NET, nested classes are represented in reflection with '+' characters,
     /// but in XML documentation, they use '.' notation.
     /// </remarks>
-    private static string ConvertNestedClassNameToXmlNotation(string? className)
+    private static string ConvertToXmlDocTypeFormat(string? className)
     {
         if (string.IsNullOrWhiteSpace(className))
         {
             //Generic types has no FullName value
-            return "";
+            return string.Empty;
         }
         
         // Replace nested type '+' with '.' if needed
