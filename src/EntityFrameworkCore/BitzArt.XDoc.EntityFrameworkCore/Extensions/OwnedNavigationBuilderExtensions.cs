@@ -24,7 +24,7 @@ public static class OwnedNavigationBuilderExtensions
     {
         var entityType = builder.Metadata.DeclaringEntityType;
 
-        entityType.ConfigureEntityTypeComment(xdoc);
+        entityType.ConfigureEntityXmlDocumentation(xdoc);
 
         return builder;
     }
@@ -50,7 +50,7 @@ public static class OwnedNavigationBuilderExtensions
 
         foreach (var property in properties)
         {
-            entityType.ConfigureEntityPropertyComment(xdoc, property);
+            entityType.ConfigurePropertyXmlDocumentation(xdoc, property);
         }
 
         return builder;

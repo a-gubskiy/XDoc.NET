@@ -136,7 +136,6 @@ public static class EntityTypeBuilderExtensions
 
         return entityTypeBuilder;
     }
-
     
     /// <summary>
     /// Configures XML documentation for the entity type being configured.
@@ -151,8 +150,7 @@ public static class EntityTypeBuilderExtensions
         where TEntity : class
     {
         var entityType = builder.Metadata;
-        entityType.ConfigureEntityTypeComment(xdoc); //Do not call for inherited entities
-    
+        entityType.ConfigureEntityXmlDocumentation(xdoc); //Do not call for inherited entities
     
         return builder;
     }
@@ -175,7 +173,7 @@ public static class EntityTypeBuilderExtensions
     
         foreach (var property in properties)
         {
-            entityType.ConfigureEntityPropertyComment(xdoc, property);
+            entityType.ConfigurePropertyXmlDocumentation(xdoc, property);
         }
     
         return builder;
