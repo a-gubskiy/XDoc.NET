@@ -22,7 +22,7 @@ public static class OwnedNavigationBuilderExtensions
         where TOwnerEntity : class
         where TDependentEntity : class
     {
-        var entityType = builder.Metadata.DeclaringEntityType;
+        var entityType = builder.OwnedEntityType;
 
         entityType.ConfigureEntityXmlDocumentation(xdoc);
 

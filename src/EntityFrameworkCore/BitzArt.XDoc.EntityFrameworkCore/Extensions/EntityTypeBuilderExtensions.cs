@@ -150,7 +150,7 @@ public static class EntityTypeBuilderExtensions
         where TEntity : class
     {
         var entityType = builder.Metadata;
-        entityType.ConfigureEntityXmlDocumentation(xdoc); //Do not call for inherited entities
+        entityType.ConfigureEntityXmlDocumentation(xdoc);
     
         return builder;
     }
