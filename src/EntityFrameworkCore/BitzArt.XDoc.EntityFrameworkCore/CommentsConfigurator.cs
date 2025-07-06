@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -16,7 +17,7 @@ public class CommentsConfigurator
     /// <summary>
     /// List of processed database columns to prevent comments conflicts.
     /// </summary>
-    private readonly HashSet<string> _processedColumns = [];
+    private readonly Dictionary<string, string?> _processedColumns = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CommentsConfigurator"/> class.
@@ -34,6 +35,8 @@ public class CommentsConfigurator
     public void SetComments(ModelBuilder modelBuilder)
     {
         var entityTypes = modelBuilder.Model.GetEntityTypes();
+
+        Console.Clear();
 
         foreach (var entityType in entityTypes)
         {
@@ -109,19 +112,48 @@ public class CommentsConfigurator
     private void SetEntityPropertyComment(IMutableEntityType entityType, IMutableProperty property)
     {
         var columnName = $"{entityType.GetTableName()}.{property.GetColumnName()}";
+
+        Console.WriteLine("Processing entity: " + entityType.Name + ", property: " + property.Name);
+        Console.WriteLine("\tColumn: " + columnName);
         
-        
-        if (!_processedColumns.Add(columnName))
+        if (_processedColumns.ContainsKey(columnName))
         {
+            var existingComment = _processedColumns[columnName];
+            var potentialComment = GetComment(entityType, property).Replace('\n', ' ').Replace('\r', ' ').Replace("  ", " ");;
+
+            Console.WriteLine($"\tExisting comment: {existingComment}");
+            Console.WriteLine($"\tPotential comment: {potentialComment}");
+            Console.WriteLine($"\tDiffer: {potentialComment != existingComment}");
+
+            Trace.WriteLine($"{columnName}: [{potentialComment} != {existingComment}]");
+            Console.WriteLine($"{columnName}: [{potentialComment} != {existingComment}]");
             // Column already processed, skip to avoid conflicts
-            return;
+            //return;
         }
 
+        _processedColumns[columnName] = string.Empty;
+
+        var propertyComment = GetComment(entityType, property);
+
+        if (!string.IsNullOrEmpty(propertyComment))
+        {
+            _processedColumns[columnName] = propertyComment.Replace('\n', ' ').Replace('\r', ' ').Replace("  ", " ");
+
+            Console.WriteLine("\tСomment: " + _processedColumns[columnName]);
+
+            property.SetComment(propertyComment);
+        }
+    }
+
+    private string GetComment(IMutableEntityType entityType, IMutableProperty property)
+    {
         var isShadowProperty = property.IsShadowProperty();
 
         if (isShadowProperty)
         {
-            return;
+            Trace.Write("Skipping shadow property: " + property.Name);
+
+            return string.Empty;
         }
 
         var propertyInfo = entityType.ClrType.GetProperty(property.Name);
@@ -129,7 +161,7 @@ public class CommentsConfigurator
         if (propertyInfo is null)
         {
             // Property not found in the CLR type
-            return;
+            return string.Empty;
         }
 
         var propertyDocumentation = _xDoc.Get(propertyInfo);
@@ -137,11 +169,11 @@ public class CommentsConfigurator
         if (propertyDocumentation is null)
         {
             // No own xml-documentation for the property
-            return;
+            return string.Empty;
         }
 
-        var propertyComment = propertyDocumentation.ToPlainText();
+        var comment = propertyDocumentation.ToPlainText();
 
-        property.SetComment(propertyComment);
+        return comment;
     }
 }
