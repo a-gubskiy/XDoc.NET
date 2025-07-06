@@ -137,30 +137,47 @@ public static class EntityTypeBuilderExtensions
         return entityTypeBuilder;
     }
 
+    
     /// <summary>
-    /// Adds comments to the entity type and all its properties using documentation from XDoc.
-    /// This method automatically maps XML comments from the entity class documentation to the database objects.
+    /// Configures XML documentation for the entity type being configured.
     /// </summary>
     /// <typeparam name="TEntity">The entity type being configured</typeparam>
     /// <param name="builder">The builder for the entity type</param>
     /// <param name="xdoc">The XDoc instance used to extract documentation</param>
     /// <returns>The same entity type builder instance so that multiple calls can be chained</returns>
-    public static EntityTypeBuilder<TEntity> MapXmlComments<TEntity>(
+    public static EntityTypeBuilder<TEntity> ConfigureEntityXmlDocumentation<TEntity>(
         this EntityTypeBuilder<TEntity> builder,
         XDoc xdoc)
         where TEntity : class
     {
         var entityType = builder.Metadata;
-
-        entityType.ConfigureEntityTypeComment(xdoc);
-
+        entityType.ConfigureEntityTypeComment(xdoc); //Do not call for inherited entities
+    
+    
+        return builder;
+    }
+    
+    /// <summary>
+    /// Configures XML documentation for all properties of the entity type being configured.
+    /// </summary>
+    /// <typeparam name="TEntity">The entity type being configured</typeparam>
+    /// <param name="builder">The builder for the entity type</param>
+    /// <param name="xdoc">The XDoc instance used to extract documentation</param>
+    /// <returns>The same entity type builder instance so that multiple calls can be chained</returns>
+    public static EntityTypeBuilder<TEntity> ConfigurePropertiesXmlDocumentation<TEntity>(
+        this EntityTypeBuilder<TEntity> builder,
+        XDoc xdoc)
+        where TEntity : class
+    {
+        var entityType = builder.Metadata;
+    
         var properties = entityType.GetProperties();
-
+    
         foreach (var property in properties)
         {
             entityType.ConfigureEntityPropertyComment(xdoc, property);
         }
-
+    
         return builder;
     }
 }
