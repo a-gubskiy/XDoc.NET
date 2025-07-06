@@ -16,8 +16,13 @@ public static class ModelBuilderExtensions
     /// <param name="xDoc"></param>
     public static ModelBuilder ConfigureComments(this ModelBuilder modelBuilder, XDoc xDoc)
     {
-        var commentsConfigurator = new CommentsConfigurator(xDoc);
-        commentsConfigurator.SetComments(modelBuilder);
+        var entityTypes = modelBuilder.Model.GetEntityTypes();
+
+        foreach (var entityType in entityTypes)
+        {
+            entityType.ConfigureEntityXmlDocumentation(xDoc);
+            entityType.ConfigurePropertiesXmlDocumentation(xDoc);
+        }
 
         return modelBuilder;
     }
