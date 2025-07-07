@@ -20,7 +20,8 @@ public static class ModelBuilderExtensions
 
         foreach (var entityType in entityTypes)
         {
-            entityType.ConfigureEntityComments(xDoc);
+            entityType.ConfigureEntityXmlDocumentation(xDoc);
+            entityType.ConfigurePropertiesXmlDocumentation(xDoc);
         }
 
         return modelBuilder;

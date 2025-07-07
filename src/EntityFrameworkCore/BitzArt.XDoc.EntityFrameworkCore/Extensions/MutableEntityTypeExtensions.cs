@@ -10,31 +10,34 @@ namespace BitzArt.XDoc;
 public static class MutableEntityTypeExtensions
 {
     /// <summary>
-    /// Configures an entity and all its properties with comments from XML documentation.
+    /// Configures XML documentation as comments for all properties of an entity type.
     /// </summary>
-    /// <param name="entityType">The entity type to configure.</param>
-    /// <param name="xDoc">The XDoc instance containing XML documentation.</param>
-    public static void ConfigureEntityComments(this IMutableEntityType entityType, XDoc xDoc)
+    /// <param name="entityType">The entity type whose properties should be configured with documentation.</param>
+    /// <param name="xDoc">The XDoc instance containing XML documentation information.</param>
+    /// <remarks>
+    /// This method iterates through all properties of the entity type and applies
+    /// XML documentation as comments to each property.
+    /// </remarks>
+    public static void ConfigurePropertiesXmlDocumentation(this IMutableEntityType entityType, XDoc xDoc)
     {
-        entityType.ConfigureEntityTypeComment(xDoc);
-
         var properties = entityType.GetProperties();
 
         foreach (var property in properties)
         {
-            entityType.ConfigureEntityPropertyComment(xDoc, property);
+            entityType.ConfigurePropertyXmlDocumentation(xDoc, property);
         }
     }
 
     /// <summary>
-    /// Configures an entity type with a comment from its XML documentation.
+    /// Configures XML documentation as a comment for an entity type.
     /// </summary>
-    /// <param name="entityType">The entity type to configure.</param>
-    /// <param name="xDoc">The XDoc instance containing XML documentation.</param>
+    /// <param name="entityType">The entity type to configure with documentation.</param>
+    /// <param name="xDoc">The XDoc instance containing XML documentation information.</param>
     /// <remarks>
     /// Comments are not applied to owned entities or entities without a table name.
+    /// If no XML documentation exists for the entity type, no comment is set.
     /// </remarks>
-    public static void ConfigureEntityTypeComment(this IMutableEntityType entityType, XDoc xDoc)
+    public static void ConfigureEntityXmlDocumentation(this IMutableEntityType entityType, XDoc xDoc)
     {
         var typeDocumentation = xDoc.Get(entityType.ClrType);
 
@@ -69,7 +72,7 @@ public static class MutableEntityTypeExtensions
     /// <remarks>
     /// Comments are not applied to shadow properties or properties without documentation.
     /// </remarks>
-    public static void ConfigureEntityPropertyComment(this IMutableEntityType entityType, XDoc xDoc, IMutableProperty property)
+    public static void ConfigurePropertyXmlDocumentation(this IMutableEntityType entityType, XDoc xDoc, IMutableProperty property)
     {
         var isShadowProperty = property.IsShadowProperty();
 
