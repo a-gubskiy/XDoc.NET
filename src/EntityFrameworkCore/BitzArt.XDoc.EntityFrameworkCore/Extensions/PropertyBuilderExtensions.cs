@@ -19,13 +19,11 @@ public static class PropertyBuilderExtensions
     /// <typeparam name="TCommentTargetProperty">The type of the property whose documentation will be used</typeparam>
     /// <param name="propertyBuilder">The builder for the property</param>
     /// <param name="xdoc">The XDoc instance used to extract documentation</param>
-    /// <param name="propertyName">The name of the property to configure</param>
     /// <param name="commentTargetPropertyExpression">An expression that identifies the property whose documentation will be used</param>
     /// <returns>The same property builder instance so that multiple calls can be chained</returns>
     public static PropertyBuilder HasComment<TCommentTargetEntity, TCommentTargetProperty>(
         this PropertyBuilder propertyBuilder,
         XDoc xdoc,
-        string propertyName,
         Expression<Func<TCommentTargetEntity, TCommentTargetProperty>> commentTargetPropertyExpression)
         where TCommentTargetEntity : class
     {
