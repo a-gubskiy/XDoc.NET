@@ -77,8 +77,6 @@ public static class MutableEntityTypeExtensions
         }
 
         var propertyComment = propertyDocumentation.ToPlainText();
-        
-        Console.WriteLine($"Setting comment for property '{property.Name}' in entity '{entityType.ClrType.Name}': {propertyComment}");
 
         property.SetComment(propertyComment);
     }
