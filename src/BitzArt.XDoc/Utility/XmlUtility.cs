@@ -60,11 +60,9 @@ internal static class XmlUtility
         // But during EF Core migrations, assemblies may be loaded from the NuGet cache.
         // This method always looks for the XML doc in the output folder (AppContext.BaseDirectory),
         // so ensure the XML file is present there for both runtime and migrations.
-        
-        var outputDir = AppContext.BaseDirectory;
-        var fileName = Path.GetFileName(assembly.Location);
 
-        var localXmlPath = Path.ChangeExtension(Path.Combine(outputDir, fileName), "xml");
+        var fileName = Path.GetFileName(assembly.Location);
+        var localXmlPath = Path.ChangeExtension(Path.Combine(AppContext.BaseDirectory, fileName), "xml");
         
         if (File.Exists(localXmlPath))
         {
