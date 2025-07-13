@@ -55,9 +55,17 @@ internal static class XmlUtility
     private static string GetXmlDocumentationFilePath(Assembly assembly)
     {
         // Try to find local XML documentation file
-        var assemblyLocation = assembly.Location;
-        var localXmlPath = Path.ChangeExtension(assemblyLocation, "xml");
+        
+        // Note: At runtime, .NET loads assemblies from the output directory.
+        // But during EF Core migrations, assemblies may be loaded from the NuGet cache.
+        // This method always looks for the XML doc in the output folder (AppContext.BaseDirectory),
+        // so ensure the XML file is present there for both runtime and migrations.
+        
+        var outputDir = AppContext.BaseDirectory;
+        var fileName = Path.GetFileName(assembly.Location);
 
+        var localXmlPath = Path.ChangeExtension(Path.Combine(outputDir, fileName), "xml");
+        
         if (File.Exists(localXmlPath))
         {
             return localXmlPath;
