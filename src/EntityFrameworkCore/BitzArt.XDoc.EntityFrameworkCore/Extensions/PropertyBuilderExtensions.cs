@@ -17,7 +17,7 @@ public static class PropertyBuilderExtensions
     /// </summary>
     /// <typeparam name="TCommentTargetEntity">The entity type containing the property whose documentation will be used</typeparam>
     /// <typeparam name="TCommentTargetProperty">The type of the property whose documentation will be used</typeparam>
-    /// /// <typeparam name="TProperty">The type of the property being configured</typeparam>
+    /// <typeparam name="TProperty">The type of the property being configured</typeparam>
     /// <param name="propertyBuilder">The builder for the property</param>
     /// <param name="xdoc">The XDoc instance used to extract documentation</param>
     /// <param name="commentTargetPropertyExpression">An expression that identifies the property whose documentation will be used</param>
