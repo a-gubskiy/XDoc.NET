@@ -14,7 +14,7 @@ public abstract class MemberDocumentation<TMemberInfo> : DocumentationElement, I
     public IMemberDocumentation? GetInheritanceTargetDocumentation()
     {
         var target = GetInheritanceTarget();
-        
+
         if (target is null)
         {
             return null;
@@ -55,19 +55,25 @@ public abstract class MemberDocumentation<TMemberInfo> : DocumentationElement, I
 public sealed class FieldDocumentation : MemberDocumentation<FieldInfo>
 {
     internal FieldDocumentation(XDoc source, FieldInfo field, XmlNode? node)
-        : base(source, field, node) { }
+        : base(source, field, node)
+    {
+    }
 }
 
 /// <inheritdoc/>
 public sealed class MethodDocumentation : MemberDocumentation<MethodBase>
 {
     internal MethodDocumentation(XDoc source, MethodBase method, XmlNode? node)
-        : base(source, method, node) { }
+        : base(source, method, node)
+    {
+    }
 }
 
 /// <inheritdoc/>
 public sealed class PropertyDocumentation : MemberDocumentation<PropertyInfo>
 {
     internal PropertyDocumentation(XDoc source, PropertyInfo property, XmlNode? node)
-        : base(source, property, node) { }
+        : base(source, property, node)
+    {
+    }
 }
