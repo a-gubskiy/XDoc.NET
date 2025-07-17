@@ -14,13 +14,23 @@ public abstract class MemberDocumentation<TMemberInfo> : DocumentationElement, I
     public IMemberDocumentation? GetInheritanceTargetDocumentation()
     {
         var target = GetInheritanceTarget();
-
-        if (target is null)
+        var memberDocumentation = target is not null ? Source.Get(target) : null;
+        
+        if (memberDocumentation is null)
         {
-            return null;
+            var memberName = $"{Member.DeclaringType}.{Member.Name}";
+
+            var message = "WARNING! " +
+                          $"Inherited documentation for {memberName} is missing. " +
+                          "This may mean the parent member has no documentation or is in a different assembly. " +
+                          "See details: https://github.com/BitzArt/XDoc.NET/blob/main/README.md#handling-inherited-documentation-issues";
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(message);
+            Console.ResetColor();
         }
 
-        return Source.Get(target);
+        return memberDocumentation;
     }
 
     /// <inheritdoc/>
