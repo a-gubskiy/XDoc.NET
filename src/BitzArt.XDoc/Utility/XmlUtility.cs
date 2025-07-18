@@ -48,22 +48,16 @@ internal static class XmlUtility
         catch (Exception ex)
         {
             throw new AggregateException("Something went wrong while trying to parse the XML documentation file. " +
-                                    "See inner exception for details.", ex);
+                                         "See inner exception for details.", ex);
         }
     }
 
     private static string GetXmlDocumentationFilePath(Assembly assembly)
     {
         // Try to find local XML documentation file
-        
-        // Note: At runtime, .NET loads assemblies from the output directory.
-        // But during EF Core migrations, assemblies may be loaded from the NuGet cache.
-        // This method always looks for the XML doc in the output folder (AppContext.BaseDirectory),
-        // so ensure the XML file is present there for both runtime and migrations.
 
-        var fileName = Path.GetFileName(assembly.Location);
-        var localXmlPath = Path.ChangeExtension(Path.Combine(AppContext.BaseDirectory, fileName), "xml");
-        
+        var localXmlPath = assembly.GetXmlDocumentationFilePath();
+
         if (File.Exists(localXmlPath))
         {
             return localXmlPath;
