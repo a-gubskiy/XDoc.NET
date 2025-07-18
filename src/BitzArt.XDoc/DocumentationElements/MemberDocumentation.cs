@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text;
 using System.Xml;
 
 namespace BitzArt.XDoc;
@@ -15,20 +16,52 @@ public abstract class MemberDocumentation<TMemberInfo> : DocumentationElement, I
     {
         var target = GetInheritanceTarget();
         var memberDocumentation = target is not null ? Source.Get(target) : null;
-        
+
         if (memberDocumentation is null)
         {
-            var memberName = $"{Member.DeclaringType}.{Member.Name}";
-
-            var message = "WARNING! " +
-                          $"Inherited documentation for {memberName} is missing. " +
-                          "This may mean the parent member has no documentation or is in a different assembly. " +
-                          "See details: https://github.com/BitzArt/XDoc.NET/blob/main/README.md#handling-inherited-documentation-issues";
-
-            ConsoleWriter.WriteLine(message, ConsoleColor.Yellow);
+            WriteInheritanceTargetDocumentationDiagnosticMessage(target);
         }
 
         return memberDocumentation;
+    }
+
+    private void WriteInheritanceTargetDocumentationDiagnosticMessage(MemberInfo? target)
+    {
+        var declaringAssembly = Member.DeclaringType?.Assembly;
+        var targetAssembly = target?.DeclaringType?.Assembly;
+        var memberName = $"{Member.DeclaringType}.{Member.Name}";
+        var parentMemberName = $"{target?.DeclaringType}.{target?.Name}";
+
+        var sb = new StringBuilder();
+
+        sb.Append("WARNING! ");
+        sb.Append($"Inherited documentation for '{memberName}' from '{parentMemberName}' is missing. ");
+
+        if (declaringAssembly?.FullName == targetAssembly?.FullName)
+        {
+            // Seems we have a local member without documentation.
+            sb.Append("Check if the parent member is documented. ");
+        }
+        else if (declaringAssembly?.FullName != targetAssembly?.FullName)
+        {
+            // The target member is in a different assembly
+            var targetAssemblyXmlDocumentationFilePath = targetAssembly?.GetXmlDocumentationFilePath();
+
+            if (!File.Exists(targetAssemblyXmlDocumentationFilePath))
+            {
+                sb.Append("Ensure that the referenced assembly has an XML documentation file. ");
+                sb.Append("If it's a NuGet package, verify that <IncludeAssets> tag configured. ");
+            }
+            else
+            {
+                sb.Append("Check if the referenced assembly XML documentation file is not corrupted. ");
+            }
+        }
+
+        sb.Append(
+            "See details: https://github.com/BitzArt/XDoc.NET/blob/main/README.md#handling-inherited-documentation-issues");
+
+        ConsoleUtility.WriteLine(sb.ToString(), ConsoleColor.Yellow);
     }
 
     /// <inheritdoc/>
