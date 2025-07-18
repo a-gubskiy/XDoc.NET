@@ -61,7 +61,7 @@ public abstract class MemberDocumentation<TMemberInfo> : DocumentationElement, I
         sb.Append(
             "See details: https://github.com/BitzArt/XDoc.NET/blob/main/README.md#handling-inherited-documentation-issues");
 
-        ConsoleUtility.WriteLine(sb.ToString(), ConsoleColor.Yellow);
+        ConsoleUtility.WriteLine(sb.ToString(), ConsoleColor.Magenta);
     }
 
     /// <inheritdoc/>
