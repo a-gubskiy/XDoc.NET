@@ -25,9 +25,7 @@ public abstract class MemberDocumentation<TMemberInfo> : DocumentationElement, I
                           "This may mean the parent member has no documentation or is in a different assembly. " +
                           "See details: https://github.com/BitzArt/XDoc.NET/blob/main/README.md#handling-inherited-documentation-issues";
 
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine(message);
-            Console.ResetColor();
+            ConsoleWriter.WriteLine(message, ConsoleColor.Yellow);
         }
 
         return memberDocumentation;
