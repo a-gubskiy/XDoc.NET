@@ -42,7 +42,7 @@ public abstract class MemberDocumentation<TMemberInfo> : DocumentationElement, I
             // Seems we have a local member without documentation.
             sb.Append("Check if the parent member is documented. ");
         }
-        else if (declaringAssembly?.FullName != targetAssembly?.FullName)
+        else
         {
             // The target member is in a different assembly
             var targetAssemblyXmlDocumentationFilePath = targetAssembly?.GetXmlDocumentationFilePath();
@@ -58,8 +58,7 @@ public abstract class MemberDocumentation<TMemberInfo> : DocumentationElement, I
             }
         }
 
-        sb.Append(
-            "See details: https://github.com/BitzArt/XDoc.NET/blob/main/README.md#handling-inherited-documentation-issues");
+        sb.Append("See details: https://github.com/BitzArt/XDoc.NET/blob/main/README.md#inherited-documentation");
 
         ConsoleUtility.WriteLine(sb.ToString(), ConsoleColor.Magenta);
     }
