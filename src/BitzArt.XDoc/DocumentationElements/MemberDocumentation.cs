@@ -54,7 +54,7 @@ public abstract class MemberDocumentation<TMemberInfo> : DocumentationElement, I
             }
             else
             {
-                sb.Append("Check if the referenced assembly XML documentation file is not corrupted. ");
+                sb.Append("Check that the referenced assembly's XML documentation contains the target comment. ");
             }
         }
 
