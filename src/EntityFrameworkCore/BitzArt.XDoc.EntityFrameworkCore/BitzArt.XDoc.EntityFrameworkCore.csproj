@@ -24,14 +24,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="JetBrains.Annotations" Version="2024.3.0" PrivateAssets="All"/>
+		<PackageReference Include="JetBrains.Annotations" Version="2024.3.0" PrivateAssets="All" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.7" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\BitzArt.XDoc\BitzArt.XDoc.csproj"/>
-		<ProjectReference Include="..\..\Render\BitzArt.XDoc.PlainText\BitzArt.XDoc.PlainText.csproj"/>
+		<ProjectReference Include="..\..\BitzArt.XDoc\BitzArt.XDoc.csproj" />
+		<ProjectReference Include="..\..\Render\BitzArt.XDoc.PlainText\BitzArt.XDoc.PlainText.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
