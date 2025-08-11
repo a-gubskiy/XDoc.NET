@@ -7,6 +7,7 @@
 		<IsPackable>false</IsPackable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<NoWarn>1591</NoWarn>
+		<RootNamespace>BitzArt.XDoc.PlainText.Tests.E2E</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -17,7 +18,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\XDoc\XDoc.csproj" />
+		<ProjectReference Include="..\..\..\src\Render\XDoc.PlainText\XDoc.PlainText.csproj" />
+		<ProjectReference Include="..\..\XDoc.TestNodes\XDoc.TestNodes.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -9,11 +9,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{616D63B3
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XDoc", "src\XDoc\XDoc.csproj", "{051F3A64-78F8-4055-9785-5D5A3C489832}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.Tests", "tests\BitzArt.XDoc.Tests\BitzArt.XDoc.Tests.csproj", "{D6F5A728-53AD-49F9-8BA0-1E72D0AF6A93}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XDoc.Tests", "tests\XDoc.Tests\XDoc.Tests.csproj", "{D6F5A728-53AD-49F9-8BA0-1E72D0AF6A93}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XDoc.PlainText", "src\Render\XDoc.PlainText\XDoc.PlainText.csproj", "{95283F56-EFD3-4B32-AE26-4E486D186127}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.PlainText.Tests", "tests\Render\BitzArt.XDoc.PlainText.Tests\BitzArt.XDoc.PlainText.Tests.csproj", "{4F4720A9-8DD2-4DFD-B217-A0FAFC6F60D0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XDoc.PlainText.Tests", "tests\Render\XDoc.PlainText.Tests\XDoc.PlainText.Tests.csproj", "{4F4720A9-8DD2-4DFD-B217-A0FAFC6F60D0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sln", "sln", "{4DF4BD72-775C-4D08-8192-DAD007669051}"
 	ProjectSection(SolutionItems) = preProject
@@ -26,17 +26,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Render", "Render", "{E34A2A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XDoc.EntityFrameworkCore", "src\EntityFrameworkCore\XDoc.EntityFrameworkCore\XDoc.EntityFrameworkCore.csproj", "{69E03C89-EA2B-4C47-BF61-70C5F9E56550}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.EntityFrameworkCore.Tests", "tests\EntityFrameworkCore\BitzArt.XDoc.EntityFrameworkCore.Tests\BitzArt.XDoc.EntityFrameworkCore.Tests.csproj", "{3A197906-2E9F-48AE-BB67-092874629CBA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XDoc.EntityFrameworkCore.Tests", "tests\EntityFrameworkCore\XDoc.EntityFrameworkCore.Tests\XDoc.EntityFrameworkCore.Tests.csproj", "{3A197906-2E9F-48AE-BB67-092874629CBA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EntityFrameworkCore", "EntityFrameworkCore", "{5B807A9A-62ED-44BC-BB5F-86FE8923144B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EntityFrameworkCore", "EntityFrameworkCore", "{F12832C9-3988-40C4-B768-7028BC8273BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.PlainText.Tests.E2E", "tests\Render\BitzArt.XDoc.PlainText.Tests.E2E\BitzArt.XDoc.PlainText.Tests.E2E.csproj", "{799345E4-14C6-49BB-9D16-4076476B3AC3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XDoc.PlainText.Tests.E2E", "tests\Render\XDoc.PlainText.Tests.E2E\XDoc.PlainText.Tests.E2E.csproj", "{799345E4-14C6-49BB-9D16-4076476B3AC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.TestNodes", "tests\BitzArt.XDoc.TestNodes\BitzArt.XDoc.TestNodes.csproj", "{D7D4852B-D5DC-44CF-B989-8CFC020D9FBB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XDoc.TestNodes", "tests\XDoc.TestNodes\XDoc.TestNodes.csproj", "{D7D4852B-D5DC-44CF-B989-8CFC020D9FBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.Tests.E2E", "tests\BitzArt.XDoc.Tests.E2E\BitzArt.XDoc.Tests.E2E.csproj", "{6FE6829F-9E59-427A-9707-E4BD73D321E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XDoc.Tests.E2E", "tests\XDoc.Tests.E2E\XDoc.Tests.E2E.csproj", "{6FE6829F-9E59-427A-9707-E4BD73D321E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

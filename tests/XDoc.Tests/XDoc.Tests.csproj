@@ -7,7 +7,6 @@
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
         <TargetFramework>net9.0</TargetFramework>
-		<RootNamespace>BitzArt.XDoc.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -27,7 +26,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\XDoc\XDoc.csproj" />
-        <ProjectReference Include="..\BitzArt.XDoc.TestNodes\BitzArt.XDoc.TestNodes.csproj" />
+        <ProjectReference Include="..\XDoc.TestNodes\XDoc.TestNodes.csproj" />
     </ItemGroup>
 
     <ItemGroup>
