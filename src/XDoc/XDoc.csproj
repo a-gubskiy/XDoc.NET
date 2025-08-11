@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+        <PackageId>XDoc</PackageId>
+        <Description>A lightweight and efficient tool for parsing, and managing C# XML documentation comments.</Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryType>git</RepositoryType>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageIcon>xdoc-logo.png</PackageIcon>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>XDoc.Tests</_Parameter1>
+        </AssemblyAttribute>
+
+        <AssemblyAttribute Include="JetBrains.Annotations.PublicAPIAttribute" />
+    </ItemGroup>
+            
+    <ItemGroup>
+        <None Include="..\..\assets\xdoc-logo.png" Pack="True" Visible="false" PackagePath="\" />
+        <None Include="..\..\README.md" Pack="True" Visible="false" PackagePath="\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations" Version="2025.2.0" PrivateAssets="All" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+		<PackageId>XDoc.EntityFrameworkCore</PackageId>
+		<Description>Extension library that bridges XML documentation comments from C# code to Entity Framework Core database objects.</Description>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryType>git</RepositoryType>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageIcon>xdoc-logo.png</PackageIcon>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\..\..\assets\xdoc-logo.png" Pack="True" Visible="false" PackagePath="\" />
+		<None Include="..\..\..\README.md" Pack="True" Visible="false" PackagePath="\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="JetBrains.Annotations" Version="2025.2.0" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.7" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\XDoc\XDoc.csproj" />
+		<ProjectReference Include="..\..\Render\XDoc.PlainText\XDoc.PlainText.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>XDoc.EntityFrameworkCore.Tests</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
+</Project>
