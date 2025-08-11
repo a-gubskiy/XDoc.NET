@@ -7,7 +7,7 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
         <PackageId>XDoc.PlainText</PackageId>
-        <Description>Extension package for BitzArt.XDoc that enables rendering XML documentation comments into plain text.</Description>
+        <Description>Extension package for XDoc that enables rendering XML documentation comments into plain text.</Description>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryType>git</RepositoryType>
         <PackageReadmeFile>README.md</PackageReadmeFile>
