@@ -19,7 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\src\EntityFrameworkCore\BitzArt.XDoc.EntityFrameworkCore\BitzArt.XDoc.EntityFrameworkCore.csproj" />
+	  <ProjectReference Include="..\..\..\src\EntityFrameworkCore\XDoc.EntityFrameworkCore\XDoc.EntityFrameworkCore.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -26,7 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\BitzArt.XDoc\BitzArt.XDoc.csproj" />
+        <ProjectReference Include="..\..\src\XDoc\XDoc.csproj" />
         <ProjectReference Include="..\BitzArt.XDoc.TestNodes\BitzArt.XDoc.TestNodes.csproj" />
     </ItemGroup>
 

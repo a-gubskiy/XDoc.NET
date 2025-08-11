@@ -7,7 +7,7 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <RootNamespace>BitzArt.XDoc.PlainText</RootNamespace>
 
-        <PackageId>BitzArt.XDoc.PlainText</PackageId>
+        <PackageId>XDoc.PlainText</PackageId>
         <Authors>BitzArt</Authors>
         <Description>Extension package for BitzArt.XDoc that enables rendering XML documentation comments into plain text.</Description>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -24,7 +24,7 @@
 	</ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\BitzArt.XDoc\BitzArt.XDoc.csproj"/>
+        <ProjectReference Include="..\..\XDoc\XDoc.csproj" />
     </ItemGroup>
 
 	<ItemGroup>

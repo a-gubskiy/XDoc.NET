@@ -30,7 +30,7 @@ public class PlainTextRendererTests
         var xmlDocument = new XmlDocument();
         xmlDocument.LoadXml(xml);
 
-        var node = xmlDocument.SelectSingleNode("//member[@name='P:BitzArt.XDoc.PlainText.Tests.TestClass.MyProperty']");
+        var node = xmlDocument.SelectSingleNode("//member[@name='P:XDoc.PlainText.Tests.TestClass.MyProperty']");
 
         var memberDocumentation = new TestDocumentationElement(node!);
 
@@ -50,8 +50,8 @@ public class PlainTextRendererTests
         [
             new TestMemberNode(typeof(TestClass), "node with inherit doc test"),
             new TestMemberNode(TestNodeType.Property,
-                "BitzArt.XDoc.Tests.TestClass.Name",
-                "<member name=\"P:BitzArt.XDoc.Tests.TestClass.Name\"><inheritdoc /></member>")
+                "XDoc.Tests.TestClass.Name",
+                "<member name=\"P:XDoc.Tests.TestClass.Name\"><inheritdoc /></member>")
         ];
 
         var xml = nodes.GetXml(assembly);
@@ -118,7 +118,7 @@ public class PlainTextRendererTests
         var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "test", null);
         var element = xmlDocument.CreateElement("see");
 
-        element.SetAttribute("cref", "T:BitzArt.XDoc.Models.SomeType");
+        element.SetAttribute("cref", "T:XDoc.Models.SomeType");
         xmlNode.AppendChild(element);
 
         xmlDocument.AppendChild(xmlNode);
@@ -141,7 +141,7 @@ public class PlainTextRendererTests
         var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "test", null);
         var element = xmlDocument.CreateElement("see");
 
-        element.SetAttribute("cref", "M:BitzArt.XDoc.Models.SomeType.SomeMethod");
+        element.SetAttribute("cref", "M:XDoc.Models.SomeType.SomeMethod");
         xmlNode.AppendChild(element);
 
         xmlDocument.AppendChild(xmlNode);

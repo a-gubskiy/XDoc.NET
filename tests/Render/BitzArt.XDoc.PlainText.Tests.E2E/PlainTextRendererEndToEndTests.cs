@@ -37,7 +37,7 @@ class MySimpleClass
 public class PlainTextRendererEndToEndTests
 {
     private const string ThisIsTestingPropertyFromMyClass = "This is testing property from MyClass.";
-    private const string ThisIsTestingPropertyFromMyClassWithNamespace = "This is testing property from BitzArt.XDoc.PlainText.Tests.MyClass.";
+    private const string ThisIsTestingPropertyFromMyClassWithNamespace = "This is testing property from XDoc.PlainText.Tests.MyClass.";
     private const string ThisIsTestingPropertyFromInheritedClass = "This is testing property from inherited class.";
 
     [Fact]

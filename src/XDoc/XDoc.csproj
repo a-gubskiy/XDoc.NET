@@ -7,7 +7,7 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <RootNamespace>BitzArt.XDoc</RootNamespace>
 
-        <PackageId>BitzArt.XDoc</PackageId>
+        <PackageId>XDoc</PackageId>
         <Authors>BitzArt</Authors>
         <Description>A lightweight and efficient tool for parsing, and managing C# XML documentation comments.</Description>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>

@@ -7,7 +7,7 @@
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<RootNamespace>BitzArt.XDoc</RootNamespace>
 
-		<PackageId>BitzArt.XDoc.EntityFrameworkCore</PackageId>
+		<PackageId>XDoc.EntityFrameworkCore</PackageId>
 		<Authors>BitzArt</Authors>
 		<Description>Extension library that bridges XML documentation comments from C# code to Entity Framework Core database objects.</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -30,8 +30,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\BitzArt.XDoc\BitzArt.XDoc.csproj" />
-		<ProjectReference Include="..\..\Render\BitzArt.XDoc.PlainText\BitzArt.XDoc.PlainText.csproj" />
+		<ProjectReference Include="..\..\XDoc\XDoc.csproj" />
+		<ProjectReference Include="..\..\Render\XDoc.PlainText\XDoc.PlainText.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

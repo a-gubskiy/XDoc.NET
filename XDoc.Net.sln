@@ -7,11 +7,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DE8DA5D7-65D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{616D63B3-7EF0-40FB-A404-33A221F65577}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc", "src\BitzArt.XDoc\BitzArt.XDoc.csproj", "{051F3A64-78F8-4055-9785-5D5A3C489832}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XDoc", "src\XDoc\XDoc.csproj", "{051F3A64-78F8-4055-9785-5D5A3C489832}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.Tests", "tests\BitzArt.XDoc.Tests\BitzArt.XDoc.Tests.csproj", "{D6F5A728-53AD-49F9-8BA0-1E72D0AF6A93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.PlainText", "src\Render\BitzArt.XDoc.PlainText\BitzArt.XDoc.PlainText.csproj", "{95283F56-EFD3-4B32-AE26-4E486D186127}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XDoc.PlainText", "src\Render\XDoc.PlainText\XDoc.PlainText.csproj", "{95283F56-EFD3-4B32-AE26-4E486D186127}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.PlainText.Tests", "tests\Render\BitzArt.XDoc.PlainText.Tests\BitzArt.XDoc.PlainText.Tests.csproj", "{4F4720A9-8DD2-4DFD-B217-A0FAFC6F60D0}"
 EndProject
@@ -24,7 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Render", "Render", "{767858
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Render", "Render", "{E34A2AB7-3E63-488C-85FC-72BB747ACD6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.EntityFrameworkCore", "src\EntityFrameworkCore\BitzArt.XDoc.EntityFrameworkCore\BitzArt.XDoc.EntityFrameworkCore.csproj", "{69E03C89-EA2B-4C47-BF61-70C5F9E56550}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XDoc.EntityFrameworkCore", "src\EntityFrameworkCore\XDoc.EntityFrameworkCore\XDoc.EntityFrameworkCore.csproj", "{69E03C89-EA2B-4C47-BF61-70C5F9E56550}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitzArt.XDoc.EntityFrameworkCore.Tests", "tests\EntityFrameworkCore\BitzArt.XDoc.EntityFrameworkCore.Tests\BitzArt.XDoc.EntityFrameworkCore.Tests.csproj", "{3A197906-2E9F-48AE-BB67-092874629CBA}"
 EndProject
