@@ -7,7 +7,6 @@
 		<IsPackable>false</IsPackable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<NoWarn>1591</NoWarn>
-		<RootNamespace>BitzArt.XDoc.Tests.E2E</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>

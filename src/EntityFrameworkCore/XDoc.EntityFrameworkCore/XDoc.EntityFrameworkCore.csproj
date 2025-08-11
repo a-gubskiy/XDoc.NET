@@ -7,12 +7,9 @@
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 
 		<PackageId>XDoc.EntityFrameworkCore</PackageId>
-		<Authors>BitzArt</Authors>
 		<Description>Extension library that bridges XML documentation comments from C# code to Entity Framework Core database objects.</Description>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryType>git</RepositoryType>
-		<RepositoryUrl>https://github.com/BitzArt/xdoc</RepositoryUrl>
-		<PackageProjectUrl>https://github.com/BitzArt/xdoc</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>xdoc-logo.png</PackageIcon>
 	</PropertyGroup>
