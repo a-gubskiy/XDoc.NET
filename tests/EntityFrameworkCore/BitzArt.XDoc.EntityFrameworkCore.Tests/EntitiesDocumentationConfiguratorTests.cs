@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace BitzArt.XDoc.Tests;
+namespace XDoc.Tests;
 
 public class EntitiesDocumentationConfiguratorTests
 {

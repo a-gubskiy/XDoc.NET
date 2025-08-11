@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Reflection;
 
-namespace BitzArt.XDoc.Tests;
+namespace XDoc.Tests;
 
 public class XDocTests
 {

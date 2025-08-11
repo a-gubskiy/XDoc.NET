@@ -1,7 +1,7 @@
-using BitzArt.XDoc.Tests;
+using XDoc.Tests;
 using System.Xml;
 
-namespace BitzArt.XDoc.PlainText.Tests;
+namespace XDoc.PlainText.Tests;
 
 public class TestClass
 {

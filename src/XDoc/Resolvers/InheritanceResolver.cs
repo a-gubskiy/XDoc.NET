@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace BitzArt.XDoc;
+namespace XDoc;
 
 /// <summary>
 /// Direct inheritance resolver (<c>&lt;inheritdoc/&gt;</c>)

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace BitzArt.XDoc;
+namespace XDoc;
 
 /// <summary>
 /// Extension methods for <see cref="IMutableEntityType"/> that add XML documentation as comments

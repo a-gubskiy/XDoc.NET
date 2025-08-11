@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace BitzArt.XDoc.Tests;
+namespace XDoc.Tests;
 
 public static class TestXmlNodesExtensions
 {

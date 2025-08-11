@@ -1,4 +1,4 @@
-namespace BitzArt.XDoc.PlainText;
+namespace XDoc.PlainText;
 
 /// <summary>
 /// Configuration options for controlling XML documentation rendering behavior.

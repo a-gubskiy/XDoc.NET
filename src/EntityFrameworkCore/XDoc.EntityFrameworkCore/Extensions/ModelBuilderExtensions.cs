@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace BitzArt.XDoc;
+namespace XDoc;
 
 /// <summary>
 /// Extensions for configuring XML documentation comments for Entity Framework Core entities.

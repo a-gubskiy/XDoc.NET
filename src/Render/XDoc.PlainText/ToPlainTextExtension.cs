@@ -1,6 +1,6 @@
-using BitzArt.XDoc.PlainText;
+using XDoc.PlainText;
 
-namespace BitzArt.XDoc;
+namespace XDoc;
 
 /// <summary>
 /// Extension methods for <see cref="XDoc"/> objects which allow rendering documentation in plain text.

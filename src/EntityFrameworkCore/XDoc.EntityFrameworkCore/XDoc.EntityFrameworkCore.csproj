@@ -5,7 +5,6 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<RootNamespace>BitzArt.XDoc</RootNamespace>
 
 		<PackageId>XDoc.EntityFrameworkCore</PackageId>
 		<Authors>BitzArt</Authors>

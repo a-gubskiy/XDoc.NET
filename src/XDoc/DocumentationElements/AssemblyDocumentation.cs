@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace BitzArt.XDoc;
+namespace XDoc;
 
 /// <inheritdoc/>
 public sealed class AssemblyDocumentation : DocumentationElement, IDocumentationElement<Assembly>

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-namespace BitzArt.XDoc.Tests;
+namespace XDoc.Tests;
 
 public class TestDbContext(Action<TestDbContext, ModelBuilder> onModelCreating) : DbContext
 {

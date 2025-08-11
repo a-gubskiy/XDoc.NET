@@ -1,6 +1,6 @@
 using System.Xml;
 
-namespace BitzArt.XDoc.Tests;
+namespace XDoc.Tests;
 
 public class TypeDocumentationTests
 {

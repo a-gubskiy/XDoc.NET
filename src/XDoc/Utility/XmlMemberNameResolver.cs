@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace BitzArt.XDoc;
+namespace XDoc;
 
 /// <summary>
 /// Provides utility methods for parsing and resolving information from fully qualified member signatures,

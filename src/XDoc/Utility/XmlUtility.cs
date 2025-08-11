@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Xml;
 
-namespace BitzArt.XDoc;
+namespace XDoc;
 
 internal static class XmlUtility
 {

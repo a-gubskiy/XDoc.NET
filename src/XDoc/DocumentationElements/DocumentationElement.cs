@@ -1,4 +1,4 @@
-namespace BitzArt.XDoc;
+namespace XDoc;
 
 /// <summary>
 /// A base class for <see cref="XDoc"/> documentation elements.

@@ -1,4 +1,4 @@
-namespace BitzArt.XDoc.PlainText.Tests;
+namespace XDoc.PlainText.Tests;
 
 class MyClass
 {

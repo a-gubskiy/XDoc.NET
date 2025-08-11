@@ -1,4 +1,4 @@
-namespace BitzArt.XDoc;
+namespace XDoc;
 
 /// <summary>
 /// Contains documentation for a specific value of type <typeparamref name="TTarget"/>.

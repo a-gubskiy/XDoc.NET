@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace BitzArt.XDoc;
+namespace XDoc;
 
 internal static class XDocExtensions
 {

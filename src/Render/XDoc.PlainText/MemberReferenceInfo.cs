@@ -1,4 +1,4 @@
-namespace BitzArt.XDoc.PlainText;
+namespace XDoc.PlainText;
 
 /// <summary>
 /// Represents an identifier for types and members in XML documentation comments.

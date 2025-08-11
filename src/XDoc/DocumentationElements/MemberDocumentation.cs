@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Xml;
 
-namespace BitzArt.XDoc;
+namespace XDoc;
 
 /// <summary>
 /// Contains documentation of a specific declared <typeparamref name="TMemberInfo"/>.

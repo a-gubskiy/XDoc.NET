@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Linq.Expressions;
 
-namespace BitzArt.XDoc;
+namespace XDoc;
 
 /// <summary>
 /// Extension methods for PropertyBuilder.

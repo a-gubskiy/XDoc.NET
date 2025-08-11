@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Reflection;
 
-namespace BitzArt.XDoc;
+namespace XDoc;
 
 /// <summary>
 /// Provides functionality for fetching and parsing documentation

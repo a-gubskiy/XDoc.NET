@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Reflection;
 
-namespace BitzArt.XDoc.Tests;
+namespace XDoc.Tests;
 
 public class TestMemberNode
 {

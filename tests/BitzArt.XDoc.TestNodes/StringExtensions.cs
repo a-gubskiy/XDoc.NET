@@ -1,4 +1,4 @@
-﻿namespace BitzArt.XDoc.Tests;
+﻿namespace XDoc.Tests;
 
 public static class StringExtensions
 {

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BitzArt.XDoc;
+namespace XDoc;
 
 /// <summary>
 /// Provides extension methods for <see cref="OwnedNavigationBuilder{TOwnerEntity, TDependentEntity}"/> to map XML comments.
