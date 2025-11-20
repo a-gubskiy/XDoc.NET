@@ -26,19 +26,23 @@ namespace XDoc;
 public class XDoc : IDisposable
 {
     private readonly ConcurrentDictionary<Assembly, AssemblyDocumentation> _fetchedAssemblies;
-    
+
     private bool _disposed = false;
+
+    internal XDocConfiguration? configuration { get; private set; } = null;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="XDoc"/> class.
+    /// <param name="configuration">The <see cref="XDocConfiguration"/> to use for this XDoc instance.</param>
     /// </summary>
-    public XDoc() : this(new())
+    public XDoc(XDocConfiguration? configuration = null) : this(new(), configuration)
     {
     }
 
-    internal XDoc(ConcurrentDictionary<Assembly, AssemblyDocumentation> fetchedAssemblies)
+    internal XDoc(ConcurrentDictionary<Assembly, AssemblyDocumentation> fetchedAssemblies, XDocConfiguration? configuration = null)
     {
         _fetchedAssemblies = fetchedAssemblies;
+        this.configuration = configuration;
     }
 
     /// <summary>
@@ -49,7 +53,7 @@ public class XDoc : IDisposable
     public AssemblyDocumentation Get(Assembly assembly)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
-        
+
         return _fetchedAssemblies.TryGetValue(assembly, out var result)
             ? result
             : Fetch(assembly);

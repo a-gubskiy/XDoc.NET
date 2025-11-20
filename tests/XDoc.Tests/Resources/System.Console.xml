@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>System.Console</name>
+  </assembly>
+  <members>
+    <member name="T:System.Console">
+      <summary>Represents the standard input, output, and error streams for console applications. This class cannot be inherited.</summary>
+    </member>
+  </members>
+</doc>
