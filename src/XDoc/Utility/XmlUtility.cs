@@ -14,7 +14,7 @@ internal static class XmlUtility
     /// </returns>
     internal static Dictionary<Type, TypeDocumentation> Fetch(XDoc source, Assembly assembly)
     {
-        var filePath = GetXmlDocumentationFilePath(assembly);
+        var filePath = GetXmlDocumentationFilePath(assembly, source.configuration);
 
         if (string.IsNullOrEmpty(filePath))
         {
@@ -52,8 +52,13 @@ internal static class XmlUtility
         }
     }
 
-    private static string GetXmlDocumentationFilePath(Assembly assembly)
+    internal static string GetXmlDocumentationFilePath(Assembly assembly, XDocConfiguration? configuration = null)
     {
+        if (configuration?.GetXmlDocumentationFilePath is Func<Assembly, string> customImplementation)
+        {
+            return customImplementation(assembly);
+        }
+
         // Try to find local XML documentation file
         var assemblyLocation = assembly.Location;
         var localXmlPath = Path.ChangeExtension(assemblyLocation, "xml");
